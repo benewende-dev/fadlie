@@ -1,7 +1,8 @@
 # Fadlie — notes de travail
 
-Un agent qui trouve, dans un catalogue de données, **les données personnelles
-que le catalogue ignore être personnelles**. Écrit pour le hackathon
+Un agent qui trouve **la même donnée vivant dans plusieurs systèmes que le
+graphe ne relie pas** — et la gouvernance qui s'arrête à cette frontière
+invisible. Écrit pour le hackathon
 **Build with DataHub — The Agent Hackathon**, échéance **10 août 2026, 17 h 00
 EDT**. Notation du **17 au 31 août** : la démonstration doit vivre jusque-là,
 pas jusqu'à la remise.
@@ -30,6 +31,36 @@ pas refaire tourner est une opinion.
 Conséquence nommable : on ne peut pas honorer une demande d'effacement sur une
 donnée qu'on ignore être personnelle. Et le catalogue ne dit pas « je ne sais
 pas » — il répond « deux jeux », avec l'assurance de celui qui a cherché.
+
+## Où est vraiment le trou (`mesurer-jumeaux.py`)
+
+Une première hypothèse a été **écartée par la mesure** : « le nom de colonne ne
+survit pas au lignage, il faut un modèle pour apparier ». Faux. Là où le lignage
+relie et où le schéma est recopié, l'égalité de noms suffit — 18 colonnes
+marquées sur 18 retrouvées dans `ORDER_DETAILS_REPLICA` et `looker/order_details`,
+et 18 sur 18 à la casse près dans `powerbi/ORDER_DETAILS`. Ne pas rebâtir ce
+problème : il n'existe pas.
+
+Le trou est ailleurs, et il est plus grave.
+
+- **24 jeux sur 67 n'ont aucun lignage** — les 12 tables postgres et les 12
+  tables s3, dans aucun sens. Aucune propagation ne les atteindra jamais.
+- **11 tables existent à l'identique sur quatre plateformes** : dbt, snowflake,
+  postgres, s3, recouvrement de colonnes **100 %**. `customers` : 22 colonnes
+  des deux côtés, au nom près. Rien dans le graphe ne dit que c'est la même
+  donnée.
+- **La gouvernance s'arrête à dbt.** 11 groupes sur 12 sont gouvernés
+  inégalement : `dbt/customers` a 3 propriétaires, un domaine et une
+  description ; ses trois jumeaux ont **zéro, aucun, aucune**.
+- **12 colonnes identiques sont marquées d'un côté et nues de l'autre.**
+  `customers.zipcode`, `customers.town_city`, `addresses.zipcode` : annotées
+  chez dbt, rien chez snowflake ni postgres. `customers.customer_id` ne porte
+  `PII_Data` **que** sur postgres.
+- Et le nom seul ne peut pas trancher : **3 groupes homonymes sur 15 ne sont pas
+  la même chose** — `custom_sql_query` (4 jeux tableau, recouvrement 0 %),
+  `order_details` (0 %), `promotions` (9 %). Le nom présélectionne ; il ne
+  tranche pas. C'est exactement la place d'un juge, et elle est *gagnée* par la
+  mesure, pas supposée.
 
 ## Ce qui est vérifié (ne pas re-supposer)
 
