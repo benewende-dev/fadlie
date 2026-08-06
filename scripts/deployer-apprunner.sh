@@ -61,6 +61,12 @@ ARN_INSTANCE="$(command aws iam get-role --role-name "$ROLE_INSTANCE" --query Ro
 # Les deux jetons arrivent par `RuntimeEnvironmentSecrets` : App Runner les
 # résout au démarrage et ils n'apparaissent ni dans l'image, ni dans la
 # configuration du service, ni dans la console.
+#
+# Le cache passe à trente minutes en déployé, contre cinq en local. Sous
+# limitation de débit une analyse dure plus longtemps que le cache ne vit : elle
+# serait donc relancée à chaque appel, et n'aboutirait jamais. Ce qu'on perd est
+# borné — `apply_governance` force le recalcul après avoir écrit, donc seule une
+# modification faite ailleurs que par Fadlie peut vieillir dans le cache.
 source_json() {
 cat <<FIN
 {
@@ -72,7 +78,7 @@ cat <<FIN
       "RuntimeEnvironmentVariables": {
         "DATAHUB_GMS_URL": "$DATAHUB_GMS_URL",
         "AWS_REGION": "$REGION",
-        "FADLIE_CACHE_SECONDS": "${FADLIE_CACHE_SECONDS:-300}",
+        "FADLIE_CACHE_SECONDS": "${FADLIE_CACHE_SECONDS:-1800}",
         "FADLIE_ALLOWED_HOSTS": "$HOTES"
       },
       "RuntimeEnvironmentSecrets": {

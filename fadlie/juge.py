@@ -91,8 +91,22 @@ class Juge:
     def client(self):
         if self._client is None:
             import boto3  # importé tard : le paquet n'est pas requis pour les tests
+            from botocore.config import Config as ConfigBoto
 
-            self._client = boto3.client("bedrock-runtime", region_name=self.config.region)
+            # Une analyse complète soumet une centaine de couples, sans pause.
+            # Le défaut de botocore — quatre tentatives, attente aveugle — n'y
+            # suffit pas : mesuré le 6 août sur le service déployé, une analyse
+            # entière tombait en `ThrottlingException (reached max retries: 4)`,
+            # et l'outil rendait une panne à l'appelant.
+            #
+            # `adaptive` ne se contente pas de réessayer : il mesure les refus et
+            # ralentit la cadence d'émission. C'est ce qu'il faut ici, parce que
+            # le problème n'est pas un appel malchanceux mais un débit trop haut.
+            self._client = boto3.client(
+                "bedrock-runtime", region_name=self.config.region,
+                config=ConfigBoto(retries={"max_attempts": 10, "mode": "adaptive"},
+                                  read_timeout=60, connect_timeout=10),
+            )
         return self._client
 
     def _invoquer(self, texte: str) -> str:

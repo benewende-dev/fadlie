@@ -80,6 +80,13 @@ echo "✓ rôle d'accès $ROLE_ACCES"
 # --- rôle d'instance : Bedrock, et les deux secrets --------------------------
 # Des droits nommés, pas `bedrock:*`. Le juge n'invoque qu'un modèle ; un rôle
 # qui peut tout invoquer transforme une erreur de configuration en facture.
+#
+# Le modèle sous-jacent n'est pas restreint à une région, et ce n'est pas un
+# relâchement : un profil d'inférence *route*. Mesuré le 6 août 2026 sur le
+# service déployé — appelé en eu-central-1 par `eu.amazon.nova-micro-v1:0`, le
+# refus portait sur `arn:aws:bedrock:eu-west-3::foundation-model/…`. Restreindre
+# la région du modèle revient à interdire au profil de faire son travail. Ce qui
+# borne la dépense, c'est le nom du modèle, et il reste unique.
 creer_role "$ROLE_INSTANCE" "tasks.apprunner.amazonaws.com"
 command aws iam put-role-policy --role-name "$ROLE_INSTANCE" \
     --policy-name fadlie-bedrock-et-secrets \
@@ -89,7 +96,7 @@ command aws iam put-role-policy --role-name "$ROLE_INSTANCE" \
         {\"Effect\": \"Allow\",
          \"Action\": [\"bedrock:InvokeModel\"],
          \"Resource\": [
-           \"arn:aws:bedrock:$REGION::foundation-model/amazon.nova-micro-v1:0\",
+           \"arn:aws:bedrock:*::foundation-model/amazon.nova-micro-v1:0\",
            \"arn:aws:bedrock:*:$COMPTE:inference-profile/eu.amazon.nova-micro-v1:0\"]},
         {\"Effect\": \"Allow\",
          \"Action\": [\"secretsmanager:GetSecretValue\"],

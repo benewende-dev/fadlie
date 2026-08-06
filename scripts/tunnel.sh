@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 # Ouvre (ou ré-ouvre) le tunnel vers DataHub.
 #
-# Le port 9002 n'est pas exposé et ne le sera pas : une instance DataHub porte le
-# catalogue entier d'une organisation. On passe donc par SSH.
+# Le tunnel sert au travail local. Il n'est plus la seule porte : App Runner n'a
+# pas d'adresse de sortie fixe, donc 8080 (GMS) et 9002 (l'interface) sont
+# ouverts au monde depuis le déploiement — et protégés par
+# `METADATA_SERVICE_AUTH_ENABLED=true` plutôt que par le pare-feu. Vérifié le
+# 6 août 2026 depuis l'extérieur : lecture, écriture et GraphQL du frontend
+# rendent 401 sans jeton. Seul SSH reste restreint par adresse.
+#
+# Passer quand même par le tunnel en local évite de faire circuler le jeton
+# DataHub en clair : ces deux ports sont en HTTP, pas en HTTPS.
 #
 # `ServerAliveInterval` n'est pas une coquetterie : sans lui le tunnel tombe en
 # silence dès que la liaison reste inactive quelques minutes, et le symptôme —

@@ -238,6 +238,19 @@ Deux corrections nées de ce passage :
   nécessaire : `DATAHUB_GMS_URL` pointe sur l'adresse publique.
 - Utilisateur AWS `fadlie`, distinct de celui de Naaba : deux projets déployés,
   deux jeux de clés. Une révocation d'un côté n'emporte pas l'autre.
+- **Les conteneurs redémarrent maintenant tout seuls.** Le quickstart les posait
+  en `restart: no` — cinq sur six. Un redémarrage de l'instance pendant la
+  notation (17–31 août, sans personne pour regarder) laissait DataHub à terre, et
+  avec lui l'agent déployé. Passés en `unless-stopped` le 6 août, par
+  `docker update` : pas de recréation, donc pas de perte d'état.
+  `unattended-upgrades` est actif mais `Automatic-Reboot` reste au défaut
+  (`false`) — vérifié, il ne redémarre pas de lui-même.
+- **Un profil d'inférence route ailleurs que là où on l'appelle.** La politique du
+  rôle d'instance n'autorisait `amazon.nova-micro-v1:0` qu'en `eu-central-1` ; le
+  refus mesuré portait sur `arn:aws:bedrock:eu-west-3::foundation-model/…`. Le
+  modèle est donc autorisé sans région, et c'est son *nom* qui borne la dépense.
+  Le juge a signalé la panne au lieu de rendre « aucun doublon » : c'est
+  exactement ce pour quoi il lève.
 
 ## Conventions
 
