@@ -43,8 +43,25 @@ problème : il n'existe pas.
 
 Le trou est ailleurs, et il est plus grave.
 
-- **24 jeux sur 67 n'ont aucun lignage** — les 12 tables postgres et les 12
-  tables s3, dans aucun sens. Aucune propagation ne les atteindra jamais.
+> **Deux corrections du 6 août 2026, sur la même question.** Une première
+> version affirmait « 24 jeux n'ont aucun lignage » : mesure lancée pendant que
+> l'index se remplissait. Une seconde affirmait « 58 couples sur 88 n'ont aucun
+> chemin » : le parcours ne gardait que les arêtes entre *jeux de données*, or
+> `postgres/customers` n'a qu'un voisin et c'est un **traitement**,
+> `export_table_customers_to_s3`, qui mène droit à `s3/customers`. Les deux
+> chiffres étaient plausibles et faux, dans deux directions opposées.
+> **La vérité est l'inverse : tout est relié.** Ce qui suit est re-mesuré, index
+> stabilisé, traitements compris.
+
+- **Le lignage ne dit rien sur « est-ce la même donnée ».** Le graphe est d'un
+  seul tenant : 103 sommets, 161 arêtes, **0 jeu isolé**, et les **88 couples
+  d'homonymes sont tous reliés** — à distance 2 ou 4. Or la distance médiane
+  entre deux jeux **pris au hasard** est de 4. Les jumeaux sont donc à la même
+  distance que n'importe quel couple : la connexité ne porte aucune information.
+  C'est ce qui rend un juge nécessaire, et c'est mesuré, pas supposé.
+- **Et pourtant rien ne propage.** `snowflake/CUSTOMERS` est joignable depuis
+  `dbt/customers` en deux sauts et n'a ni propriétaire, ni domaine, ni
+  description. Le catalogue *contient* le chemin ; personne ne le parcourt.
 - **11 tables existent à l'identique sur quatre plateformes** : dbt, snowflake,
   postgres, s3, recouvrement de colonnes **100 %**. `customers` : 22 colonnes
   des deux côtés, au nom près. Rien dans le graphe ne dit que c'est la même
@@ -103,9 +120,24 @@ Le trou est ailleurs, et il est plus grave.
 - `datahub docker quickstart` **ne charge plus de données d'exemple** : le
   graphe sort vide (1 seule entité, l'utilisateur `datahub`). Le jeu du concours
   se charge par `datahub datapack load showcase-ecommerce`.
-- **L'index de recherche est alimenté en différé.** Juste après le chargement,
-  `search` rend 3 jeux ; il en rend 67 après deux minutes. Un contrôle écrit
-  juste après une écriture mesure le vide et le prend pour un échec.
+- **L'index est alimenté en différé, et le graphe de lignage bien plus lentement
+  que la recherche.** Juste après le chargement, `search` rend 3 jeux ; 67 après
+  deux minutes. Mais le **lignage** n'était toujours pas matérialisé une demi-
+  heure plus tard : 24 jeux paraissaient n'avoir aucune arête, ils en ont tous.
+  Ce piège a produit une conclusion fausse, écrite et committée. Il ne lève rien,
+  ne prévient de rien, et rend un chiffre parfaitement plausible. **Mesurer le
+  lignage seulement après avoir vérifié qu'il est stable — deux mesures
+  identiques à dix minutes d'écart.**
+- **Un traitement relie deux jeux sans être un jeu.** Ne garder que les arêtes
+  de type `DATASET` coupe le chemin exactement là où il passe :
+  `postgres/customers` n'a qu'un seul voisin dans tout le graphe, le DataJob
+  `export_table_customers_to_s3`, qui mène à `s3/customers`. Un parcours qui
+  filtre les traitements fabrique des îlots qui n'existent pas — et le résultat
+  ressemble à une découverte. Suivre `DATASET` **et** `DATA_JOB`, et interroger
+  le lignage par `entity(urn:)`, pas par `dataset(urn:)`.
+- **Se méfier d'un résultat qui arrange.** Les deux erreurs ci-dessus allaient
+  toutes les deux dans le sens de la thèse du moment. C'est le signe qu'il faut
+  re-mesurer autrement, pas écrire plus vite.
 - `datahub datapack --help` **plante** (ressource `DATAPACK_AGENT_CONTEXT.md`
   absente du paquet). `datapack list` et `datapack load` fonctionnent. Défaut
   d'empaquetage du CLI, sans conséquence.
