@@ -240,13 +240,24 @@ Deux corrections nées de ce passage :
   nécessaire : `DATAHUB_GMS_URL` pointe sur l'adresse publique.
 - Utilisateur AWS `fadlie`, distinct de celui de Naaba : deux projets déployés,
   deux jeux de clés. Une révocation d'un côté n'emporte pas l'autre.
-- **Les conteneurs redémarrent maintenant tout seuls.** Le quickstart les posait
-  en `restart: no` — cinq sur six. Un redémarrage de l'instance pendant la
-  notation (17–31 août, sans personne pour regarder) laissait DataHub à terre, et
-  avec lui l'agent déployé. Passés en `unless-stopped` le 6 août, par
-  `docker update` : pas de recréation, donc pas de perte d'état.
-  `unattended-upgrades` est actif mais `Automatic-Reboot` reste au défaut
-  (`false`) — vérifié, il ne redémarre pas de lui-même.
+- **Les conteneurs redémarrent maintenant tout seuls, et ça a été éprouvé.** Le
+  quickstart les posait en `restart: no` — cinq sur six. Un redémarrage de
+  l'instance pendant la notation (17–31 août, sans personne pour regarder)
+  laissait DataHub à terre, et avec lui l'agent déployé. Passés en
+  `unless-stopped` le 6 août par `docker update` : pas de recréation, donc pas de
+  perte d'état. `unattended-upgrades` est actif mais `Automatic-Reboot` reste au
+  défaut (`false`).
+  **L'instance a été redémarrée pour de bon le 6 août.** Les six conteneurs
+  étaient debout **52 secondes** après le démarrage ; GMS et le frontal
+  répondaient en moins de cinq minutes ; l'authentification a survécu — 401 en
+  lecture, en écriture, et sur le GraphQL du frontal ; les ports internes sont
+  restés fermés. Une politique de redémarrage qu'on n'a pas vue s'exercer n'est
+  pas une garantie, c'est une intention.
+- **Le cache du service déployé porte la panne.** Mesuré pendant ce redémarrage :
+  `catalog_summary` a continué de rendre les 97 couples et les 580 écarts, avec
+  `analysis_age_seconds` à 345, pendant que DataHub était à terre. C'est la
+  raison de fond des trente minutes, au-delà de la limitation de débit : un juge
+  qui appelle au mauvais moment ne voit pas une panne.
 - **Un profil d'inférence route ailleurs que là où on l'appelle.** La politique du
   rôle d'instance n'autorisait `amazon.nova-micro-v1:0` qu'en `eu-central-1` ; le
   refus mesuré portait sur `arn:aws:bedrock:eu-west-3::foundation-model/…`. Le
