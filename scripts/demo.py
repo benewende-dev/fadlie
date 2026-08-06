@@ -9,11 +9,13 @@ le montre.
     FADLIE_MCP_URL=https://…/mcp FADLIE_API_TOKEN=… python scripts/demo.py
     …  --vite            sans les pauses
     …  --repetition      ne grave rien : la scène d'écriture reste à blanc
+    …  --jeu order_items  un autre groupe de jumeaux que `customers`
 
 `--repetition` existe parce que la démonstration est destructrice par nature :
-une fois `apply_governance` passé pour de vrai, les écarts sur `customers`
+une fois `apply_governance` passé pour de vrai, les écarts du groupe visé
 n'existent plus et la scène suivante n'a plus rien à montrer. On répète à blanc,
-on tourne une seule fois.
+on tourne une seule fois — et `--jeu` permet de refaire une prise ailleurs
+plutôt que d'attendre que le catalogue se re-dégrade, ce qu'il ne fera pas.
 """
 from __future__ import annotations
 
@@ -50,13 +52,23 @@ def dire(texte: str, couleur: str = "") -> None:
     print(f"{couleur}{texte}{FIN}")
 
 
+_LETTRES = {2: "two", 3: "three", 4: "four", 5: "five",
+            6: "six", 7: "seven", 8: "eight"}
+
+
+def _en_lettres(n: int) -> str:
+    """« four » plutôt que « 4 » : c'est un titre, pas une mesure."""
+    return _LETTRES.get(n, str(n))
+
+
 def appel(nom: str, arguments: dict | None = None) -> None:
     args = json.dumps(arguments) if arguments else ""
     dire(f"{GRIS}▸ {nom}({args}){FIN}")
     souffler(0.5)
 
 
-async def jouer(url: str, jeton: str, repetition: bool = False) -> int:
+async def jouer(url: str, jeton: str, repetition: bool = False,
+                jeu: str = "customers") -> int:
     import httpx2
 
     client = create_mcp_http_client(
@@ -83,11 +95,13 @@ async def jouer(url: str, jeton: str, repetition: bool = False) -> int:
             souffler(2.5)
 
             # --- 2. les copies -----------------------------------------------
-            titre("The same table, four systems")
             appel("find_duplicate_datasets")
             groupes = contenu(await session.call_tool("find_duplicate_datasets", {}))["groups"]
             clients = next((g for g in groupes
-                            if any("customers" in d.lower() for d in g["datasets"])), groupes[0])
+                            if any(jeu in d.lower() for d in g["datasets"])), groupes[0])
+            # Le titre se lit après le résultat, pas avant : c'est le serveur qui
+            # dit combien de systèmes portent la table, pas le script.
+            titre(f"The same table, {_en_lettres(len(clients['datasets']))} systems")
             for d in clients["datasets"]:
                 dire(f"  {d}")
             souffler(1.2)
@@ -99,10 +113,10 @@ async def jouer(url: str, jeton: str, repetition: bool = False) -> int:
 
             # --- 3. la gouvernance qui s'arrête -------------------------------
             titre("Where the governance stopped")
-            appel("governance_gaps", {"dataset": "customers"})
+            appel("governance_gaps", {"dataset": jeu})
             ecarts = contenu(await session.call_tool(
-                "governance_gaps", {"dataset": "customers", "limit": 200}))
-            dire(f"  {ecarts['total']} gaps on the customers copies alone\n")
+                "governance_gaps", {"dataset": jeu, "limit": 200}))
+            dire(f"  {ecarts['total']} gaps on the {jeu} copies alone\n")
             # Un écart par genre, et par colonne distincte : cinq fois « missing
             # owner » ne montre pas ce que fait l'agent, ça montre qu'il boucle.
             vus, varies = set(), []
@@ -126,9 +140,9 @@ async def jouer(url: str, jeton: str, repetition: bool = False) -> int:
 
             # --- 4. la réparation, à blanc puis pour de vrai ------------------
             titre("Fixing it")
-            appel("apply_governance", {"dataset": "customers"})
+            appel("apply_governance", {"dataset": jeu})
             blanc = contenu(await session.call_tool(
-                "apply_governance", {"dataset": "customers"}))
+                "apply_governance", {"dataset": jeu}))
             dire(f"  dry run: {blanc['would_apply']} values would be written, "
                  f"{blanc['applied']} written")
             dire(f"{GRIS}  dry run is the default. writing takes a second argument.{FIN}")
@@ -139,10 +153,10 @@ async def jouer(url: str, jeton: str, repetition: bool = False) -> int:
                 souffler(1.0)
                 vrai = None
             else:
-                appel("apply_governance", {"dataset": "customers", "dry_run": False})
+                appel("apply_governance", {"dataset": jeu, "dry_run": False})
                 debut = time.time()
                 vrai = contenu(await session.call_tool(
-                    "apply_governance", {"dataset": "customers", "dry_run": False}))
+                    "apply_governance", {"dataset": jeu, "dry_run": False}))
                 dire(f"  {VERT}{vrai['applied']} values written to DataHub{FIN}"
                      f"  {GRIS}({time.time() - debut:.0f}s){FIN}")
                 if vrai["failed"]:
@@ -150,17 +164,17 @@ async def jouer(url: str, jeton: str, repetition: bool = False) -> int:
                          f"{vrai['failures'][0]['reason'][:70]}")
                 souffler(1.5)
 
-            appel("governance_gaps", {"dataset": "customers"})
+            appel("governance_gaps", {"dataset": jeu})
             reste = contenu(await session.call_tool(
-                "governance_gaps", {"dataset": "customers", "limit": 1}))
+                "governance_gaps", {"dataset": jeu, "limit": 1}))
             # La légende suit le résultat du serveur, elle ne le précède pas.
             # Piège vécu au tournage de Naaba : un commentaire écrit d'avance
             # démentait la ligne juste au-dessus, et il a fallu refaire la prise.
             if reste["total"] < ecarts["total"]:
-                dire(f"  gaps on customers now: {VERT}{reste['total']}{FIN}"
+                dire(f"  gaps on {jeu} now: {VERT}{reste['total']}{FIN}"
                      f"  {GRIS}(was {ecarts['total']}){FIN}")
             else:
-                dire(f"  gaps on customers: {reste['total']}"
+                dire(f"  gaps on {jeu}: {reste['total']}"
                      f"  {GRIS}(unchanged — nothing was written){FIN}")
             souffler(2.0)
 
@@ -180,6 +194,11 @@ def main() -> int:
     analyseur.add_argument("--vite", action="store_true", help="sans les pauses")
     analyseur.add_argument("--repetition", action="store_true",
                            help="ne grave rien : la scène d'écriture reste à blanc")
+    # La scène d'écriture est destructrice : une fois un groupe réparé, il n'a
+    # plus rien à montrer. Pouvoir en viser un autre, c'est pouvoir refaire une
+    # prise sans attendre que le catalogue se re-dégrade — ce qu'il ne fera pas.
+    analyseur.add_argument("--jeu", default="customers",
+                           help="le groupe de jumeaux à montrer (défaut : customers)")
     args = analyseur.parse_args()
     if args.vite:
         PAUSE = 0.0
@@ -189,7 +208,7 @@ def main() -> int:
     if not url or not jeton:
         print("FADLIE_MCP_URL et FADLIE_API_TOKEN sont requises", file=sys.stderr)
         return 2
-    return asyncio.run(jouer(url, jeton, repetition=args.repetition))
+    return asyncio.run(jouer(url, jeton, repetition=args.repetition, jeu=args.jeu))
 
 
 if __name__ == "__main__":

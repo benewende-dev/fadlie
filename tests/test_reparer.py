@@ -11,7 +11,7 @@ import pytest
 
 from fadlie.catalogue import CatalogueError
 from fadlie.ecart import Ecart
-from fadlie.reparer import appliquer
+from fadlie.reparer import Resultat, appliquer
 
 
 class CatalogueFactice:
@@ -119,3 +119,18 @@ class TestRienAFaire:
     def test_aucun_ecart(self):
         r = appliquer(CatalogueFactice(), [], pour_de_vrai=True)
         assert (r.poses, r.simules, r.echecs, r.total) == (0, 0, (), 0)
+
+
+def test_le_resume_des_outils_est_en_anglais():
+    """Une réponse d'outil MCP se lit par n'importe qui.
+
+    Piège déjà vu et déjà corrigé pour les désaccords : la prose française
+    d'une aide de travail s'était retrouvée dans une surface publique.
+    `resume()` reste français, `summary()` ne l'est pas.
+    """
+    r = Resultat(poses=3, simules=0, echecs=())
+    assert r.summary() == "3 gaps written"
+    assert "écarts" in r.resume()
+
+    blanc = Resultat(poses=0, simules=7, echecs=())
+    assert blanc.summary() == "7 gaps simulated, nothing was written"

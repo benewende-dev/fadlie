@@ -371,7 +371,7 @@ def construire(config: Config | None = None, agent: Agent | None = None,
                 "failed": len(resultat.echecs),
                 "failures": [{"dataset": nom(e.cible), "reason": raison}
                              for e, raison in resultat.echecs[:10]],
-                "summary": resultat.resume(),
+                "summary": resultat.summary(),
             }
 
         return _executer("apply_governance", faire)

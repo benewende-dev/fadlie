@@ -35,12 +35,27 @@ class Resultat:
         return self.poses + self.simules + len(self.echecs)
 
     def resume(self) -> str:
+        """Pour la sortie de travail — `python -m fadlie report`."""
         if self.simules:
             return f"{self.simules} écarts simulés, rien n'a été écrit"
         if self.echecs:
             return (f"{self.poses} écarts posés, {len(self.echecs)} en échec "
                     f"— le catalogue est partiellement à jour")
         return f"{self.poses} écarts posés"
+
+    def summary(self) -> str:
+        """Pour les réponses d'outil MCP, qui sont une surface publique.
+
+        Même règle que les désaccords : une réponse d'outil se lit par
+        n'importe qui, donc elle est en anglais. `resume()` reste français, il
+        ne sort que dans la ligne de commande de travail.
+        """
+        if self.simules:
+            return f"{self.simules} gaps simulated, nothing was written"
+        if self.echecs:
+            return (f"{self.poses} gaps written, {len(self.echecs)} failed "
+                    f"— the catalog is partially updated")
+        return f"{self.poses} gaps written"
 
 
 def _appliquer_un(catalogue: Catalogue, e: Ecart) -> None:
