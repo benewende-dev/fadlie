@@ -10,7 +10,7 @@ import itertools
 import pytest
 
 from fadlie.candidats import Candidat, normaliser, preselectionner, recouvrement
-from fadlie.catalogue import Colonne, Jeu
+from fadlie.catalogue import Colonne, Jeu, cle_colonne
 
 
 _compteur = itertools.count()
@@ -61,6 +61,23 @@ class TestNormaliser:
         assert normaliser("orders_raw_old") == "orders_raw"
 
 
+class TestCleDeColonne:
+    def test_la_casse_ne_distingue_pas(self):
+        assert cle_colonne("CUST_EMAIL") == cle_colonne("cust_email")
+
+    def test_lespace_et_le_tiret_bas_ne_distinguent_pas(self):
+        # Mesuré : `tableau/Top Product Category` porte « Category Name » là où
+        # sa requête porte « CATEGORY_NAME ». Sans ça, le recouvrement tombait de
+        # 80 % à 50 % et le couple passait sous le seuil, en silence.
+        assert cle_colonne("Category Name") == cle_colonne("CATEGORY_NAME")
+        assert cle_colonne("order-id") == cle_colonne("order_id")
+
+    def test_on_ne_va_pas_plus_loin(self):
+        # Rapprocher `cust_email` et `email` demanderait de deviner. Deviner est
+        # le travail du juge, pas celui d'une clé.
+        assert cle_colonne("cust_email") != cle_colonne("email")
+
+
 class TestRecouvrement:
     def test_la_casse_ne_cree_pas_un_ecart(self):
         # Mesuré : les 18 colonnes marquées de dbt/order_details se retrouvent une
@@ -71,6 +88,14 @@ class TestRecouvrement:
 
     def test_deux_jeux_sans_colonne_commune(self):
         assert recouvrement(jeu("a", "dbt", ["x"]), jeu("b", "s3", ["y"])) == 0.0
+
+    def test_un_separateur_different_ne_cree_pas_un_ecart(self):
+        a = jeu("Top Product Category", "tableau",
+                ["Category Name", "ORDERS_COUNT", "TOTAL_REVENUE", "AVERAGE_ORDER_VALUE"])
+        b = jeu("Custom SQL Query", "tableau",
+                ["CATEGORY_NAME", "ORDERS_COUNT", "TOTAL_REVENUE", "AVERAGE_ORDER_VALUE"])
+        assert recouvrement(a, b) == 1.0
+        assert preselectionner([a, b]) != []
 
     def test_un_jeu_sans_colonne_ne_ressemble_a_rien(self):
         # Un schéma absent n'est pas un schéma vide identique à un autre : sans

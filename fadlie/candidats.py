@@ -48,11 +48,9 @@ def normaliser(nom: str) -> str:
 
 
 def recouvrement(a: Jeu, b: Jeu) -> float:
-    """Jaccard sur les noms de colonnes, casse ignorée.
+    """Jaccard sur les colonnes, comparées par leur clé normalisée.
 
-    Casse ignorée parce que c'est mesuré : les 18 colonnes marquées de
-    `dbt/order_details` se retrouvent une pour une dans `powerbi/ORDER_DETAILS`,
-    à la seule casse près. Les distinguer inventerait un écart.
+    Ce que « normalisée » recouvre, et pourquoi, est dans `cle_colonne`.
     """
     x, y = a.noms_colonnes, b.noms_colonnes
     if not x or not y:

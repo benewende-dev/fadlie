@@ -25,38 +25,69 @@ from fadlie.catalogue import Catalogue  # noqa: E402
 from fadlie.config import Config  # noqa: E402
 from fadlie.juge import Juge, JugeError  # noqa: E402
 
+# Les quatre jeux tableau s'appellent tous « Custom SQL Query ». On les désigne
+# par un fragment de leur urn : quatre requêtes d'agrégat différentes, qui ne
+# partagent que des noms de mesures (`TOTAL_REVENUE`, `AVERAGE_ORDER_VALUE`).
+# C'est le piège le plus dur du catalogue, et le juge y est tombé la première
+# fois — trois couples sur six confirmés à tort.
+CSQ = ("37fcfb15", "4a3af1dd", "8bfe7483", "f32082e5")
+
 # (plateforme, nom, plateforme, nom, même donnée ?, pourquoi)
 EPREUVE = [
+    # --- des noms génériques sur des agrégats sans rapport --------------------
+    (("tableau", CSQ[0]), ("tableau", CSQ[1]), False,
+     "chiffre d'affaires par mode de commande contre par catégorie"),
+    (("tableau", CSQ[0]), ("tableau", CSQ[2]), False,
+     "par mode de commande contre par promotion"),
+    (("tableau", CSQ[0]), ("tableau", CSQ[3]), False,
+     "par mode de commande contre ventes par catégorie et date"),
+    (("tableau", CSQ[1]), ("tableau", CSQ[2]), False,
+     "par catégorie contre par promotion"),
+    (("tableau", CSQ[1]), ("tableau", CSQ[3]), False,
+     "deux agrégats par catégorie, mesures et grain différents"),
+    (("tableau", CSQ[2]), ("tableau", CSQ[3]), False,
+     "par promotion contre par catégorie et date ; aucune colonne commune"),
+]
+
+EPREUVE += [
     # --- des copies -----------------------------------------------------------
-    ("dbt", "customers", "postgres", "customers", True,
+    (("dbt", "customers"), ("postgres", "customers"), True,
      "22 colonnes identiques, même entité, deux systèmes"),
-    ("postgres", "addresses", "s3", "addresses", True,
+    (("postgres", "addresses"), ("s3", "addresses"), True,
      "export S3 de la table postgres — le traitement existe dans le lignage"),
-    ("dbt", "order_details", "snowflake", "ORDER_DETAILS_REPLICA", True,
+    (("dbt", "order_details"), ("snowflake", "ORDER_DETAILS_REPLICA"), True,
      "réplique déclarée ; seul le nom porte le suffixe"),
-    ("dbt", "order_details", "powerbi", "ORDER_DETAILS", True,
+    (("dbt", "order_details"), ("powerbi", "ORDER_DETAILS"), True,
      "même table, casse différente et deux colonnes de plus côté powerbi"),
 
     # --- des ressemblances trompeuses ----------------------------------------
-    ("dbt", "countries", "dbt", "regions", False,
+    (("dbt", "countries"), ("dbt", "regions"), False,
      "deux tables de référence à quatre colonnes, entités différentes"),
-    ("dbt", "warehouses", "dbt", "product_categories", False,
+    (("dbt", "warehouses"), ("dbt", "product_categories"), False,
      "même forme, un entrepôt n'est pas une catégorie de produit"),
-    ("postgres", "products", "postgres", "product_information", False,
+    (("postgres", "products"), ("postgres", "product_information"), False,
      "noms voisins, 12 colonnes contre 5, granularités différentes"),
-    ("dbt", "promotions", "tableau", "promotions", False,
+    (("dbt", "promotions"), ("tableau", "promotions"), False,
      "homonymes ; recouvrement de colonnes mesuré à 9 %"),
-    ("dbt", "order_details", "powerbi", "Customer Analytics Measures", False,
+    (("dbt", "order_details"), ("powerbi", "Customer Analytics Measures"), False,
      "des mesures calculées en aval, pas une copie de la table"),
-    ("dbt", "orders", "dbt", "order_items", False,
+    (("dbt", "orders"), ("dbt", "order_items"), False,
      "une commande et ses lignes : reliées, pas identiques"),
 ]
 
 
-def trouver(jeux, plateforme, nom):
-    cible = nom.lower()
+def trouver(jeux, plateforme, cle):
+    """Par nom, ou par fragment d'urn quand le nom ne distingue pas.
+
+    Les quatre jeux tableau s'appellent tous « Custom SQL Query » : sans
+    fragment d'urn, on ne peut pas désigner celui qu'on veut éprouver.
+    """
+    cible = cle.lower()
     for j in jeux:
         if j.plateforme == plateforme and j.nom.lower() == cible:
+            return j
+    for j in jeux:
+        if j.plateforme == plateforme and cle in j.urn:
             return j
     return None
 
@@ -80,7 +111,7 @@ def main() -> int:
 
     justes = total = 0
     erreurs = []
-    for pg, ng, pd_, nd, attendu, pourquoi in EPREUVE:
+    for (pg, ng), (pd_, nd), attendu, pourquoi in EPREUVE:
         g, d = trouver(jeux, pg, ng), trouver(jeux, pd_, nd)
         if g is None or d is None:
             print(f"  ⚠ introuvable : {pg}/{ng} ou {pd_}/{nd} — couple ignoré")
@@ -98,14 +129,15 @@ def main() -> int:
         bon = verdict.identiques == attendu
         justes += bon
         marque = "✓" if bon else "✗"
-        print(f"  {marque} {pg}/{ng} ≟ {pd_}/{nd}")
+        print(f"  {marque} {pg}/{g.nom}[{ng[:8]}] ≟ {pd_}/{d.nom}[{nd[:8]}]"
+              if ng not in g.nom.lower() else f"  {marque} {pg}/{ng} ≟ {pd_}/{nd}")
         print(f"      attendu {'même' if attendu else 'distinct':<8} "
               f"— {pourquoi}")
         print(f"      rendu   {'même' if verdict.identiques else 'distinct':<8} "
               f"({verdict.confiance}, recouvrement {candidat.recouvrement:.0%}) "
               f": {verdict.raison}")
         if not bon:
-            erreurs.append((f"{pg}/{ng} ≟ {pd_}/{nd}", verdict.raison))
+            erreurs.append((f"{pg}/{g.nom} ≟ {pd_}/{d.nom}", verdict.raison))
 
     print(f"\n{justes}/{total} couples correctement tranchés")
     if erreurs:

@@ -14,11 +14,31 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import re
 import urllib.error
 import urllib.request
 from typing import Any, Iterable
 
 from .config import Config
+
+
+def cle_colonne(nom: str) -> str:
+    """La forme sous laquelle deux colonnes se comparent d'un système à l'autre.
+
+    Deux normalisations, chacune mesurée sur le vrai catalogue :
+
+    - **la casse** : les 18 colonnes marquées de `dbt/order_details` se
+      retrouvent une pour une dans `powerbi/ORDER_DETAILS`, à la seule casse
+      près. Les distinguer inventerait un écart de 100 %.
+    - **les séparateurs** : `tableau/Top Product Category` porte
+      `Category Name` là où la requête qui l'alimente porte `CATEGORY_NAME`. Un
+      espace au lieu d'un tiret bas faisait tomber le recouvrement de 80 % à
+      50 %, sous le seuil — le couple disparaissait sans que rien ne le signale.
+
+    On ne va pas plus loin : rapprocher `cust_email` et `email` demanderait de
+    deviner, et deviner est le travail du juge, pas celui d'une clé.
+    """
+    return re.sub(r"[^a-z0-9]+", "_", nom.lower()).strip("_")
 
 
 class CatalogueError(RuntimeError):
@@ -56,17 +76,22 @@ class Jeu:
 
     @property
     def noms_colonnes(self) -> frozenset[str]:
-        # La casse ne distingue pas deux données : `CUST_EMAIL` chez snowflake et
-        # `cust_email` chez dbt sont la même colonne. Mesuré : 18 sur 18.
-        return frozenset(c.nom.lower() for c in self.colonnes)
+        """Les colonnes sous une forme comparable d'un système à l'autre."""
+        return frozenset(cle_colonne(c.nom) for c in self.colonnes)
 
     @property
     def isole(self) -> bool:
         return self.lignage_amont == 0 and self.lignage_aval == 0
 
     def colonne(self, nom: str) -> Colonne | None:
-        cible = nom.lower()
-        return next((c for c in self.colonnes if c.nom.lower() == cible), None)
+        """La colonne, désignée par n'importe laquelle de ses écritures.
+
+        Rend l'objet portant le **nom réel** du jeu : c'est celui-là qu'il faudra
+        donner à DataHub pour écrire, pas la clé normalisée — une écriture sur un
+        chemin de champ qui n'existe pas ne lève rien et ne fait rien.
+        """
+        cible = cle_colonne(nom)
+        return next((c for c in self.colonnes if cle_colonne(c.nom) == cible), None)
 
 
 _JEUX = """

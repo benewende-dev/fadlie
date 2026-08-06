@@ -176,6 +176,34 @@ même forme, homonymes à 9 % de recouvrement, mesures calculées en aval,
   commentaire — ne jamais la présenter comme un fait vérifié, et ne jamais
   l'écrire telle quelle dans le catalogue.
 
+## Ce que l'agent trouve, bout en bout
+
+Sur le vrai catalogue, un passage complet : **97 couples présélectionnés sur
+2 211, 84 confirmés, 18 groupes de jumeaux, 580 écarts de gouvernance sur 48
+jeux, 1 désaccord.** Répartition : 291 descriptions de colonne, 127
+propriétaires, 55 étiquettes de colonne, 39 descriptions, 34 domaines, 34 termes.
+
+Le seul désaccord est instructif : `snowflake/ORDER_DETAILS` est dans
+« Ecommerce Operations » quand ses quatre jumeaux sont dans « Data Platform
+Team ». Fadlie **ne tranche pas** — quelqu'un a décidé, ou quelqu'un s'est
+trompé, et ce n'est pas à un agent de choisir.
+
+Deux corrections nées de ce passage :
+
+- **Un espace vaut un tiret bas.** `tableau/Top Product Category` porte
+  `Category Name` là où la requête qui l'alimente porte `CATEGORY_NAME` : le
+  recouvrement tombait de 80 % à 50 %, sous le seuil, et le couple disparaissait
+  sans un mot. `cle_colonne` normalise casse *et* séparateurs — et pas plus
+  loin : rapprocher `cust_email` de `email` serait deviner, et deviner est le
+  travail du juge.
+- **Un groupe qui porte deux noms porte deux noms.** L'étiquette affichait
+  `jeux[0].nom`, donc le premier par urn : le groupe
+  « Promotions ≟ Custom SQL Query » s'affichait « Custom SQL Query » et donnait
+  l'impression d'une confusion. Le résultat était juste, l'étiquette mentait. Une
+  deuxième version départageait par une règle qui nommait « Custom SQL Query »
+  dans le code — une donnée de ce catalogue-ci glissée dans la bibliothèque. Il
+  n'y a pas de bon départage : on montre tous les noms.
+
 ## Infrastructure
 
 - DataHub Core v1.7.0, instance EC2 `i-0fb64e9417800d75f` (`t3.large`,
