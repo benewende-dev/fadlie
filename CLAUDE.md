@@ -150,6 +150,32 @@ Le trou est ailleurs, et il est plus grave.
   une panne de DataHub. `scripts/tunnel.sh` pose `ServerAliveInterval` et se
   ré-ouvre tout seul ; l'appeler avant toute mesure.
 
+## Le juge (`mesurer-le-juge.py`)
+
+`eu.amazon.nova-micro-v1:0`, température 0. **10 couples sur 10 correctement
+tranchés**, tous tirés du vrai catalogue et choisis pour être difficiles :
+quatre copies que la structure ne suffit pas à reconnaître (casse différente,
+deux colonnes de plus), six ressemblances trompeuses (tables de référence de
+même forme, homonymes à 9 % de recouvrement, mesures calculées en aval,
+`orders` contre `order_items`).
+
+- **Une panne du juge ne doit jamais ressembler à un verdict.** Ici, un juge muet
+  rendrait « aucune copie trouvée » — un catalogue en règle. La panne se
+  déguiserait en bonne nouvelle, et personne ne va vérifier une bonne nouvelle.
+  D'où `JugeError` systématique, et une sonde qui invoque vraiment le modèle
+  avant le premier verdict. Vérifié dans les deux modes de panne réels :
+  identifiant nu (`ValidationException`) et identifiants sans droit Bedrock
+  (`UnrecognizedClientException`). C'est le piège 8 de Naaba, corrigé à la
+  source plutôt que rattrapé.
+- **Le juge ne voit ni le recouvrement calculé ni la distance de lignage.** Un
+  nombre l'ancrerait, et la distance est mesurée sans valeur pour cette question.
+  Un test l'impose.
+- **Les raisons rendues sont parfois factuellement fausses même quand le verdict
+  est juste** : pour `dbt/customers` ≟ `postgres/customers` il écrit « same
+  platform », ce qui est faux. Le verdict tient, la justification est un
+  commentaire — ne jamais la présenter comme un fait vérifié, et ne jamais
+  l'écrire telle quelle dans le catalogue.
+
 ## Infrastructure
 
 - DataHub Core v1.7.0, instance EC2 `i-0fb64e9417800d75f` (`t3.large`,
