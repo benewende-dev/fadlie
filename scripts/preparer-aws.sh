@@ -15,8 +15,15 @@ SECRET_API="${FADLIE_SECRET_API:-fadlie/api-token}"
 ROLE_ACCES="${FADLIE_ACCESS_ROLE:-fadlie-apprunner-ecr-access}"
 ROLE_INSTANCE="${FADLIE_INSTANCE_ROLE:-fadlie-apprunner-instance}"
 
-: "${DATAHUB_GMS_TOKEN:?DATAHUB_GMS_TOKEN doit être dans l'environnement}"
-: "${FADLIE_API_TOKEN:?FADLIE_API_TOKEN doit être dans l'environnement}"
+# Voir `deployer-apprunner.sh` : `${VAR:?message}` avec une apostrophe dans le
+# message casse le parsing sous bash 3.2. Ici ça passait par chance — deux
+# apostrophes qui s'apparient. On ne laisse pas une syntaxe tenir à ça.
+exiger() {
+    eval "[ -n \"\${$1:-}\" ]" || {
+        echo "✗ $1 doit être dans l'environnement" >&2; exit 1; }
+}
+exiger DATAHUB_GMS_TOKEN
+exiger FADLIE_API_TOKEN
 
 A() { command aws --region "$REGION" "$@"; }
 COMPTE="$(A sts get-caller-identity --query Account --output text)"

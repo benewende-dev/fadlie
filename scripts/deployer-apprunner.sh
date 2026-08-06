@@ -15,7 +15,14 @@ SECRET_API="${FADLIE_SECRET_API:-fadlie/api-token}"
 ROLE_ACCES="${FADLIE_ACCESS_ROLE:-fadlie-apprunner-ecr-access}"
 ROLE_INSTANCE="${FADLIE_INSTANCE_ROLE:-fadlie-apprunner-instance}"
 
-: "${DATAHUB_GMS_URL:?DATAHUB_GMS_URL doit être dans l'environnement}"
+# Pas de `: "${VAR:?message}"` : bash 3.2, celui de macOS, lit l'apostrophe du
+# message comme une vraie ouverture de guillemet simple, et le fichier entier
+# cesse de se parser. L'erreur tombe sur une ligne sans rapport, très loin.
+exiger() {
+    eval "[ -n \"\${$1:-}\" ]" || {
+        echo "✗ $1 doit être dans l'environnement" >&2; exit 1; }
+}
+exiger DATAHUB_GMS_URL
 
 A() { command aws --region "$REGION" "$@"; }
 COMPTE="$(A sts get-caller-identity --query Account --output text)"
