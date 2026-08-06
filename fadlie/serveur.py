@@ -110,6 +110,22 @@ def _nommer(rapport: Rapport):
     return lambda urn: noms.get(urn, urn)
 
 
+def _desaccord_en_dict(d, nom) -> dict[str, Any]:
+    """Un désaccord, en données plutôt qu'en phrase.
+
+    `Desaccord.resume()` est en français : c'est une aide de travail, et les
+    réponses d'outil sont une surface publique. Rendre la structure évite d'avoir
+    à traduire de la prose, et laisse l'appelant la formuler comme il veut.
+    """
+    return {
+        "kind": d.genre,
+        "column": d.colonne,
+        "values": [{"dataset": nom(u), "dataset_urn": u, "value": v}
+                   for u, v in d.valeurs],
+        "resolution": "left to a human: Fadlie reports the conflict, it does not pick",
+    }
+
+
 def _ecart_en_dict(e: Ecart, nom) -> dict[str, Any]:
     return {
         "dataset": nom(e.cible),
@@ -225,7 +241,7 @@ def construire(config: Config | None = None, agent: Agent | None = None,
                 "total": len(ecarts),
                 "returned": min(limit, len(ecarts)),
                 "gaps": [_ecart_en_dict(e, nom) for e in ecarts[:limit]],
-                "disagreements": [d.resume(nom) for d in r.desaccords],
+                "disagreements": [_desaccord_en_dict(d, nom) for d in r.desaccords],
             }
 
         return _executer("governance_gaps", faire)
