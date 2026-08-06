@@ -207,7 +207,9 @@ Deux corrections nées de ce passage :
 ## Infrastructure
 
 - DataHub Core v1.7.0, instance EC2 `i-0fb64e9417800d75f` (`t3.large`,
-  eu-central-1, 40 Go). Quatorze conteneurs.
+  eu-central-1, 40 Go). Six conteneurs en service — frontend, GMS, actions,
+  MySQL, Kafka, OpenSearch — plus `system-update`, qui a fait son travail une
+  fois et reste sorti en 0. Compté le 6 août 2026.
 - **Adresse fixe : `63.186.160.88`** (Elastic IP `fadlie-datahub`). Sans elle,
   éteindre l'instance pour économiser change l'adresse — et l'URL déposée sur
   Devpost casserait pendant la notation, du 17 au 31 août. Ne pas la libérer.
