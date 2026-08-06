@@ -31,13 +31,20 @@ their columns; `promotions` shares 9 %.
 
 **And the governance does not travel.** Eleven tables exist identically on dbt,
 Snowflake, Postgres and S3 — 100 % column overlap, `customers` has the same 22
-columns in all four. `dbt/customers` has three owners, a domain and a
-description. Its three twins have none, none and none. Twelve identical columns
-are annotated on one side and bare on the other; `customers.customer_id` carries
-the `PII_Data` tag on Postgres alone.
+columns in all four. On the datapack as it ships, `dbt/customers` has three
+owners, a domain and a description; its three twins have none, none and none.
+Twelve identical columns are annotated on one side and bare on the other, and
+`customers.customer_id` carries the `PII_Data` tag on Postgres alone.
 
 Ask that catalog where the personal data is, and it answers with two datasets,
 with the confidence of something that has looked.
+
+> **The live demo no longer matches that paragraph, and that is the point.**
+> Fadlie has since levelled three of the eighteen groups on the running
+> instance — `customers`, `orders`, `products` — writing 102, 60 and 53 values
+> that it read from their twins. Around 420 gaps remain, on some 46 datasets,
+> so there is plenty left to try. Reload the datapack into a fresh DataHub and
+> the numbers above come back exactly.
 
 ## How it decides
 

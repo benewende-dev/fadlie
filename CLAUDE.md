@@ -271,6 +271,15 @@ Deux corrections nées de ce passage :
   (90 s) — au-delà, `AnalyseEnCours` dit quoi faire, ce qu'un 504 ne fait pas.
   Après une écriture, les écarts comblés sont **retirés** du rapport en cache :
   c'est exact et gratuit, là où recalculer est juste impossible dans le budget.
+- **Le compte de couples confirmés bouge un peu d'une analyse à l'autre.**
+  Observé le 6 août : 83, puis 85, puis 84, sur les mêmes 97 couples examinés.
+  Deux lectures successives d'un même rapport en cache donnent évidemment le
+  même chiffre — ce n'est pas une preuve de stabilité, et j'ai d'abord conclu
+  trop vite à partir de ça. Ce qui est stable, ce sont les faits structurels
+  (103 nœuds, 161 arêtes, 2 211 → 97, 0 % de colonnes communes entre les
+  `Custom SQL Query`) ; ce qui bouge, ce sont les verdicts en marge, et donc les
+  totaux d'écarts qui en découlent. **Conséquence pour tout livrable : un chiffre
+  de comptage se lit sur la prise, jamais recopié de la veille.**
 - **Le cache du service déployé porte la panne.** Mesuré pendant ce redémarrage :
   `catalog_summary` a continué de rendre les 97 couples et les 580 écarts, avec
   `analysis_age_seconds` à 345, pendant que DataHub était à terre. C'est la

@@ -1,5 +1,24 @@
 # La vidéo — moins de trois minutes
 
+**Faite, le 6 août 2026 : 2 min 40, 1080p, voix Liam, sous-titres anglais.**
+Ce fichier a servi à la tourner ; il est gardé parce qu'il dit *pourquoi* chaque
+plan est là, ce que la vidéo finie ne dit pas.
+
+Ce qui a changé en cours de route, et qui vaut d'être su :
+
+- **Le plan principal est passé de `customers` à `products`.** `customers` avait
+  été réparé par Fadlie lui-même pendant les essais, donc il n'avait plus rien à
+  montrer. `--jeu` existe pour ça.
+- **Le premier montage coupait le bas de l'image.** La fenêtre de lignes était
+  fixée à trente-quatre alors que vingt-quatre seulement tiennent à cette taille.
+  Ce qui disparaissait, c'étaient exactement les deux lignes que la voix
+  annonçait : « 53 values written » et « gaps now: 0 ». La fenêtre est maintenant
+  **calculée** depuis la hauteur de ligne, pas estimée.
+- **La voix du segment 1 démentait son image** — elle disait encore « order
+  table » et « two owners » après le passage à `products`. Ce sont les
+  **sous-titres** qui l'ont attrapé, pas l'oreille : ils écrivent noir sur blanc
+  ce que la voix a dit. Les générer avant de valider le montage, toujours.
+
 Ce fichier dit **quoi filmer**. [`docs/narration.md`](narration.md) dit **quoi
 dire**, mot à mot, en anglais. `scripts/demo.py` joue la séquence contre l'URL
 déployée.

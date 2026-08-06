@@ -1,113 +1,78 @@
 # La narration, mot à mot
 
-Le texte exact à donner à la voix de synthèse. [`docs/video.md`](video.md) dit
-*quoi filmer* ; ce fichier dit *quoi dire*, et rien d'autre — pour qu'on puisse
-le copier segment par segment sans avoir à décider quoi que ce soit au moment de
-générer l'audio.
+**Faite, le 6 août 2026 : 2 min 40, 1080p, voix Liam, sous-titres anglais.**
+Ce qui suit est le texte exact qui a été prononcé — pas un brouillon.
 
 **En anglais**, parce que la vidéo est un livrable public et que le jury est
 celui de DataHub. Même règle que le README et la licence.
 
-## Le budget
+## Ce qui a été tourné, et sur quel groupe
 
-Six segments, 356 mots. À cent cinquante mots par minute — le débit d'une voix
-de synthèse lue confortablement — ça fait **2 min 22 de parole** pour une vidéo
-de moins de trois minutes. Le reste, ce sont les silences pendant lesquels le
-terminal travaille.
+Le plan principal devait être `customers`. Il ne l'est pas : `customers` avait
+déjà été réparé par Fadlie lui-même au cours des essais, donc il n'avait plus
+d'écart à montrer. La démonstration a été tournée sur **`products`** — même
+forme exacte : quatre plateformes, trois jumeaux nus face à `dbt/products`, et
+cinquante-trois écarts qui viennent tous de lui.
 
-| segment | plan | mots | parole |
-|---|---|---|---|
-| 1 | 0:00 – 0:20 | 52 | ~21 s |
-| 2 | 0:20 – 0:45 | 61 | ~24 s |
-| 3 | 0:45 – 1:15 | 68 | ~27 s |
-| 4 | 1:15 – 1:55 | 76 | ~30 s |
-| 5 | 1:55 – 2:30 | 61 | ~24 s |
-| 6 | 2:30 – 2:55 | 38 | ~15 s |
-
-**Enregistrer les six séparément.** Un segment à refaire coûte alors vingt
-secondes, pas trois minutes — et les silences entre segments se règlent au
-montage, ce qui est exactement ce qu'on veut pour caler la voix sur un terminal
-qui ne répond jamais deux fois à la même vitesse.
+C'est pour ça que `scripts/demo.py` prend `--jeu` : une prise réelle consomme
+son groupe, et il faut pouvoir en viser un autre sans attendre que le catalogue
+se re-dégrade — ce qu'il ne fera jamais.
 
 ## Ce qui se prononce mal
 
-Une voix de synthèse lit les nombres de façon imprévisible selon le moteur. Ils
-sont donc **écrits en toutes lettres** ci-dessous. Ne pas les « corriger » en
-repassant aux chiffres.
+Les nombres sont **écrits en toutes lettres** : un moteur de synthèse les
+prononce autrement de façon imprévisible. Ne pas les « corriger » en repassant
+aux chiffres. `MCP` s'écrit `M C P`, `dbt` s'écrit `d b t`, `SQL` s'écrit
+`S Q L` — sinon la voix tente des mots. Les sous-titres, eux, refont le chemin
+inverse : ils affichent `420` là où la voix dit *four hundred and twenty*.
 
-`MCP` s'écrit `M C P` pour que la voix épelle au lieu de tenter un mot. `dbt`
-s'écrit `d b t`. Si le moteur massacre un nom de plateforme, l'écrire
-phonétiquement **dans l'entrée du moteur uniquement** — jamais dans le dépôt.
+## Les six segments, et leur durée mesurée
+
+| segment | plan | mots | audio |
+|---|---|---|---|
+| s1 | 0:00 – 0:22 | 61 | 22.2 s |
+| s2 | 0:22 – 0:47 | 58 | 24.4 s |
+| s3 | 0:47 – 1:14 | 61 | 27.2 s |
+| s4 | 1:14 – 1:50 | 87 | 35.7 s |
+| s5 | 1:50 – 2:18 | 73 | 27.8 s |
+| s6 | 2:18 – 2:40 | 52 | 23.0 s |
+
+**Total : 160.3 s.** Enregistrés séparément — un segment à refaire coûte vingt secondes, pas trois minutes. C'est ce qui a permis de reprendre le segment 1 quand il a fallu passer de `orders` à `products` : la voix disait encore « order table » et « two owners » alors que l'image montrait `products` et trois propriétaires. **Les sous-titres l'ont attrapé, pas l'oreille.**
 
 ---
 
-## 1 — 0:00 – 0:20 · le problème
+## s1 — 0:00 – 0:22 · le problème
 
-**À l'écran** : les quatre tables `customers`, et ce que chacune porte.
+**À l'écran** : les quatre tables `products` et ce que chacune porte.
 
-> The same customer table lives in four systems: d b t, Snowflake, Postgres, and
-> S three. Twenty-two columns each, identical. One of them has three owners, a
-> domain, and a description. The other three have none. Ask that catalog who
-> owns customer data, and it will answer — with the confidence of something that
-> has looked.
+> The same product table lives in four systems: d b t, Postgres, S three, and Snowflake. Identical columns, all four of them. One has three owners, a domain, a description, and twelve annotated columns. The other three have none of it. Ask this catalog who owns product data, and it will answer — with the confidence of something that has looked.
 
-## 2 — 0:20 – 0:45 · pourquoi le lignage ne répond pas
+## s2 — 0:22 – 0:47 · pourquoi le lignage ne répond pas
 
-**À l'écran** : les deux distances, en gros, en même temps.
+**À l'écran** : une composante, cent trois nœuds, et les deux distances égales.
 
-> The obvious fix is lineage, so we measured it. The graph is a single connected
-> component: a hundred and three nodes, a hundred and sixty-one edges, no
-> isolated dataset. Every same-name pair is connected, at distance two or four.
-> The median distance between two datasets picked at random is also four. Twins
-> are indistinguishable from strangers.
+> Following lineage was the obvious answer, so it was measured. The graph is a single connected component: a hundred and three nodes, a hundred and sixty-one edges, not one isolated dataset. Every same-name pair is connected, at distance two or four. The median distance between two datasets picked at random is also four. Twins are indistinguishable from strangers.
 
-## 3 — 0:45 – 1:15 · les noms mentent aussi
+## s3 — 0:47 – 1:14 · les noms mentent aussi
 
-**À l'écran** : les quatre `Custom SQL Query`, puis le tableau des couches.
+**À l'écran** : les quatre `Custom SQL Query`, les couches, le seize sur seize.
 
-> Names are no better. Four Tableau datasets are all called Custom S Q L Query,
-> and they share zero percent of their columns. So structure only shortlists —
-> column overlap cuts two thousand two hundred and eleven pairs down to
-> ninety-seven. Then a model on Amazon Bedrock decides, one pair at a time.
-> Against sixteen hard pairs drawn from the real catalog: sixteen correct.
+> Names are no better. Four Tableau datasets are all called Custom S Q L Query, and they share zero percent of their columns. So structure only shortlists: column overlap cuts two thousand two hundred and eleven pairs down to ninety-seven. Then a model on Amazon Bedrock decides, one pair at a time. Sixteen hard pairs from the real catalog: sixteen correct.
 
-## 4 — 1:15 – 1:55 · l'agent déployé
+## s4 — 1:14 – 1:50 · l'agent déployé, en direct
 
-**À l'écran** : `demo.py`, sections 1 à 3.
+**À l'écran** : `scripts/demo.py --jeu products`, révélé section par section.
 
-Deux analyses complètes et indépendantes ont rendu les mêmes nombres le 6 août
-2026, donc ceux ci-dessous devraient tenir. **Enregistrer quand même ce segment
-en dernier**, une fois la capture faite, et lire ce qui est réellement à
-l'écran : c'est vingt secondes contre le seul défaut qu'un jury remarque à coup
-sûr. Voir `video.md`.
+> This is the deployed agent, answering over M C P. Ninety-seven pairs examined, eighty-five hold the same data, in eighteen groups across platforms. Four hundred and twenty governance gaps, on forty-three datasets. Here are the four product tables, and the judge's own reason for calling two of them the same. Fifty-three gaps on those copies alone, each naming where its value comes from. Dry run: fifty-three would be written, nothing written. Then the second argument — fifty-three values written to DataHub, in eleven seconds. Gaps now: zero.
 
-> This is the deployed agent, answering over M C P. Ninety-seven pairs examined.
-> Eighty-three hold the same data. Eighteen groups of copies, across platforms.
-> Five hundred and eighty governance gaps, on forty-eight datasets.
->
-> Here are the four customer tables, and the judge's own reason for calling two
-> of them the same thing. A hundred and two gaps on those four copies alone —
-> and every one of them names the dataset its value would be copied from.
+## s5 — 1:50 – 2:18 · les deux règles
 
-## 5 — 1:55 – 2:30 · les deux règles
+**À l'écran** : un écart avec sa source, et le passage à blanc / pour de vrai.
 
-**À l'écran** : la scène « Fixing it », le passage de cent deux à zéro.
+> Two rules shape all of this. Fadlie copies; it never writes. No value it proposes was produced by a model. Each one comes from a twin that already carried it, and names it. A description written by a machine is indistinguishable from one written by the team that knows the data — six months later, nobody can tell. And writing is a dry run by default. Touching the catalog takes a second argument.
 
-> Two rules shape all of this. Fadlie copies; it never writes. No value it
-> proposes was produced by a model. A generated description is indistinguishable
-> from one written by the team that knows the data, and six months later nobody
-> can tell which is which.
->
-> And writing is a dry run by default. Touching the catalog takes a second
-> argument.
+## s6 — 2:18 – 2:40 · ce qu'il refuse de faire
 
-## 6 — 2:30 – 2:55 · ce qu'il refuse de faire
+**À l'écran** : le désaccord sur `order_details`, puis le juge qui lève.
 
-**À l'écran** : le désaccord sur `order_details`, puis l'erreur du juge.
-
-> Snowflake's order details sits in one domain. Its three twins sit in another.
-> Fadlie reports that, and does not choose. Someone decided, or someone erred,
-> and neither is an agent's call.
->
-> And when the judge cannot reach the model, it raises. It never reports a clean
-> catalog. Nobody audits good news.
+> Snowflake's order details sits in one domain. Its three twins sit in another. Fadlie reports that, and does not choose. Someone decided, or someone erred, and neither is an agent's call. And when the judge cannot reach the model, it raises. It never reports a clean catalog, because nobody audits good news.

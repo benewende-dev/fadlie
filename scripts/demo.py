@@ -95,13 +95,16 @@ async def jouer(url: str, jeton: str, repetition: bool = False,
             souffler(2.5)
 
             # --- 2. les copies -----------------------------------------------
-            appel("find_duplicate_datasets")
+            # L'appel est fait avant d'écrire quoi que ce soit : c'est le serveur
+            # qui dit combien de systèmes portent la table, pas le script. Mais
+            # rien ne s'affiche avant le titre — sinon la ligne d'appel se
+            # retrouve sous la section précédente, ce qui s'est vu à la prise du
+            # 6 août et a coûté un tournage.
             groupes = contenu(await session.call_tool("find_duplicate_datasets", {}))["groups"]
             clients = next((g for g in groupes
                             if any(jeu in d.lower() for d in g["datasets"])), groupes[0])
-            # Le titre se lit après le résultat, pas avant : c'est le serveur qui
-            # dit combien de systèmes portent la table, pas le script.
             titre(f"The same table, {_en_lettres(len(clients['datasets']))} systems")
+            appel("find_duplicate_datasets")
             for d in clients["datasets"]:
                 dire(f"  {d}")
             souffler(1.2)
