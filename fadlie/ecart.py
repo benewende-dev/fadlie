@@ -44,8 +44,9 @@ class Ecart:
     cible: str            # urn du jeu à compléter
     source: str           # urn du jumeau d'où vient la valeur — jamais vide
     genre: str            # une clé de GENRES
-    valeur: str
+    valeur: str           # ce qui s'écrit : un urn pour owner/domain/tag/term
     colonne: str | None = None
+    libelle: str | None = None   # ce qui se lit, quand `valeur` est un urn
 
     def __post_init__(self) -> None:
         if self.genre not in GENRES:
@@ -57,7 +58,7 @@ class Ecart:
     def resume(self, nom=lambda urn: urn) -> str:
         ou = f".{self.colonne}" if self.colonne else ""
         return (f"{nom(self.cible)}{ou} — {GENRES[self.genre]} manquant : "
-                f"{self.valeur}  (depuis {nom(self.source)})")
+                f"{self.libelle or self.valeur}  (depuis {nom(self.source)})")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -112,11 +113,19 @@ def comparer(groupe: Iterable[Jeu]) -> tuple[list[Ecart], list[Desaccord]]:
     desaccords: list[Desaccord] = []
 
     # --- domaine et description : une seule valeur, ou rien ------------------
-    for genre, lire in (("domain", lambda j: j.domaine),
-                        ("description", lambda j: j.description)):
-        e, d = _propager_valeur_simple(groupe, genre, lire)
-        ecarts += e
-        desaccords += d
+    # Le domaine se compare et s'écrit par son urn ; son nom ne sert qu'à être lu.
+    # Deux domaines peuvent porter le même nom, et `setDomain` refuse un nom.
+    e, d = _propager_valeur_simple(groupe, "domain", lambda j: j.domaine_urn)
+    libelles = {j.domaine_urn: j.domaine for j in groupe if j.domaine_urn}
+    ecarts += [dataclasses.replace(x, libelle=libelles.get(x.valeur)) for x in e]
+    desaccords += [
+        Desaccord(genre=dd.genre, colonne=dd.colonne,
+                  valeurs=tuple((u, libelles.get(v) or v) for u, v in dd.valeurs))
+        for dd in d
+    ]
+    e, d = _propager_valeur_simple(groupe, "description", lambda j: j.description)
+    ecarts += e
+    desaccords += d
 
     # --- propriétaires : un ensemble, pas une valeur -------------------------
     # Plusieurs propriétaires ne se contredisent pas ; on complète chacun avec ce

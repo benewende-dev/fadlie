@@ -66,13 +66,17 @@ class Jeu:
     nom: str
     plateforme: str
     description: str | None
-    domaine: str | None
+    domaine: str | None          # le nom, pour un lecteur
     proprietaires: tuple[str, ...]
     etiquettes: frozenset[str]
     termes: frozenset[str]
     colonnes: tuple[Colonne, ...]
     lignage_amont: int = 0
     lignage_aval: int = 0
+    # L'urn du domaine, parce que `setDomain` ne prend pas un nom. Garder les
+    # deux : le nom se lit, l'urn s'écrit, et confondre les deux fait échouer
+    # l'écriture au dernier moment.
+    domaine_urn: str | None = None
 
     @property
     def noms_colonnes(self) -> frozenset[str]:
@@ -103,7 +107,7 @@ query($debut:Int!, $nombre:Int!) {
       name
       platform { name }
       properties { description }
-      domain { domain { properties { name } } }
+      domain { domain { urn properties { name } } }
       ownership { owners { owner {
         ... on CorpUser { urn username }
         ... on CorpGroup { urn name } } } }
@@ -211,8 +215,9 @@ class Catalogue:
             o["owner"].get("urn", "")
             for o in ((e.get("ownership") or {}).get("owners") or [])
         )
-        domaine = (((e.get("domain") or {}).get("domain") or {})
-                   .get("properties") or {}).get("name")
+        bloc_domaine = (e.get("domain") or {}).get("domain") or {}
+        domaine = (bloc_domaine.get("properties") or {}).get("name")
+        domaine_urn = bloc_domaine.get("urn")
 
         return Jeu(
             urn=e["urn"],
@@ -235,6 +240,7 @@ class Catalogue:
             ),
             lignage_amont=((e.get("amont") or {}).get("total") or 0),
             lignage_aval=((e.get("aval") or {}).get("total") or 0),
+            domaine_urn=domaine_urn,
         )
 
     # `entity(urn:)` plutôt que `dataset(urn:)` : le chemin passe par des
@@ -342,6 +348,15 @@ class Catalogue:
         self._gql(
             "mutation($i:DescriptionUpdateInput!){ updateDescription(input:$i) }",
             {"i": entree},
+        )
+
+    def poser_domaine(self, urn: str, domaine_urn: str) -> None:
+        # `setDomain` prend un urn, jamais un nom. Un `Ecart` de domaine porte
+        # donc l'urn dans `valeur` et le nom dans `libelle` : le premier s'écrit,
+        # le second se lit.
+        self._gql(
+            "mutation($e:String!,$d:String!){ setDomain(entityUrn:$e, domainUrn:$d) }",
+            {"e": urn, "d": domaine_urn},
         )
 
     def retirer_etiquette(self, urn: str, etiquette: str,

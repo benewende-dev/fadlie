@@ -24,9 +24,13 @@ def colonne(nom, *, etiquettes=(), termes=(), description=None) -> Colonne:
 
 def jeu(plateforme, nom, colonnes, *, domaine=None, description=None,
         proprietaires=()) -> Jeu:
+    # Un domaine porte un nom *et* un urn : le nom se lit, l'urn s'écrit. Les
+    # confondre ferait échouer `setDomain` au dernier moment, donc le gabarit
+    # de test porte les deux comme le vrai catalogue.
     return Jeu(
         urn=f"urn:li:dataset:(urn:li:dataPlatform:{plateforme},{nom},PROD)",
         nom=nom, plateforme=plateforme, description=description, domaine=domaine,
+        domaine_urn=f"urn:li:domain:{domaine}" if domaine else None,
         proprietaires=tuple(proprietaires), etiquettes=frozenset(),
         termes=frozenset(), colonnes=tuple(colonnes),
     )
@@ -69,8 +73,12 @@ class TestPropagation:
         ]
         ecarts, _ = comparer(groupe)
         genres = {(e.genre, e.valeur, e.cible) for e in ecarts}
-        assert ("domain", "E-Commerce", urn("postgres")) in genres
+        assert ("domain", "urn:li:domain:E-Commerce", urn("postgres")) in genres
         assert ("description", "Customer master", urn("postgres")) in genres
+        # Le libellé accompagne l'urn : c'est lui qu'un lecteur verra.
+        domaine = next(e for e in ecarts if e.genre == "domain")
+        assert domaine.libelle == "E-Commerce"
+        assert "E-Commerce" in domaine.resume()
 
     def test_les_proprietaires_sunissent_dans_les_deux_sens(self):
         # Deux propriétaires différents ne se contredisent pas : chacun reçoit
