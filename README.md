@@ -97,7 +97,7 @@ does.
 cp .env.example .env && $EDITOR .env
 set -a && . ./.env && set +a
 
-python -m pytest tests/          # 70 tests, no network, no bill
+python -m pytest tests/          # 76 tests, no network, no bill
 python -m fadlie check           # reads config, connects to nothing
 python -m fadlie report          # the full analysis, printed
 python -m fadlie serve           # the MCP server, locally

@@ -253,6 +253,24 @@ Deux corrections nées de ce passage :
   lecture, en écriture, et sur le GraphQL du frontal ; les ports internes sont
   restés fermés. Une politique de redémarrage qu'on n'a pas vue s'exercer n'est
   pas une garantie, c'est une intention.
+- **App Runner coupe toute requête à 120 secondes**, et ce n'est pas
+  configurable côté service. Mesuré : `504 upstream request timeout` à
+  **120,58 s**. Une analyse complète en dure environ 240. Deux conséquences,
+  toutes deux vécues :
+  1. `apply_governance(dry_run=false)` relançait l'analyse *dans sa propre
+     requête*. Les cent deux valeurs étaient bien écrites — cinq cent
+     quatre-vingts écarts sont passés à quatre cent quatre-vingt-un — et le
+     client recevait une erreur. **Un appel qui a réussi ressemblait à un appel
+     qui a échoué**, ce qui est exactement le mode de panne que ce dépôt
+     traque ailleurs.
+  2. Le verrou était tenu pendant toute l'analyse, donc **à chaque expiration
+     du cache le premier appelant prenait un 504**. Personne ne l'avait vu
+     parce que les vérifications tombaient toujours sur un cache chaud.
+  Corrigé : un rapport vieilli se **sert** et le recalcul part derrière ; on
+  n'attend que s'il n'y a rien du tout, et pas plus de `FADLIE_WAIT_SECONDS`
+  (90 s) — au-delà, `AnalyseEnCours` dit quoi faire, ce qu'un 504 ne fait pas.
+  Après une écriture, les écarts comblés sont **retirés** du rapport en cache :
+  c'est exact et gratuit, là où recalculer est juste impossible dans le budget.
 - **Le cache du service déployé porte la panne.** Mesuré pendant ce redémarrage :
   `catalog_summary` a continué de rendre les 97 couples et les 580 écarts, avec
   `analysis_age_seconds` à 345, pendant que DataHub était à terre. C'est la

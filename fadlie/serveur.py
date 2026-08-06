@@ -19,6 +19,7 @@ passent, elles.
 """
 from __future__ import annotations
 
+import dataclasses
 import logging
 import os
 import threading
@@ -44,47 +45,134 @@ journal = logging.getLogger("fadlie")
 # ferait mentir `apply_governance` sur l'état réel du catalogue.
 DUREE_CACHE = int(os.environ.get("FADLIE_CACHE_SECONDS", "300"))
 
+# **App Runner coupe toute requête à 120 secondes.** Mesuré le 6 août 2026 :
+# `504 upstream request timeout` à 120,58 s exactement. Une analyse complète en
+# dure environ 240. Aucun appel d'outil ne doit donc *attendre* une analyse : il
+# rend ce qu'on sait déjà et laisse le recalcul se faire derrière. On n'attend
+# que s'il n'y a rien du tout à servir, et même là on rend la main avant la
+# coupure — un message qui dit quoi faire vaut mieux qu'un 504 muet.
+DELAI_ATTENTE = int(os.environ.get("FADLIE_WAIT_SECONDS", "90"))
+
+
+class AnalyseEnCours(Exception):
+    """Le premier rapport n'est pas encore prêt. Ce n'est pas une panne."""
+
 
 class _Analyse:
-    """Le dernier rapport, et un verrou pour ne pas le calculer en double."""
+    """Le dernier rapport connu, rafraîchi en arrière-plan, jamais attendu.
+
+    Trois états possibles, et c'est le troisième qui a coûté cher :
+
+    1. un rapport frais — on le rend ;
+    2. un rapport vieilli — **on le rend quand même**, et on lance le recalcul
+       derrière. Servir des chiffres de trente minutes est honnête (`age` les
+       accompagne) ; faire attendre quatre minutes ne l'est pas, parce que le
+       proxy coupe avant et que l'appelant lit une panne ;
+    3. rien du tout — là seulement on attend, avec une limite.
+
+    L'ancienne version tenait le verrou pendant toute l'analyse. Conséquence
+    mesurée : à chaque expiration du cache, le premier appelant prenait un 504,
+    et `apply_governance` en prenait un systématiquement puisqu'il forçait le
+    recalcul dans sa propre requête.
+    """
 
     def __init__(self, agent: Agent) -> None:
         self.agent = agent
-        self._verrou = threading.Lock()
+        self._verrou = threading.Lock()   # protège les champs, jamais l'analyse
         self._rapport: Rapport | None = None
         self._date: float = 0.0
+        self._en_calcul = False
+        self._echec: Exception | None = None
 
-    def rapport(self, forcer: bool = False) -> Rapport:
+    def _frais(self) -> bool:
+        return self._rapport is not None and time.time() - self._date < DUREE_CACHE
+
+    def rapport(self) -> Rapport:
         with self._verrou:
-            frais = self._rapport is not None and time.time() - self._date < DUREE_CACHE
-            if forcer or not frais:
-                self._rapport = self.agent.analyser()
-                self._date = time.time()
-            return self._rapport
+            connu, frais = self._rapport, self._frais()
+            lancer = not frais and not self._en_calcul
+            if lancer:
+                self._en_calcul = True
+        if lancer:
+            self._lancer()
+        if connu is not None:
+            return connu
+        return self._attendre()
+
+    def _lancer(self) -> None:
+        def travailler():
+            try:
+                r = self.agent.analyser()
+            except Exception as e:  # noqa: BLE001
+                # Retenue, pas avalée : `_attendre` la relaie à l'appelant. Un
+                # juge mort doit remonter, jamais devenir « aucun doublon ».
+                journal.exception("analyse impossible")
+                with self._verrou:
+                    self._echec, self._en_calcul = e, False
+                return
+            with self._verrou:
+                self._rapport, self._date = r, time.time()
+                self._echec, self._en_calcul = None, False
+            journal.info("analyse terminée : %d écarts", len(r.ecarts))
+
+        threading.Thread(target=travailler, name="fadlie-analyse",
+                         daemon=True).start()
+
+    def _attendre(self) -> Rapport:
+        limite = time.time() + DELAI_ATTENTE
+        while time.time() < limite:
+            with self._verrou:
+                if self._rapport is not None:
+                    return self._rapport
+                echec = self._echec
+            if echec is not None:
+                raise echec
+            time.sleep(1.0)
+        raise AnalyseEnCours(
+            "The first analysis is still running — it examines every pair with "
+            "the judge and takes about four minutes. Retry shortly; nothing is "
+            "wrong."
+        )
+
+    def retirer(self, combles: set[Ecart]) -> None:
+        """Retire du rapport en cache les écarts qui viennent d'être comblés.
+
+        Recalculer serait plus simple à écrire et impossible à servir : quatre
+        minutes contre cent vingt secondes de budget. Retirer est exact et
+        gratuit — ce sont précisément les écarts qu'on vient d'écrire. Le
+        rafraîchissement complet suit derrière, pour ce qu'une écriture change
+        indirectement.
+        """
+        with self._verrou:
+            if self._rapport is not None and combles:
+                self._rapport = dataclasses.replace(
+                    self._rapport,
+                    ecarts=tuple(e for e in self._rapport.ecarts if e not in combles),
+                )
+            self._date = 0.0          # vieilli : le prochain appel relancera
+            lancer = not self._en_calcul
+            if lancer:
+                self._en_calcul = True
+        if lancer:
+            self._lancer()
 
     @property
     def age(self) -> int:
         return int(time.time() - self._date) if self._rapport else -1
 
     def prechauffer(self) -> None:
-        """Calcule le premier rapport à part, pendant que le serveur écoute.
+        """Calcule le premier rapport pendant que le serveur écoute déjà.
 
         Mesuré : une analyse complète prend **238 secondes** — 67 jeux lus, 97
-        couples soumis au juge. Sans préchauffage, le premier appel d'outil les
-        attend, et quatre minutes de silence se lisent comme une panne. Le
-        démarrage n'est pas bloqué pour autant : `/health` doit répondre tout de
-        suite, sinon App Runner déclare le service mort et le remplace en boucle.
+        couples soumis au juge. Le démarrage n'est pas bloqué pour autant :
+        `/health` doit répondre tout de suite, sinon App Runner déclare le
+        service mort et le remplace en boucle.
         """
-
-        def travailler():
-            try:
-                self.rapport()
-                journal.info("préchauffage terminé")
-            except Exception:  # noqa: BLE001 — un échec ici ne doit pas tuer le serveur
-                journal.exception("préchauffage impossible ; le premier appel réessaiera")
-
-        threading.Thread(target=travailler, name="fadlie-prechauffage",
-                         daemon=True).start()
+        with self._verrou:
+            if self._en_calcul:
+                return
+            self._en_calcul = True
+        self._lancer()
 
 
 def _executer(nom: str, faire):
@@ -96,7 +184,7 @@ def _executer(nom: str, faire):
     """
     try:
         return faire()
-    except (CatalogueError, JugeError, ConfigError) as e:
+    except (CatalogueError, JugeError, ConfigError, AnalyseEnCours) as e:
         journal.warning("%s : %s", nom, e)
         raise
     except Exception:
@@ -267,7 +355,15 @@ def construire(config: Config | None = None, agent: Agent | None = None,
                 # Le catalogue a changé : le rapport en cache décrit un état qui
                 # n'existe plus. Le garder ferait proposer deux fois les mêmes
                 # écritures, et compter deux fois le même travail.
-                analyse.rapport(forcer=True)
+                #
+                # On retire ce qu'on vient d'écrire — exactement les écarts
+                # tentés moins ceux qui ont échoué — au lieu de relancer une
+                # analyse ici. Mesuré : le recalcul dans la requête donnait un
+                # `504 upstream request timeout` à 120 s alors que les écritures,
+                # elles, avaient bien eu lieu. Un appel qui a réussi ne doit pas
+                # ressembler à un appel qui a échoué.
+                rates = {e for e, _ in resultat.echecs}
+                analyse.retirer({e for e in ecarts if e not in rates})
             return {
                 "dry_run": dry_run,
                 "applied": resultat.poses,
