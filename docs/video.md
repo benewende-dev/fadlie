@@ -1,6 +1,8 @@
 # La vidéo — moins de trois minutes
 
-**Faite, le 6 août 2026 : 2 min 40, 1080p, voix Liam, sous-titres anglais.**
+**Faite et publiée le 6 août 2026 : 2 min 40, 1080p, voix Liam, sous-titres
+anglais.** <https://youtu.be/YXff0HNRAwU>
+
 Ce fichier a servi à la tourner ; il est gardé parce qu'il dit *pourquoi* chaque
 plan est là, ce que la vidéo finie ne dit pas.
 

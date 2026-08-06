@@ -13,6 +13,9 @@ Built for **Build with DataHub: The Agent Hackathon**, on the contest's own
 `showcase-ecommerce` dataset. Every number below is produced by a script in this
 repository, against a live DataHub instance.
 
+**Two minutes and forty seconds, including a live run against the deployed
+agent: <https://youtu.be/YXff0HNRAwU>**
+
 ---
 
 ## What the measurements found

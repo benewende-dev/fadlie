@@ -308,7 +308,25 @@ Les mêmes que Naaba, et pour les mêmes raisons.
 ## Où en est le projet
 
 Fait : instance debout, jeu du concours chargé, graphe mesuré, problème établi
-sur des chiffres.
+sur des chiffres ; la mesure fondatrice (l'appariement par colonnes présélectionne,
+un modèle tranche) ; l'agent, le serveur MCP à quatre outils, le déploiement.
 
-À faire : la mesure fondatrice (l'appariement par nom de colonne suffit-il ?),
-puis l'agent, le serveur MCP, le déploiement, la vidéo, le dépôt.
+**Déployé** : `https://yvh3rv2qmp.eu-central-1.awsapprunner.com/mcp` — App Runner,
+Francfort. `verifier-mcp.py --distant` : 24 contrôles verts contre cette URL.
+
+**Dépôt public** (Apache-2.0) : <https://github.com/benewende-dev/fadlie>
+
+**Vidéo publiée** le 6 août 2026 : <https://youtu.be/YXff0HNRAwU> — 2 min 40,
+1080p, voix Liam, sous-titres anglais, personne à l'image. Le plan terminal est
+la sortie réelle de `scripts/demo.py --jeu products` contre l'URL déployée,
+re-composée en HTML pour être lisible à 1080p. Comment, et les trois défauts que
+le tournage a révélés : [`docs/video.md`](docs/video.md), narration mot à mot
+dans [`docs/narration.md`](docs/narration.md).
+
+Les six images de la galerie Devpost sont fabriquées par le même chemin, en
+1920 × 1280 (le 3:2 demandé). **La largeur ne change pas** : composées pour 1920,
+rétrécies elles font retomber un titre sur deux lignes et coupent le pied de
+page. Seule la hauteur bouge.
+
+À faire : le dépôt Devpost lui-même — il reste le champ vidéo et les questions
+du concours.
