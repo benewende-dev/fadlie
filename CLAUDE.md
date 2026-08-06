@@ -122,14 +122,34 @@ Le trou est ailleurs, et il est plus grave.
 
 - DataHub Core v1.7.0, instance EC2 `i-0fb64e9417800d75f` (`t3.large`,
   eu-central-1, 40 Go). Quatorze conteneurs.
-- **Question ouverte, à trancher avant le déploiement** : les juges doivent
-  pouvoir essayer Fadlie, mais DataHub reste fermé. Donc soit Fadlie tourne sur
-  la même instance et parle à GMS en `localhost`, soit il tourne sur App Runner
-  avec un connecteur VPC vers l'adresse privée de l'instance — et il lui faut
-  alors un point de terminaison pour joindre Bedrock. Ne pas trancher à la
-  légère : c'est la seule décision d'architecture qui a un coût mensuel.
-- **Le port 9002 n'est pas exposé.** Accès par tunnel :
-  `ssh -f -N -i ~/.ssh/fadlie-datahub.pem -L 9002:localhost:9002 -L 8080:localhost:8080 ubuntu@<ip>`
+- **Adresse fixe : `63.186.160.88`** (Elastic IP `fadlie-datahub`). Sans elle,
+  éteindre l'instance pour économiser change l'adresse — et l'URL déposée sur
+  Devpost casserait pendant la notation, du 17 au 31 août. Ne pas la libérer.
+- **Ouvert, mais gardé.** Décision du 6 août : GMS (`8080`) et l'interface
+  (`9002`) sont joignables depuis l'internet, parce que les juges doivent
+  pouvoir essayer Fadlie *et* vérifier de leurs yeux ce qu'il a écrit. C'est
+  tenable seulement grâce à trois choses vérifiées avant l'ouverture :
+  1. GMS exige un jeton (401 sans, 401 avec un faux) ;
+  2. le compte `datahub/datahub` est mort ; l'administrateur a un mot de passe
+     fort, et un compte `judge` en rôle **Reader** lit sans pouvoir écrire
+     (403 sur `createTag`, vérifié) ;
+  3. **l'instance ne porte aucun identifiant AWS** — pas de rôle, rien dans
+     `~/.aws`. L'entamer ne donne accès à rien d'autre. Et elle ne contient que
+     le jeu de démonstration public du concours.
+  Le SSH, lui, reste réservé aux deux adresses du poste de travail.
+- Les comptes sont dans `~/.datahub/plugins/frontend/auth/user.props` sur
+  l'instance, **monté par-dessus** `/datahub-frontend/conf/user.props`. Piège :
+  `jaas.conf` déclare les deux fichiers `sufficient`, donc *ajouter* des comptes
+  ne retire pas celui par défaut — il faut recouvrir le fichier de l'image.
+  Autre piège : le conteneur tourne sous un autre utilisateur, un `chmod 600`
+  rend le fichier illisible et l'authentification retombe silencieusement sur le
+  défaut. 644, et 755 sur les dossiers.
+- Un utilisateur créé dans `user.props` ne peut pas se connecter tant que son
+  entité n'existe pas dans GMS : le frontal rend **500**, « Session token denied
+  by Metadata Service ». Émettre un `CorpUserInfo` d'abord, puis
+  `batchAssignRole`.
+- `scripts/tunnel.sh` reste utile pour le travail local, mais n'est plus
+  nécessaire : `DATAHUB_GMS_URL` pointe sur l'adresse publique.
 - Utilisateur AWS `fadlie`, distinct de celui de Naaba : deux projets déployés,
   deux jeux de clés. Une révocation d'un côté n'emporte pas l'autre.
 
