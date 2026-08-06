@@ -64,6 +64,33 @@ Le trou est ailleurs, et il est plus grave.
 
 ## Ce qui est vérifié (ne pas re-supposer)
 
+- **`datahub docker quickstart` livre GMS sans authentification.**
+  `METADATA_SERVICE_AUTH_ENABLED=false` : mesuré le 6 août 2026, une requête
+  GraphQL *sans en-tête* rendait 200, et une mutation `createTag` **sans aucune
+  identité** a créé l'étiquette. Le jeton d'accès personnel était décoratif. Le
+  réglage est maintenant à `true` ; vérifié : 401 sans jeton, 401 avec un jeton
+  inventé, 401 avec un jeton émis avant le changement de clé. Ne jamais exposer
+  8080 ni 9002 sur un quickstart qu'on n'a pas d'abord vérifié.
+- **Redémarrer un service de la composition sans son `.env` casse tout en
+  silence.** La composition attend `DATAHUB_VERSION`,
+  `UI_INGESTION_DEFAULT_CLI_VERSION`, `DATAHUB_TOKEN_SERVICE_SALT` et
+  `DATAHUB_TOKEN_SERVICE_SIGNING_KEY`. Absentes, docker compose les remplace par
+  la chaîne vide : étiquette d'image vide, **clé de signature vide** — tous les
+  jetons deviennent invalides sans un mot d'erreur. Un `.env` complet est
+  maintenant écrit dans `~/.datahub/quickstart/` sur l'instance.
+- Le service s'appelle **`datahub-gms-quickstart`**, pas `datahub-gms`, et le
+  frontal **`frontend-quickstart`**. Les deux lisent la clé de signature.
+- **Toutes les écritures dont l'agent a besoin fonctionnent** (vérifiées puis
+  défaites, sur `postgres/countries` remise à son état d'origine) : `addTags`,
+  `addOwners`, `updateDescription`, et surtout `addTags` / `addTerms` **au
+  niveau colonne** via `subResource` + `subResourceType: DATASET_FIELD`. Les
+  variantes `batchAddTags`, `batchAddTerms`, `batchAddOwners`, `batchSetDomain`
+  existent — les préférer.
+  Piège de nommage : `removeTerm` prend un **`TermAssociationInput`**, pas un
+  `RemoveTermInput` comme la symétrie le laisse croire.
+- **Bedrock : `eu.amazon.nova-micro-v1:0` s'invoque à Francfort, l'identifiant
+  nu échoue** (`ValidationException`, « on-demand… »). Exactement comme pour
+  Naaba : le préfixe régional du profil d'inférence est obligatoire.
 - **Il n'y a pas de lignage à la colonne dans ce graphe : 0 sur 67.** Mesuré via
   l'aspect `upstreamLineage` (OpenAPI v2) sur chaque jeu ; `fineGrainedLineages`
   est absent partout. Donc **aucune propagation mécanique n'est possible**. Le
@@ -95,6 +122,12 @@ Le trou est ailleurs, et il est plus grave.
 
 - DataHub Core v1.7.0, instance EC2 `i-0fb64e9417800d75f` (`t3.large`,
   eu-central-1, 40 Go). Quatorze conteneurs.
+- **Question ouverte, à trancher avant le déploiement** : les juges doivent
+  pouvoir essayer Fadlie, mais DataHub reste fermé. Donc soit Fadlie tourne sur
+  la même instance et parle à GMS en `localhost`, soit il tourne sur App Runner
+  avec un connecteur VPC vers l'adresse privée de l'instance — et il lui faut
+  alors un point de terminaison pour joindre Bedrock. Ne pas trancher à la
+  légère : c'est la seule décision d'architecture qui a un coût mensuel.
 - **Le port 9002 n'est pas exposé.** Accès par tunnel :
   `ssh -f -N -i ~/.ssh/fadlie-datahub.pem -L 9002:localhost:9002 -L 8080:localhost:8080 ubuntu@<ip>`
 - Utilisateur AWS `fadlie`, distinct de celui de Naaba : deux projets déployés,
