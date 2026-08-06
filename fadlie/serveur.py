@@ -26,6 +26,7 @@ import time
 from typing import Any
 
 from mcp.server.mcpserver import MCPServer
+from mcp.server.transport_security import TransportSecuritySettings
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
@@ -289,6 +290,34 @@ def construire(config: Config | None = None, agent: Agent | None = None,
     return serveur
 
 
+def _securite_transport() -> TransportSecuritySettings:
+    """Les hôtes sous lesquels le serveur accepte d'être appelé.
+
+    `FADLIE_ALLOWED_HOSTS` : une liste séparée par des virgules. Derrière App
+    Runner, c'est le domaine du service — le client s'y adresse par son nom, et
+    le SDK compare ce nom, pas l'adresse d'écoute.
+
+    Vide, on garde les formes locales : un serveur qui accepterait n'importe quel
+    `Host` parce que la variable manquait n'aurait plus de protection du tout, et
+    rien ne le dirait.
+    """
+    declares = [h.strip() for h in
+                os.environ.get("FADLIE_ALLOWED_HOSTS", "").split(",") if h.strip()]
+    hotes = declares or ["127.0.0.1:*", "localhost:*", "[::1]:*"]
+    # Un hôte nommé sans port doit aussi valoir avec port : derrière un proxy,
+    # `Host` porte parfois `:443`.
+    for h in list(hotes):
+        if not h.endswith(":*") and ":" not in h:
+            hotes.append(h + ":*")
+    origines = [f"https://{h}" for h in hotes if not h.startswith("127.")]
+    origines += ["http://127.0.0.1:*", "http://localhost:*", "http://[::1]:*"]
+    return TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=hotes,
+        allowed_origins=origines,
+    )
+
+
 def application(config: Config | None = None):
     """L'application HTTP, jeton compris."""
     config = config or Config.depuis_environnement()
@@ -306,9 +335,16 @@ def application(config: Config | None = None):
 
     serveur = construire(config, prechauffer=True)
     # `host` ne choisit pas l'adresse d'écoute — elle vient d'uvicorn. Elle ne
-    # décide que de la protection anti-DNS-rebinding, et seulement pour
-    # 127.0.0.1. Piège mesuré sur Naaba : « 0.0.0.0 » la laissait désactivée en
-    # donnant à lire l'inverse.
-    app = serveur.streamable_http_app(json_response=True)
+    # décide que de la protection anti-DNS-rebinding, et son défaut est
+    # `127.0.0.1` : la protection est donc **active**, avec pour seuls hôtes
+    # autorisés les formes locales. Mesuré sur le service déployé : le domaine
+    # App Runner recevait `421 Invalid Host header` sur toute session MCP,
+    # pendant que `/health` répondait 200 et que `/mcp` sans jeton répondait
+    # bien 401 — la sonde du script de déploiement ne voyait donc rien. En local
+    # rien ne se manifeste : on s'y connecte par `127.0.0.1`.
+    #
+    # On ne désactive pas la protection, on la renseigne.
+    app = serveur.streamable_http_app(
+        json_response=True, transport_security=_securite_transport())
     app.add_middleware(Authentification, jeton=jeton)
     return app

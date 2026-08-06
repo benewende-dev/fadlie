@@ -72,7 +72,8 @@ cat <<FIN
       "RuntimeEnvironmentVariables": {
         "DATAHUB_GMS_URL": "$DATAHUB_GMS_URL",
         "AWS_REGION": "$REGION",
-        "FADLIE_CACHE_SECONDS": "${FADLIE_CACHE_SECONDS:-300}"
+        "FADLIE_CACHE_SECONDS": "${FADLIE_CACHE_SECONDS:-300}",
+        "FADLIE_ALLOWED_HOSTS": "$HOTES"
       },
       "RuntimeEnvironmentSecrets": {
         "DATAHUB_GMS_TOKEN": "$ARN_DATAHUB",
@@ -95,6 +96,15 @@ INSTANCE="{\"Cpu\":\"1 vCPU\",\"Memory\":\"2 GB\",\"InstanceRoleArn\":\"$ARN_INS
 ARN_SERVICE="$(A apprunner list-services \
     --query "ServiceSummaryList[?ServiceName=='$SERVICE'].ServiceArn | [0]" --output text)"
 
+# Le SDK MCP valide l'en-tête `Host` : il faut lui donner le domaine sous lequel
+# les clients s'adressent au service. App Runner ne le tire qu'à la création,
+# donc au premier passage il n'existe pas encore — on déploie, puis on repasse.
+HOTES=""
+if [ "$ARN_SERVICE" != "None" ] && [ -n "$ARN_SERVICE" ]; then
+    HOTES="$(A apprunner describe-service --service-arn "$ARN_SERVICE" \
+             --query 'Service.ServiceUrl' --output text)"
+fi
+
 if [ "$ARN_SERVICE" = "None" ] || [ -z "$ARN_SERVICE" ]; then
     echo "→ création du service $SERVICE"
     ARN_SERVICE="$(A apprunner create-service --service-name "$SERVICE" \
@@ -110,22 +120,37 @@ else
         --health-check-configuration "$SANTE" >/dev/null
 fi
 
-echo "→ attente (compter cinq à dix minutes : l'image se tire, puis l'agent préchauffe)"
-for _ in $(seq 1 60); do
-    sleep 20
-    ETAT="$(A apprunner describe-service --service-arn "$ARN_SERVICE" \
-            --query 'Service.Status' --output text)"
-    echo "   $ETAT"
-    case "$ETAT" in
-        RUNNING) break ;;
-        CREATE_FAILED|DELETE_FAILED)
-            echo "✗ échec — voir les journaux CloudWatch du service" >&2; exit 1 ;;
-    esac
-done
+attendre() {
+    echo "→ attente (compter cinq à dix minutes : l'image se tire, puis l'agent préchauffe)"
+    for _ in $(seq 1 60); do
+        sleep 20
+        ETAT="$(A apprunner describe-service --service-arn "$ARN_SERVICE" \
+                --query 'Service.Status' --output text)"
+        echo "   $ETAT"
+        case "$ETAT" in
+            RUNNING) return 0 ;;
+            CREATE_FAILED|DELETE_FAILED)
+                echo "✗ échec — voir les journaux CloudWatch du service" >&2; exit 1 ;;
+        esac
+    done
+}
+attendre
 
 DOMAINE="$(A apprunner describe-service --service-arn "$ARN_SERVICE" \
           --query 'Service.ServiceUrl' --output text)"
 URL="https://$DOMAINE/mcp"
+
+# Premier passage : le service vient de naître, il tourne donc sans connaître son
+# propre domaine et refuse toute session MCP. On le lui apprend et on repasse.
+if [ -z "$HOTES" ]; then
+    echo "→ second passage : le domaine $DOMAINE est maintenant connu"
+    HOTES="$DOMAINE"
+    A apprunner update-service --service-arn "$ARN_SERVICE" \
+        --source-configuration "$(source_json)" \
+        --instance-configuration "$INSTANCE" \
+        --health-check-configuration "$SANTE" >/dev/null
+    attendre
+fi
 
 echo
 echo "→ sonde"
@@ -133,6 +158,24 @@ CODE_SANTE="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "https://$DOM
 CODE_NU="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 -X POST "$URL")"
 echo "   /health sans jeton : $CODE_SANTE  (attendu 200)"
 echo "   /mcp sans jeton    : $CODE_NU  (attendu 401)"
+
+# Une vraie session MCP, avec le jeton. Sans ce contrôle la sonde déclare vert un
+# service inutilisable : mesuré le 6 août, `/health` rendait 200 et `/mcp` sans
+# jeton rendait 401 pendant que toute session recevait « 421 Invalid Host
+# header ». Les deux premières vérifications n'atteignent jamais l'application
+# MCP — l'une est une route à part, l'autre est arrêtée par le middleware.
+CORPS="$(curl -s --max-time 60 -X POST "$URL" \
+    -H "Authorization: Bearer ${FADLIE_API_TOKEN:-}" \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json, text/event-stream' \
+    -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"sonde","version":"1"}}}')"
+if printf '%s' "$CORPS" | grep -q '"serverInfo"'; then
+    echo "   session MCP avec jeton : ✓"
+else
+    echo "   session MCP avec jeton : ✗" >&2
+    printf '   %s\n' "$(printf '%s' "$CORPS" | head -c 200)" >&2
+    exit 1
+fi
 
 cat <<FIN
 
