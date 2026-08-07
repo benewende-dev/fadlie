@@ -20,7 +20,12 @@ capture refuses to save unless the response confirms that nothing was written.
 | [`catalog_summary.json`](catalog_summary.json) | `catalog_summary()` |
 | [`find_duplicate_datasets.json`](find_duplicate_datasets.json) | `find_duplicate_datasets()` |
 | [`governance_gaps.json`](governance_gaps.json) | `governance_gaps(dataset="order_details")` |
+| [`governance_gaps_all.json`](governance_gaps_all.json) | `governance_gaps()` — every gap, unfiltered |
 | [`apply_governance_dry_run.json`](apply_governance_dry_run.json) | `apply_governance(dataset="order_details")` |
+
+`governance_gaps_all.json` is also what the browsable page is built from —
+`python scripts/faire-la-page.py` turns these files into a single HTML page and
+connects to nothing while doing it.
 
 ## What to look at
 

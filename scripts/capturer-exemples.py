@@ -81,6 +81,18 @@ async def capturer(url: str, jeton: str) -> None:
             ecrire("governance_gaps.json",
                    f'governance_gaps(dataset="{JEU}")', ecarts)
 
+            # Sans filtre et sans plafond : c'est de ce fichier-là que
+            # `faire-la-page.py` construit la page HTML. Une page bâtie sur les
+            # cinquante premiers écarts d'un seul jeu montrerait un catalogue
+            # presque en règle — l'inverse de ce qu'il y a à voir.
+            tous = extraire(await session.call_tool(
+                "governance_gaps", {"limit": 2000}))
+            if tous["returned"] < tous["total"]:
+                raise SystemExit(
+                    f"REFUS : {tous['returned']} écarts rendus sur "
+                    f"{tous['total']} — la page serait tronquée sans le dire.")
+            ecrire("governance_gaps_all.json", "governance_gaps()", tous)
+
             blanc = extraire(await session.call_tool(
                 "apply_governance", {"dataset": JEU}))
             # Le contrôle qui rend ce script sûr à relancer : si la réponse ne

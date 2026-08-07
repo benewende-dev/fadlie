@@ -1,0 +1,1426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fadlie — what the catalog actually looks like</title>
+<meta name="description" content="Every governance gap Fadlie found on the
+DataHub showcase catalog, each one naming the dataset its value would be copied
+from. Generated from real responses of the deployed agent.">
+<style>
+:root{--fond:#fff;--encre:#16181d;--doux:#5b6270;--trait:#e3e6ea;--carte:#f7f8fa;
+--vert:#0a7d46;--rouge:#b3261e;--ambre:#8a5a00;--code:#eef0f4}
+@media (prefers-color-scheme:dark){:root{--fond:#0e1116;--encre:#e6e9ef;
+--doux:#98a1b0;--trait:#242a33;--carte:#161b22;--vert:#3fb37f;--rouge:#f08b84;
+--ambre:#d9a441;--code:#1c222b}}
+:root[data-theme=dark]{--fond:#0e1116;--encre:#e6e9ef;--doux:#98a1b0;
+--trait:#242a33;--carte:#161b22;--vert:#3fb37f;--rouge:#f08b84;--ambre:#d9a441;
+--code:#1c222b}
+:root[data-theme=light]{--fond:#fff;--encre:#16181d;--doux:#5b6270;
+--trait:#e3e6ea;--carte:#f7f8fa;--vert:#0a7d46;--rouge:#b3261e;--ambre:#8a5a00;
+--code:#eef0f4}
+*{box-sizing:border-box}
+body{background:var(--fond);color:var(--encre);margin:0;padding:0 1.2rem 5rem;
+font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+-webkit-text-size-adjust:100%}
+main{max-width:60rem;margin:0 auto}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;
+background:var(--code);padding:.12em .38em;border-radius:4px;white-space:nowrap}
+h1{font-size:2rem;line-height:1.2;margin:2.6rem 0 .5rem;letter-spacing:-.02em}
+h2{font-size:1.3rem;margin:3rem 0 .4rem;letter-spacing:-.01em}
+h3{font-size:1rem;margin:0 0 .6rem}
+p{margin:.6rem 0}
+a{color:inherit;text-decoration-color:var(--doux);text-underline-offset:3px}
+.chapeau{color:var(--doux);font-size:1.05rem;max-width:44rem}
+.liens{margin:1.2rem 0 0;font-size:.92rem;color:var(--doux)}
+.liens a{margin-right:1.1rem;white-space:nowrap}
+.chiffres{display:grid;gap:.7rem;margin:2rem 0 0;
+grid-template-columns:repeat(auto-fit,minmax(9rem,1fr))}
+.case{background:var(--carte);border:1px solid var(--trait);border-radius:9px;
+padding:.85rem .9rem}
+.case b{display:block;font-size:1.7rem;line-height:1.1;letter-spacing:-.03em}
+.case span{display:block;font-size:.83rem;margin-top:.15rem}
+.case em{display:block;font-size:.75rem;color:var(--doux);font-style:normal;
+margin-top:.25rem}
+.avant{color:var(--doux);max-width:44rem}
+.desaccord{background:var(--carte);border:1px solid var(--trait);
+border-left:3px solid var(--ambre);border-radius:9px;padding:1rem 1.1rem;
+margin:1rem 0}
+.desaccord table{width:100%;border-collapse:collapse}
+.desaccord td{padding:.3rem .6rem .3rem 0;border-bottom:1px solid var(--trait)}
+.desaccord tr:last-child td{border-bottom:0}
+.note{color:var(--ambre);font-size:.9rem;margin:.8rem 0 0}
+details{background:var(--carte);border:1px solid var(--trait);border-radius:9px;
+margin:.5rem 0;overflow:hidden}
+summary{cursor:pointer;padding:.7rem .9rem;display:flex;flex-wrap:wrap;
+align-items:baseline;gap:.6rem}
+summary::marker{color:var(--doux)}
+summary b{font-weight:600}
+.plats,.compte{font-size:.8rem;color:var(--doux)}
+.compte{margin-left:auto}
+.jeux{padding:0 .9rem .3rem;display:flex;flex-wrap:wrap;gap:.35rem}
+.verdicts{margin:0;padding:.3rem .9rem 1rem 1.6rem;font-size:.92rem}
+.verdicts li{margin:.6rem 0}
+.verdicts blockquote{margin:.25rem 0 0;padding-left:.7rem;
+border-left:2px solid var(--trait);color:var(--doux)}
+.conf{font-size:.75rem;padding:.05rem .4rem;border-radius:4px;
+border:1px solid var(--trait);color:var(--doux)}
+.conf-high{color:var(--vert);border-color:currentColor}
+.rouleau{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cible table{width:100%;border-collapse:collapse;font-size:.88rem}
+.cible th{text-align:left;font-weight:600;font-size:.76rem;color:var(--doux);
+text-transform:uppercase;letter-spacing:.04em;padding:.4rem .9rem;
+border-top:1px solid var(--trait);border-bottom:1px solid var(--trait);
+white-space:nowrap}
+.cible td{padding:.38rem .9rem;border-bottom:1px solid var(--trait);
+vertical-align:top}
+.cible tr:last-child td{border-bottom:0}
+.genre{color:var(--doux);white-space:nowrap}
+/* Les valeurs sont parfois des urn d'un seul tenant — `urn:li:glossaryTerm:…`.
+   Sans césure elles élargissent la table de plusieurs centaines de pixels et
+   tout le monde scrolle pour lire une colonne qui tient. On les coupe. */
+.val{min-width:12rem;max-width:26rem;overflow-wrap:anywhere}
+.src code{color:var(--vert)}
+.barre{display:flex;align-items:center;gap:.7rem;margin:.35rem 0;font-size:.88rem}
+.barre .nom{width:9.5rem;flex:none;color:var(--doux)}
+.barre .jauge{flex:1;height:.55rem;background:var(--code);border-radius:3px;
+overflow:hidden;min-width:3rem}
+.barre .jauge i{display:block;height:100%;background:var(--doux)}
+.barre .n{width:2.4rem;flex:none;text-align:right;font-variant-numeric:tabular-nums}
+.genres{background:var(--carte);border:1px solid var(--trait);border-radius:9px;
+padding:.9rem 1rem;margin:1rem 0 1.4rem}
+table.blanc{width:100%;border-collapse:collapse;background:var(--carte);
+border:1px solid var(--trait);border-radius:9px;margin:1rem 0}
+table.blanc td{padding:.45rem .9rem;border-bottom:1px solid var(--trait)}
+table.blanc tr:last-child td{border-bottom:0}
+footer{margin:4rem 0 0;padding-top:1.4rem;border-top:1px solid var(--trait);
+color:var(--doux);font-size:.86rem;max-width:44rem}
+@media (max-width:34rem){.barre .nom{width:7rem}.compte{margin-left:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>The same data lives in four systems.<br>Only one copy is governed.</h1>
+<p class="chapeau">This page is what <a href="https://github.com/benewende-dev/fadlie">Fadlie</a> found on the
+DataHub <code>showcase-ecommerce</code> catalog. Nothing here was written by
+hand: it is generated from real responses of the deployed agent, captured on
+2026-08-06, by <code>scripts/faire-la-page.py</code>.</p>
+<p class="liens"><a href="https://github.com/benewende-dev/fadlie">Source &amp; measurements</a>
+<a href="https://youtu.be/YXff0HNRAwU">Two-minute video</a>
+<a href="https://github.com/benewende-dev/fadlie/tree/main/examples">The raw JSON behind this page</a></p>
+
+<div class="chiffres"><div class="case"><b>97</b><span>pairs examined</span><em>structure said &ldquo;maybe&rdquo;</em></div>
+<div class="case"><b>84</b><span>confirmed same data</span><em>the judge said yes</em></div>
+<div class="case"><b>18</b><span>groups of copies</span><em>across platforms</em></div>
+<div class="case"><b>373</b><span>governance gaps</span><em>each naming its source</em></div>
+<div class="case"><b>46</b><span>datasets affected</span><em>counted by urn, not by name</em></div>
+<div class="case"><b>1</b><span>disagreement</span><em>reported, not settled</em></div></div>
+
+<h2>The one it refuses to settle</h2>
+<p class="avant">A disagreement is not a gap. When two copies of the same data
+carry <em>different</em> values, there is nothing to copy — someone decided, or
+someone erred, and neither is an agent's call.</p>
+<div class="desaccord"><h3>Conflicting domain</h3><div class="rouleau"><table><tr><td><code>dbt/order_details</code></td><td class="val">Data Platform Team</td></tr><tr><td><code>looker/order_details</code></td><td class="val">Data Platform Team</td></tr><tr><td><code>looker/Order Details</code></td><td class="val">Data Platform Team</td></tr><tr><td><code>snowflake/ORDER_DETAILS</code></td><td class="val">Ecommerce Operations</td></tr></table></div><p class="note">left to a human: Fadlie reports the conflict, it does not pick</p></div>
+
+<h2>What is missing, and where it already exists</h2>
+<p class="avant">Every row below is a value one dataset carries and its twin does
+not. <strong>No value here was produced by a model.</strong> Each names the
+dataset it would be copied from — the type that carries a gap refuses to be
+constructed without a source. Open a dataset to see its own.</p>
+<div class="genres"><div class="barre"><span class="nom">column description</span><span class="jauge"><i style="width:38.6%"></i></span><span class="n">144</span></div><div class="barre"><span class="nom">owner</span><span class="jauge"><i style="width:27.6%"></i></span><span class="n">103</span></div><div class="barre"><span class="nom">column tag</span><span class="jauge"><i style="width:13.9%"></i></span><span class="n">52</span></div><div class="barre"><span class="nom">description</span><span class="jauge"><i style="width:10.5%"></i></span><span class="n">39</span></div><div class="barre"><span class="nom">domain</span><span class="jauge"><i style="width:6.7%"></i></span><span class="n">25</span></div><div class="barre"><span class="nom">glossary term</span><span class="jauge"><i style="width:2.7%"></i></span><span class="n">10</span></div></div>
+<details class="cible" open><summary><b>dbt/order_details</b><span class="compte">2 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG</td><td class="src"><code>looker/Order Details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.alex@example.com</td><td class="src"><code>looker/order_details</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>dbt/order_items</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>order_id</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>s3/order_items</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>dbt/promotions</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>promotion_id</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>s3/promotions</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>looker/Order Details</b><span class="compte">10 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val"># Order Details Model
+
+## Overview
+
+The `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.
+
+This denormalized view is designed to support reporting, analysis, and operational insights across the order management process.
+
+## Model Information
+
+- **Name**: `order_details`
+- **Type**: View
+- **Source Schema**: `order_entry`
+- **Database**: `order_entry_db`
+- **Update Frequency**: Refreshed on query with current timestamp
+
+## Data Structure
+
+### Order Information
+
+| Column                | Type         | Description                                                | Example                            |
+| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |
+| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |
+| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |
+| order_mode            | VARCHAR      | Method of order placement                                  | &#x27;online&#x27;, &#x27;phone&#x27;, &#x27;direct&#x27;        |
+| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |
+| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |
+| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |
+| delivery_type         | VARCHAR      | Shipping method                                            | &#x27;Standard&#x27;, &#x27;Express&#x27;, &#x27;Overnight&#x27; |
+| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | &#x27;Y&#x27;, &#x27;N&#x27;                           |
+| payment_method_code   | VARCHAR      | Code indicating payment method used                        | &#x27;CC&#x27;, &#x27;PayPal&#x27;, &#x27;ApplePay&#x27;         |
+
+### Customer Information
+
+| Column          | Type    | Description                        | Example                      |
+| --------------- | ------- | ---------------------------------- | ---------------------------- |
+| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |
+| cust_first_name | VARCHAR | Customer first name                | &#x27;John&#x27;                       |
+| cust_last_name  | VARCHAR | Customer last name                 | &#x27;Smith&#x27;                      |
+| cust_email      | VARCHAR | Customer email address             | &#x27;john.smith@example.com&#x27;     |
+| phone_number    | VARCHAR | Customer contact phone number      | &#x27;555-123-4567&#x27;               |
+| customer_class  | VARCHAR | Classification of the customer     | &#x27;Platinum&#x27;, &#x27;Gold&#x27;, &#x27;Silver&#x27; |
+
+### Billing Address Information
+
+| Column                | Type    | Description                                   | Example         |
+| --------------------- | ------- | --------------------------------------------- | --------------- |
+| billing_address_line1 | VARCHAR | First line of customer billing address        | &#x27;123 Main St&#x27;   |
+| billing_address_line2 | VARCHAR | Second line of customer billing address       | &#x27;Apt 4B&#x27;        |
+| billing_town_city     | VARCHAR | Town or city of customer billing address      | &#x27;Springfield&#x27;   |
+| billing_country       | VARCHAR | Country name for the billing address          | &#x27;United States&#x27; |
+| billing_zipcode       | VARCHAR | Postal code of customer billing address       | &#x27;12345&#x27;         |
+| billing_region        | VARCHAR | Region/state/province for the billing address | &#x27;Illinois&#x27;      |
+
+### Shipping Address Information
+
+| Column                 | Type    | Description                                | Example         |
+| ---------------------- | ------- | ------------------------------------------ | --------------- |
+| shipping_address_line1 | VARCHAR | First line of customer shipping address    | &#x27;456 Oak St&#x27;    |
+| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | &#x27;Suite 101&#x27;     |
+| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | &#x27;Chicago&#x27;       |
+| shipping_country       | VARCHAR | Country name for the shipping address      | &#x27;United States&#x27; |
+| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | &#x27;60601&#x27;         |
+| shipping_region        | VARCHAR | Region/state/province for shipping address | &#x27;Illinois&#x27;      |
+
+### Warehouse Information
+
+| Column         | Type    | Description                                      | Example                       |
+| -------------- | ------- | ------------------------------------------------ | ----------------------------- |
+| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |
+| warehouse_name | VARCHAR | Name of the warehouse location                   | &#x27;Chicago Distribution Center&#x27; |
+
+### Promotion Information
+
+| Column                | Type    | Description                                      | Example                      |
+| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |
+| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |
+| promotion_name        | VARCHAR | Name of the marketing promotion                  | &#x27;Summer Sale 2023&#x27;           |
+| promotion_description | VARCHAR | Detailed description of the promotion            | &#x27;20% off all summer apparel&#x27; |
+
+### Order Line Item Information
+
+| Column              | Type    | Description                                            | Example                                       |
+| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |
+| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |
+| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |
+| product_name        | VARCHAR | Name of the product                                    | &#x27;Ergonomic Office Chair&#x27;                      |
+| product_description | VARCHAR | Brief description of the product                       | &#x27;Adjustable office chair with lumbar support&#x27; |
+| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |
+| category_name       | VARCHAR | Name of the product category                           | &#x27;Office Furniture&#x27;                            |
+| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |
+| quantity            | NUMBER  | Number of units ordered                                | 2                                             |
+| line_total          | NUMBER  | Total price for the line item (unit_price \* quantity) | 299.98                                        |
+| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |
+| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |
+| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | &#x27;Y&#x27;, &#x27;Premium&#x27;, &#x27;Basic&#x27;                       |
+| condition           | VARCHAR | Condition of product                                   | &#x27;New&#x27;, &#x27;Refurbished&#x27;                          |
+| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |
+| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |
+| product_status      | VARCHAR | Current status of the product                          | &#x27;Available&#x27;, &#x27;Discontinued&#x27;                   |
+| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |
+| stock_status        | VARCHAR | Status of current inventory levels                     | &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;        |
+
+### Calculated Fields
+
+| Column           | Type    | Description                                          | Example                                  |
+| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |
+| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |
+| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |
+| delivery_status  | VARCHAR | Current status of delivery                           | &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27; |
+| return_status    | VARCHAR | Status indicating if item was returned               | &#x27;Returned&#x27;, &#x27;Not Returned&#x27;               |
+
+### Timestamp Information
+
+| Column     | Type         | Description                                                             | Example                             |
+| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |
+| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |
+
+## Sources and Joins
+
+This model combines data from the following source tables:
+
+- `orders` - Primary table containing order header information
+- `customers` - Customer demographic and contact information
+- `addresses` - Billing and shipping address details
+- `countries` - Country information for addresses
+- `regions` - Regional information for addresses
+- `warehouses` - Warehouse details for order fulfillment
+- `promotions` - Promotion information applied to orders
+- `order_items` - Individual line items within each order
+- `products` - Product information for ordered items
+- `product_categories` - Category information for products
+- `inventories` - Inventory levels for products at warehouses
+
+## Data Tests
+
+The following data quality tests are applied to this model:
+
+### Primary Key Tests
+
+- `order_id` and `line_item_id` combination is unique
+- `order_id` is not null
+
+### Referential Integrity Tests
+
+- `customer_id` exists in the customers table
+- `product_id` exists in the products table
+- `warehouse_id` exists in the warehouses table
+- `promotion_id` exists in the promotions table (when not null)
+- `category_id` exists in the product_categories table
+
+### Value Tests
+
+- `unit_price` and `quantity` are positive values
+- `line_total` equals `unit_price` \* `quantity`
+- `order_status` contains valid status codes
+- `wait_till_complete_yn` contains only &#x27;Y&#x27; or &#x27;N&#x27;
+- `stock_status` contains only valid values: &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;, &#x27;Unknown&#x27;
+- `delivery_status` contains only valid values: &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27;, &#x27;Unknown&#x27;
+- `return_status` contains only valid values: &#x27;Returned&#x27;, &#x27;Not Returned&#x27;
+
+## Usage Examples
+
+### Basic Order Query
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    cust_first_name || &#x27; &#x27; || cust_last_name AS customer_name,
+    order_total,
+    delivery_status
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -1, CURRENT_DATE())
+ORDER BY order_date DESC
+```
+
+### Order Analysis by Category
+
+```sql
+SELECT
+    category_name,
+    COUNT(DISTINCT order_id) AS order_count,
+    SUM(line_total) AS total_revenue,
+    AVG(discount_percent) AS avg_discount_pct
+FROM order_details
+WHERE order_date &gt;= DATEADD(year, -1, CURRENT_DATE())
+GROUP BY category_name
+ORDER BY total_revenue DESC
+```
+
+### Delivery Performance
+
+```sql
+SELECT
+    warehouse_name,
+    delivery_type,
+    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,
+    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,
+    COUNT(*) AS shipment_count
+FROM order_details
+WHERE dispatch_date IS NOT NULL
+  AND order_date &gt;= DATEADD(month, -6, CURRENT_DATE())
+GROUP BY warehouse_name, delivery_type
+ORDER BY warehouse_name, avg_processing_days
+```
+
+### Returns Analysis
+
+```sql
+SELECT
+    product_name,
+    COUNT(*) AS total_ordered,
+    SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) AS total_returned,
+    (SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -3, CURRENT_DATE())
+GROUP BY product_name
+HAVING COUNT(*) &gt; 10
+ORDER BY return_rate DESC
+LIMIT 20
+```
+
+## Maintenance and Refresh
+
+As a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`
+
+## Dependencies
+
+This model depends on:
+
+- Source tables from the schema `order_entry`
+- Any data quality tests defined in the file `schema.yml`
+
+## Additional Notes
+
+- This model includes sensitive customer information. Ensure appropriate access controls are in place.
+- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.
+- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.1e0398a3-113f-475e-b6fc-32ab72a634d2</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.alex@example.com</td><td class="src"><code>looker/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.brock1@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.bryan@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.jonny1@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.jonny2@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.kirk@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.marty@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.sam@example.com</td><td class="src"><code>dbt/order_details</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>looker/order_details</b><span class="compte">9 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val"># Order Details Model
+
+## Overview
+
+The `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.
+
+This denormalized view is designed to support reporting, analysis, and operational insights across the order management process.
+
+## Model Information
+
+- **Name**: `order_details`
+- **Type**: View
+- **Source Schema**: `order_entry`
+- **Database**: `order_entry_db`
+- **Update Frequency**: Refreshed on query with current timestamp
+
+## Data Structure
+
+### Order Information
+
+| Column                | Type         | Description                                                | Example                            |
+| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |
+| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |
+| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |
+| order_mode            | VARCHAR      | Method of order placement                                  | &#x27;online&#x27;, &#x27;phone&#x27;, &#x27;direct&#x27;        |
+| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |
+| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |
+| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |
+| delivery_type         | VARCHAR      | Shipping method                                            | &#x27;Standard&#x27;, &#x27;Express&#x27;, &#x27;Overnight&#x27; |
+| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | &#x27;Y&#x27;, &#x27;N&#x27;                           |
+| payment_method_code   | VARCHAR      | Code indicating payment method used                        | &#x27;CC&#x27;, &#x27;PayPal&#x27;, &#x27;ApplePay&#x27;         |
+
+### Customer Information
+
+| Column          | Type    | Description                        | Example                      |
+| --------------- | ------- | ---------------------------------- | ---------------------------- |
+| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |
+| cust_first_name | VARCHAR | Customer first name                | &#x27;John&#x27;                       |
+| cust_last_name  | VARCHAR | Customer last name                 | &#x27;Smith&#x27;                      |
+| cust_email      | VARCHAR | Customer email address             | &#x27;john.smith@example.com&#x27;     |
+| phone_number    | VARCHAR | Customer contact phone number      | &#x27;555-123-4567&#x27;               |
+| customer_class  | VARCHAR | Classification of the customer     | &#x27;Platinum&#x27;, &#x27;Gold&#x27;, &#x27;Silver&#x27; |
+
+### Billing Address Information
+
+| Column                | Type    | Description                                   | Example         |
+| --------------------- | ------- | --------------------------------------------- | --------------- |
+| billing_address_line1 | VARCHAR | First line of customer billing address        | &#x27;123 Main St&#x27;   |
+| billing_address_line2 | VARCHAR | Second line of customer billing address       | &#x27;Apt 4B&#x27;        |
+| billing_town_city     | VARCHAR | Town or city of customer billing address      | &#x27;Springfield&#x27;   |
+| billing_country       | VARCHAR | Country name for the billing address          | &#x27;United States&#x27; |
+| billing_zipcode       | VARCHAR | Postal code of customer billing address       | &#x27;12345&#x27;         |
+| billing_region        | VARCHAR | Region/state/province for the billing address | &#x27;Illinois&#x27;      |
+
+### Shipping Address Information
+
+| Column                 | Type    | Description                                | Example         |
+| ---------------------- | ------- | ------------------------------------------ | --------------- |
+| shipping_address_line1 | VARCHAR | First line of customer shipping address    | &#x27;456 Oak St&#x27;    |
+| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | &#x27;Suite 101&#x27;     |
+| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | &#x27;Chicago&#x27;       |
+| shipping_country       | VARCHAR | Country name for the shipping address      | &#x27;United States&#x27; |
+| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | &#x27;60601&#x27;         |
+| shipping_region        | VARCHAR | Region/state/province for shipping address | &#x27;Illinois&#x27;      |
+
+### Warehouse Information
+
+| Column         | Type    | Description                                      | Example                       |
+| -------------- | ------- | ------------------------------------------------ | ----------------------------- |
+| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |
+| warehouse_name | VARCHAR | Name of the warehouse location                   | &#x27;Chicago Distribution Center&#x27; |
+
+### Promotion Information
+
+| Column                | Type    | Description                                      | Example                      |
+| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |
+| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |
+| promotion_name        | VARCHAR | Name of the marketing promotion                  | &#x27;Summer Sale 2023&#x27;           |
+| promotion_description | VARCHAR | Detailed description of the promotion            | &#x27;20% off all summer apparel&#x27; |
+
+### Order Line Item Information
+
+| Column              | Type    | Description                                            | Example                                       |
+| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |
+| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |
+| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |
+| product_name        | VARCHAR | Name of the product                                    | &#x27;Ergonomic Office Chair&#x27;                      |
+| product_description | VARCHAR | Brief description of the product                       | &#x27;Adjustable office chair with lumbar support&#x27; |
+| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |
+| category_name       | VARCHAR | Name of the product category                           | &#x27;Office Furniture&#x27;                            |
+| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |
+| quantity            | NUMBER  | Number of units ordered                                | 2                                             |
+| line_total          | NUMBER  | Total price for the line item (unit_price \* quantity) | 299.98                                        |
+| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |
+| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |
+| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | &#x27;Y&#x27;, &#x27;Premium&#x27;, &#x27;Basic&#x27;                       |
+| condition           | VARCHAR | Condition of product                                   | &#x27;New&#x27;, &#x27;Refurbished&#x27;                          |
+| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |
+| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |
+| product_status      | VARCHAR | Current status of the product                          | &#x27;Available&#x27;, &#x27;Discontinued&#x27;                   |
+| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |
+| stock_status        | VARCHAR | Status of current inventory levels                     | &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;        |
+
+### Calculated Fields
+
+| Column           | Type    | Description                                          | Example                                  |
+| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |
+| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |
+| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |
+| delivery_status  | VARCHAR | Current status of delivery                           | &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27; |
+| return_status    | VARCHAR | Status indicating if item was returned               | &#x27;Returned&#x27;, &#x27;Not Returned&#x27;               |
+
+### Timestamp Information
+
+| Column     | Type         | Description                                                             | Example                             |
+| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |
+| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |
+
+## Sources and Joins
+
+This model combines data from the following source tables:
+
+- `orders` - Primary table containing order header information
+- `customers` - Customer demographic and contact information
+- `addresses` - Billing and shipping address details
+- `countries` - Country information for addresses
+- `regions` - Regional information for addresses
+- `warehouses` - Warehouse details for order fulfillment
+- `promotions` - Promotion information applied to orders
+- `order_items` - Individual line items within each order
+- `products` - Product information for ordered items
+- `product_categories` - Category information for products
+- `inventories` - Inventory levels for products at warehouses
+
+## Data Tests
+
+The following data quality tests are applied to this model:
+
+### Primary Key Tests
+
+- `order_id` and `line_item_id` combination is unique
+- `order_id` is not null
+
+### Referential Integrity Tests
+
+- `customer_id` exists in the customers table
+- `product_id` exists in the products table
+- `warehouse_id` exists in the warehouses table
+- `promotion_id` exists in the promotions table (when not null)
+- `category_id` exists in the product_categories table
+
+### Value Tests
+
+- `unit_price` and `quantity` are positive values
+- `line_total` equals `unit_price` \* `quantity`
+- `order_status` contains valid status codes
+- `wait_till_complete_yn` contains only &#x27;Y&#x27; or &#x27;N&#x27;
+- `stock_status` contains only valid values: &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;, &#x27;Unknown&#x27;
+- `delivery_status` contains only valid values: &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27;, &#x27;Unknown&#x27;
+- `return_status` contains only valid values: &#x27;Returned&#x27;, &#x27;Not Returned&#x27;
+
+## Usage Examples
+
+### Basic Order Query
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    cust_first_name || &#x27; &#x27; || cust_last_name AS customer_name,
+    order_total,
+    delivery_status
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -1, CURRENT_DATE())
+ORDER BY order_date DESC
+```
+
+### Order Analysis by Category
+
+```sql
+SELECT
+    category_name,
+    COUNT(DISTINCT order_id) AS order_count,
+    SUM(line_total) AS total_revenue,
+    AVG(discount_percent) AS avg_discount_pct
+FROM order_details
+WHERE order_date &gt;= DATEADD(year, -1, CURRENT_DATE())
+GROUP BY category_name
+ORDER BY total_revenue DESC
+```
+
+### Delivery Performance
+
+```sql
+SELECT
+    warehouse_name,
+    delivery_type,
+    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,
+    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,
+    COUNT(*) AS shipment_count
+FROM order_details
+WHERE dispatch_date IS NOT NULL
+  AND order_date &gt;= DATEADD(month, -6, CURRENT_DATE())
+GROUP BY warehouse_name, delivery_type
+ORDER BY warehouse_name, avg_processing_days
+```
+
+### Returns Analysis
+
+```sql
+SELECT
+    product_name,
+    COUNT(*) AS total_ordered,
+    SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) AS total_returned,
+    (SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -3, CURRENT_DATE())
+GROUP BY product_name
+HAVING COUNT(*) &gt; 10
+ORDER BY return_rate DESC
+LIMIT 20
+```
+
+## Maintenance and Refresh
+
+As a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`
+
+## Dependencies
+
+This model depends on:
+
+- Source tables from the schema `order_entry`
+- Any data quality tests defined in the file `schema.yml`
+
+## Additional Notes
+
+- This model includes sensitive customer information. Ensure appropriate access controls are in place.
+- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.
+- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.1e0398a3-113f-475e-b6fc-32ab72a634d2</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG</td><td class="src"><code>looker/Order Details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.brock1@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.bryan@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.jonny1@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.jonny2@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.kirk@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.sam@example.com</td><td class="src"><code>dbt/order_details</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/addresses</b><span class="compte">15 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>address_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>address_line1</code></td><td class="genre">column description</td><td class="val">First line of address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>address_line2</code></td><td class="genre">column description</td><td class="val">Second line of address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>country_id</code></td><td class="genre">column description</td><td class="val">Reference to country table</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>customer_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the customers table</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>date_created</code></td><td class="genre">column description</td><td class="val">Date when address was added to the system</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>region_id</code></td><td class="genre">column description</td><td class="val">Reference to region table</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>town_city</code></td><td class="genre">column description</td><td class="val">Town or city of the address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>zipcode</code></td><td class="genre">column description</td><td class="val">Postal code of address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>town_city</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>zipcode</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains multiple shipping and billing addresses for customers</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/addresses</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/countries</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>country_code</code></td><td class="genre">column description</td><td class="val">ISO two-letter country code</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>country_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the country</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>country_name</code></td><td class="genre">column description</td><td class="val">Name of the country</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>nls_territory</code></td><td class="genre">column description</td><td class="val">NLS territory setting for localization</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Reference table for country information</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/countries</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/customers</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains customer demographic and contact information</td><td class="src"><code>dbt/customers</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/inventories</b><span class="compte">10 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>max_stock_level</code></td><td class="genre">column description</td><td class="val">Maximum storage capacity for this product</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>product_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the products table</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>quantity_on_hand</code></td><td class="genre">column description</td><td class="val">Current inventory count for this product in this warehouse</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>reorder_quantity</code></td><td class="genre">column description</td><td class="val">Standard reorder quantity when restocking</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>restock_level</code></td><td class="genre">column description</td><td class="val">Threshold at which restocking is initiated</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>warehouse_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the warehouses table</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Tracks product inventory levels across warehouses</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/inventories</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/order_items</b><span class="compte">16 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>condition</code></td><td class="genre">column description</td><td class="val">Condition of product (e.g., New, Refurbished)</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>dispatch_date</code></td><td class="genre">column description</td><td class="val">Date when item was dispatched from warehouse</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>estimated_delivery</code></td><td class="genre">column description</td><td class="val">Estimated delivery date for this item</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>gift_wrap</code></td><td class="genre">column description</td><td class="val">Flag or type of gift wrapping requested</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>line_item_id</code></td><td class="genre">column description</td><td class="val">Line item sequence number within the order</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>order_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the orders table</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>product_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the products table</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>quantity</code></td><td class="genre">column description</td><td class="val">Number of units ordered</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>return_date</code></td><td class="genre">column description</td><td class="val">Date when item was returned if applicable</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>supplier_id</code></td><td class="genre">column description</td><td class="val">ID of the supplier if dropshipped</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>unit_price</code></td><td class="genre">column description</td><td class="val">Selling price per unit at time of order</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>order_id</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>s3/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains line items for each order</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/order_items</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/orders</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains header information for customer orders</td><td class="src"><code>dbt/orders</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/product_categories</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>category_description</code></td><td class="genre">column description</td><td class="val">Detailed description of the product category</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>category_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the product category</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>category_name</code></td><td class="genre">column description</td><td class="val">Name of the product category</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>parent_category_id</code></td><td class="genre">column description</td><td class="val">Self-referential key to parent category (allows hierarchy)</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Hierarchical product category classification system</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/product_categories</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/products</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains information about products available for sale</td><td class="src"><code>dbt/products</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/promotions</b><span class="compte">12 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>promotion_cost</code></td><td class="genre">column description</td><td class="val">Budgeted cost of running the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_description</code></td><td class="genre">column description</td><td class="val">Detailed description of the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_end_date</code></td><td class="genre">column description</td><td class="val">Ending date of the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_name</code></td><td class="genre">column description</td><td class="val">Name of the marketing promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_start_date</code></td><td class="genre">column description</td><td class="val">Starting date of the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_description</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:b2fd91.No Sample Values</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_id</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>s3/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains information about marketing promotions and campaigns</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/promotions</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/regions</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>country_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the countries table</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>nls_language</code></td><td class="genre">column description</td><td class="val">Default language code for the region</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>region_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the region</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>region_name</code></td><td class="genre">column description</td><td class="val">Name of the region (state, province, etc.)</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Reference table for regional information within countries</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/regions</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>postgres/warehouses</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>location_id</code></td><td class="genre">column description</td><td class="val">Reference to the physical location</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>warehouse_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the warehouse</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>warehouse_name</code></td><td class="genre">column description</td><td class="val">Name of the warehouse location</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>wh_geo_location</code></td><td class="genre">column description</td><td class="val">Geographic coordinates of the warehouse</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains information about physical distribution centers</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/warehouses</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>powerbi/ORDER_DETAILS</b><span class="compte">12 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val"># Order Details Model
+
+## Overview
+
+The `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.
+
+This denormalized view is designed to support reporting, analysis, and operational insights across the order management process.
+
+## Model Information
+
+- **Name**: `order_details`
+- **Type**: View
+- **Source Schema**: `order_entry`
+- **Database**: `order_entry_db`
+- **Update Frequency**: Refreshed on query with current timestamp
+
+## Data Structure
+
+### Order Information
+
+| Column                | Type         | Description                                                | Example                            |
+| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |
+| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |
+| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |
+| order_mode            | VARCHAR      | Method of order placement                                  | &#x27;online&#x27;, &#x27;phone&#x27;, &#x27;direct&#x27;        |
+| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |
+| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |
+| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |
+| delivery_type         | VARCHAR      | Shipping method                                            | &#x27;Standard&#x27;, &#x27;Express&#x27;, &#x27;Overnight&#x27; |
+| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | &#x27;Y&#x27;, &#x27;N&#x27;                           |
+| payment_method_code   | VARCHAR      | Code indicating payment method used                        | &#x27;CC&#x27;, &#x27;PayPal&#x27;, &#x27;ApplePay&#x27;         |
+
+### Customer Information
+
+| Column          | Type    | Description                        | Example                      |
+| --------------- | ------- | ---------------------------------- | ---------------------------- |
+| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |
+| cust_first_name | VARCHAR | Customer first name                | &#x27;John&#x27;                       |
+| cust_last_name  | VARCHAR | Customer last name                 | &#x27;Smith&#x27;                      |
+| cust_email      | VARCHAR | Customer email address             | &#x27;john.smith@example.com&#x27;     |
+| phone_number    | VARCHAR | Customer contact phone number      | &#x27;555-123-4567&#x27;               |
+| customer_class  | VARCHAR | Classification of the customer     | &#x27;Platinum&#x27;, &#x27;Gold&#x27;, &#x27;Silver&#x27; |
+
+### Billing Address Information
+
+| Column                | Type    | Description                                   | Example         |
+| --------------------- | ------- | --------------------------------------------- | --------------- |
+| billing_address_line1 | VARCHAR | First line of customer billing address        | &#x27;123 Main St&#x27;   |
+| billing_address_line2 | VARCHAR | Second line of customer billing address       | &#x27;Apt 4B&#x27;        |
+| billing_town_city     | VARCHAR | Town or city of customer billing address      | &#x27;Springfield&#x27;   |
+| billing_country       | VARCHAR | Country name for the billing address          | &#x27;United States&#x27; |
+| billing_zipcode       | VARCHAR | Postal code of customer billing address       | &#x27;12345&#x27;         |
+| billing_region        | VARCHAR | Region/state/province for the billing address | &#x27;Illinois&#x27;      |
+
+### Shipping Address Information
+
+| Column                 | Type    | Description                                | Example         |
+| ---------------------- | ------- | ------------------------------------------ | --------------- |
+| shipping_address_line1 | VARCHAR | First line of customer shipping address    | &#x27;456 Oak St&#x27;    |
+| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | &#x27;Suite 101&#x27;     |
+| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | &#x27;Chicago&#x27;       |
+| shipping_country       | VARCHAR | Country name for the shipping address      | &#x27;United States&#x27; |
+| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | &#x27;60601&#x27;         |
+| shipping_region        | VARCHAR | Region/state/province for shipping address | &#x27;Illinois&#x27;      |
+
+### Warehouse Information
+
+| Column         | Type    | Description                                      | Example                       |
+| -------------- | ------- | ------------------------------------------------ | ----------------------------- |
+| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |
+| warehouse_name | VARCHAR | Name of the warehouse location                   | &#x27;Chicago Distribution Center&#x27; |
+
+### Promotion Information
+
+| Column                | Type    | Description                                      | Example                      |
+| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |
+| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |
+| promotion_name        | VARCHAR | Name of the marketing promotion                  | &#x27;Summer Sale 2023&#x27;           |
+| promotion_description | VARCHAR | Detailed description of the promotion            | &#x27;20% off all summer apparel&#x27; |
+
+### Order Line Item Information
+
+| Column              | Type    | Description                                            | Example                                       |
+| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |
+| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |
+| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |
+| product_name        | VARCHAR | Name of the product                                    | &#x27;Ergonomic Office Chair&#x27;                      |
+| product_description | VARCHAR | Brief description of the product                       | &#x27;Adjustable office chair with lumbar support&#x27; |
+| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |
+| category_name       | VARCHAR | Name of the product category                           | &#x27;Office Furniture&#x27;                            |
+| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |
+| quantity            | NUMBER  | Number of units ordered                                | 2                                             |
+| line_total          | NUMBER  | Total price for the line item (unit_price \* quantity) | 299.98                                        |
+| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |
+| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |
+| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | &#x27;Y&#x27;, &#x27;Premium&#x27;, &#x27;Basic&#x27;                       |
+| condition           | VARCHAR | Condition of product                                   | &#x27;New&#x27;, &#x27;Refurbished&#x27;                          |
+| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |
+| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |
+| product_status      | VARCHAR | Current status of the product                          | &#x27;Available&#x27;, &#x27;Discontinued&#x27;                   |
+| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |
+| stock_status        | VARCHAR | Status of current inventory levels                     | &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;        |
+
+### Calculated Fields
+
+| Column           | Type    | Description                                          | Example                                  |
+| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |
+| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |
+| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |
+| delivery_status  | VARCHAR | Current status of delivery                           | &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27; |
+| return_status    | VARCHAR | Status indicating if item was returned               | &#x27;Returned&#x27;, &#x27;Not Returned&#x27;               |
+
+### Timestamp Information
+
+| Column     | Type         | Description                                                             | Example                             |
+| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |
+| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |
+
+## Sources and Joins
+
+This model combines data from the following source tables:
+
+- `orders` - Primary table containing order header information
+- `customers` - Customer demographic and contact information
+- `addresses` - Billing and shipping address details
+- `countries` - Country information for addresses
+- `regions` - Regional information for addresses
+- `warehouses` - Warehouse details for order fulfillment
+- `promotions` - Promotion information applied to orders
+- `order_items` - Individual line items within each order
+- `products` - Product information for ordered items
+- `product_categories` - Category information for products
+- `inventories` - Inventory levels for products at warehouses
+
+## Data Tests
+
+The following data quality tests are applied to this model:
+
+### Primary Key Tests
+
+- `order_id` and `line_item_id` combination is unique
+- `order_id` is not null
+
+### Referential Integrity Tests
+
+- `customer_id` exists in the customers table
+- `product_id` exists in the products table
+- `warehouse_id` exists in the warehouses table
+- `promotion_id` exists in the promotions table (when not null)
+- `category_id` exists in the product_categories table
+
+### Value Tests
+
+- `unit_price` and `quantity` are positive values
+- `line_total` equals `unit_price` \* `quantity`
+- `order_status` contains valid status codes
+- `wait_till_complete_yn` contains only &#x27;Y&#x27; or &#x27;N&#x27;
+- `stock_status` contains only valid values: &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;, &#x27;Unknown&#x27;
+- `delivery_status` contains only valid values: &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27;, &#x27;Unknown&#x27;
+- `return_status` contains only valid values: &#x27;Returned&#x27;, &#x27;Not Returned&#x27;
+
+## Usage Examples
+
+### Basic Order Query
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    cust_first_name || &#x27; &#x27; || cust_last_name AS customer_name,
+    order_total,
+    delivery_status
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -1, CURRENT_DATE())
+ORDER BY order_date DESC
+```
+
+### Order Analysis by Category
+
+```sql
+SELECT
+    category_name,
+    COUNT(DISTINCT order_id) AS order_count,
+    SUM(line_total) AS total_revenue,
+    AVG(discount_percent) AS avg_discount_pct
+FROM order_details
+WHERE order_date &gt;= DATEADD(year, -1, CURRENT_DATE())
+GROUP BY category_name
+ORDER BY total_revenue DESC
+```
+
+### Delivery Performance
+
+```sql
+SELECT
+    warehouse_name,
+    delivery_type,
+    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,
+    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,
+    COUNT(*) AS shipment_count
+FROM order_details
+WHERE dispatch_date IS NOT NULL
+  AND order_date &gt;= DATEADD(month, -6, CURRENT_DATE())
+GROUP BY warehouse_name, delivery_type
+ORDER BY warehouse_name, avg_processing_days
+```
+
+### Returns Analysis
+
+```sql
+SELECT
+    product_name,
+    COUNT(*) AS total_ordered,
+    SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) AS total_returned,
+    (SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -3, CURRENT_DATE())
+GROUP BY product_name
+HAVING COUNT(*) &gt; 10
+ORDER BY return_rate DESC
+LIMIT 20
+```
+
+## Maintenance and Refresh
+
+As a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`
+
+## Dependencies
+
+This model depends on:
+
+- Source tables from the schema `order_entry`
+- Any data quality tests defined in the file `schema.yml`
+
+## Additional Notes
+
+- This model includes sensitive customer information. Ensure appropriate access controls are in place.
+- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.
+- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.1e0398a3-113f-475e-b6fc-32ab72a634d2</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG</td><td class="src"><code>looker/Order Details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.alex@example.com</td><td class="src"><code>looker/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.brock1@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.bryan@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.jonny1@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.jonny2@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.marty@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.sam@example.com</td><td class="src"><code>dbt/order_details</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/addresses</b><span class="compte">13 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>address_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>address_line1</code></td><td class="genre">column description</td><td class="val">First line of address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>address_line2</code></td><td class="genre">column description</td><td class="val">Second line of address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>country_id</code></td><td class="genre">column description</td><td class="val">Reference to country table</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>customer_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the customers table</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>date_created</code></td><td class="genre">column description</td><td class="val">Date when address was added to the system</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>region_id</code></td><td class="genre">column description</td><td class="val">Reference to region table</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>town_city</code></td><td class="genre">column description</td><td class="val">Town or city of the address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>zipcode</code></td><td class="genre">column description</td><td class="val">Postal code of address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains multiple shipping and billing addresses for customers</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/addresses</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/countries</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>country_code</code></td><td class="genre">column description</td><td class="val">ISO two-letter country code</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>country_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the country</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>country_name</code></td><td class="genre">column description</td><td class="val">Name of the country</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>nls_territory</code></td><td class="genre">column description</td><td class="val">NLS territory setting for localization</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Reference table for country information</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/countries</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/customers</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains customer demographic and contact information</td><td class="src"><code>dbt/customers</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/inventories</b><span class="compte">10 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>max_stock_level</code></td><td class="genre">column description</td><td class="val">Maximum storage capacity for this product</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>product_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the products table</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>quantity_on_hand</code></td><td class="genre">column description</td><td class="val">Current inventory count for this product in this warehouse</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>reorder_quantity</code></td><td class="genre">column description</td><td class="val">Standard reorder quantity when restocking</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>restock_level</code></td><td class="genre">column description</td><td class="val">Threshold at which restocking is initiated</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>warehouse_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the warehouses table</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Tracks product inventory levels across warehouses</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/inventories</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/order_items</b><span class="compte">15 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>condition</code></td><td class="genre">column description</td><td class="val">Condition of product (e.g., New, Refurbished)</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>dispatch_date</code></td><td class="genre">column description</td><td class="val">Date when item was dispatched from warehouse</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>estimated_delivery</code></td><td class="genre">column description</td><td class="val">Estimated delivery date for this item</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>gift_wrap</code></td><td class="genre">column description</td><td class="val">Flag or type of gift wrapping requested</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>line_item_id</code></td><td class="genre">column description</td><td class="val">Line item sequence number within the order</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>order_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the orders table</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>product_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the products table</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>quantity</code></td><td class="genre">column description</td><td class="val">Number of units ordered</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>return_date</code></td><td class="genre">column description</td><td class="val">Date when item was returned if applicable</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>supplier_id</code></td><td class="genre">column description</td><td class="val">ID of the supplier if dropshipped</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>unit_price</code></td><td class="genre">column description</td><td class="val">Selling price per unit at time of order</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains line items for each order</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/order_items</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/orders</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains header information for customer orders</td><td class="src"><code>dbt/orders</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/product_categories</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>category_description</code></td><td class="genre">column description</td><td class="val">Detailed description of the product category</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>category_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the product category</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>category_name</code></td><td class="genre">column description</td><td class="val">Name of the product category</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>parent_category_id</code></td><td class="genre">column description</td><td class="val">Self-referential key to parent category (allows hierarchy)</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Hierarchical product category classification system</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/product_categories</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/products</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains information about products available for sale</td><td class="src"><code>dbt/products</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/promotions</b><span class="compte">11 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>promotion_cost</code></td><td class="genre">column description</td><td class="val">Budgeted cost of running the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_description</code></td><td class="genre">column description</td><td class="val">Detailed description of the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_end_date</code></td><td class="genre">column description</td><td class="val">Ending date of the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_name</code></td><td class="genre">column description</td><td class="val">Name of the marketing promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_start_date</code></td><td class="genre">column description</td><td class="val">Starting date of the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_description</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:b2fd91.No Sample Values</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains information about marketing promotions and campaigns</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/promotions</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/regions</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>country_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the countries table</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>nls_language</code></td><td class="genre">column description</td><td class="val">Default language code for the region</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>region_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the region</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>region_name</code></td><td class="genre">column description</td><td class="val">Name of the region (state, province, etc.)</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Reference table for regional information within countries</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/regions</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>s3/warehouses</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>location_id</code></td><td class="genre">column description</td><td class="val">Reference to the physical location</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>warehouse_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the warehouse</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>warehouse_name</code></td><td class="genre">column description</td><td class="val">Name of the warehouse location</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>wh_geo_location</code></td><td class="genre">column description</td><td class="val">Geographic coordinates of the warehouse</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains information about physical distribution centers</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/warehouses</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/ADDRESSES</b><span class="compte">15 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>address_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>address_line1</code></td><td class="genre">column description</td><td class="val">First line of address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>address_line2</code></td><td class="genre">column description</td><td class="val">Second line of address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>country_id</code></td><td class="genre">column description</td><td class="val">Reference to country table</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>customer_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the customers table</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>date_created</code></td><td class="genre">column description</td><td class="val">Date when address was added to the system</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>region_id</code></td><td class="genre">column description</td><td class="val">Reference to region table</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>town_city</code></td><td class="genre">column description</td><td class="val">Town or city of the address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>zipcode</code></td><td class="genre">column description</td><td class="val">Postal code of address</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>town_city</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>zipcode</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains multiple shipping and billing addresses for customers</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/addresses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/addresses</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/COUNTRIES</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>country_code</code></td><td class="genre">column description</td><td class="val">ISO two-letter country code</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>country_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the country</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>country_name</code></td><td class="genre">column description</td><td class="val">Name of the country</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>nls_territory</code></td><td class="genre">column description</td><td class="val">NLS territory setting for localization</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Reference table for country information</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/countries</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/countries</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/CUSTOMERS</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains customer demographic and contact information</td><td class="src"><code>dbt/customers</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/INVENTORIES</b><span class="compte">10 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>max_stock_level</code></td><td class="genre">column description</td><td class="val">Maximum storage capacity for this product</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>product_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the products table</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>quantity_on_hand</code></td><td class="genre">column description</td><td class="val">Current inventory count for this product in this warehouse</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>reorder_quantity</code></td><td class="genre">column description</td><td class="val">Standard reorder quantity when restocking</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>restock_level</code></td><td class="genre">column description</td><td class="val">Threshold at which restocking is initiated</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>warehouse_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the warehouses table</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Tracks product inventory levels across warehouses</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/inventories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/inventories</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/ORDERS</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains header information for customer orders</td><td class="src"><code>dbt/orders</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/ORDER_DETAILS</b><span class="compte">10 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val"># Order Details Model
+
+## Overview
+
+The `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.
+
+This denormalized view is designed to support reporting, analysis, and operational insights across the order management process.
+
+## Model Information
+
+- **Name**: `order_details`
+- **Type**: View
+- **Source Schema**: `order_entry`
+- **Database**: `order_entry_db`
+- **Update Frequency**: Refreshed on query with current timestamp
+
+## Data Structure
+
+### Order Information
+
+| Column                | Type         | Description                                                | Example                            |
+| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |
+| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |
+| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |
+| order_mode            | VARCHAR      | Method of order placement                                  | &#x27;online&#x27;, &#x27;phone&#x27;, &#x27;direct&#x27;        |
+| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |
+| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |
+| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |
+| delivery_type         | VARCHAR      | Shipping method                                            | &#x27;Standard&#x27;, &#x27;Express&#x27;, &#x27;Overnight&#x27; |
+| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | &#x27;Y&#x27;, &#x27;N&#x27;                           |
+| payment_method_code   | VARCHAR      | Code indicating payment method used                        | &#x27;CC&#x27;, &#x27;PayPal&#x27;, &#x27;ApplePay&#x27;         |
+
+### Customer Information
+
+| Column          | Type    | Description                        | Example                      |
+| --------------- | ------- | ---------------------------------- | ---------------------------- |
+| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |
+| cust_first_name | VARCHAR | Customer first name                | &#x27;John&#x27;                       |
+| cust_last_name  | VARCHAR | Customer last name                 | &#x27;Smith&#x27;                      |
+| cust_email      | VARCHAR | Customer email address             | &#x27;john.smith@example.com&#x27;     |
+| phone_number    | VARCHAR | Customer contact phone number      | &#x27;555-123-4567&#x27;               |
+| customer_class  | VARCHAR | Classification of the customer     | &#x27;Platinum&#x27;, &#x27;Gold&#x27;, &#x27;Silver&#x27; |
+
+### Billing Address Information
+
+| Column                | Type    | Description                                   | Example         |
+| --------------------- | ------- | --------------------------------------------- | --------------- |
+| billing_address_line1 | VARCHAR | First line of customer billing address        | &#x27;123 Main St&#x27;   |
+| billing_address_line2 | VARCHAR | Second line of customer billing address       | &#x27;Apt 4B&#x27;        |
+| billing_town_city     | VARCHAR | Town or city of customer billing address      | &#x27;Springfield&#x27;   |
+| billing_country       | VARCHAR | Country name for the billing address          | &#x27;United States&#x27; |
+| billing_zipcode       | VARCHAR | Postal code of customer billing address       | &#x27;12345&#x27;         |
+| billing_region        | VARCHAR | Region/state/province for the billing address | &#x27;Illinois&#x27;      |
+
+### Shipping Address Information
+
+| Column                 | Type    | Description                                | Example         |
+| ---------------------- | ------- | ------------------------------------------ | --------------- |
+| shipping_address_line1 | VARCHAR | First line of customer shipping address    | &#x27;456 Oak St&#x27;    |
+| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | &#x27;Suite 101&#x27;     |
+| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | &#x27;Chicago&#x27;       |
+| shipping_country       | VARCHAR | Country name for the shipping address      | &#x27;United States&#x27; |
+| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | &#x27;60601&#x27;         |
+| shipping_region        | VARCHAR | Region/state/province for shipping address | &#x27;Illinois&#x27;      |
+
+### Warehouse Information
+
+| Column         | Type    | Description                                      | Example                       |
+| -------------- | ------- | ------------------------------------------------ | ----------------------------- |
+| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |
+| warehouse_name | VARCHAR | Name of the warehouse location                   | &#x27;Chicago Distribution Center&#x27; |
+
+### Promotion Information
+
+| Column                | Type    | Description                                      | Example                      |
+| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |
+| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |
+| promotion_name        | VARCHAR | Name of the marketing promotion                  | &#x27;Summer Sale 2023&#x27;           |
+| promotion_description | VARCHAR | Detailed description of the promotion            | &#x27;20% off all summer apparel&#x27; |
+
+### Order Line Item Information
+
+| Column              | Type    | Description                                            | Example                                       |
+| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |
+| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |
+| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |
+| product_name        | VARCHAR | Name of the product                                    | &#x27;Ergonomic Office Chair&#x27;                      |
+| product_description | VARCHAR | Brief description of the product                       | &#x27;Adjustable office chair with lumbar support&#x27; |
+| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |
+| category_name       | VARCHAR | Name of the product category                           | &#x27;Office Furniture&#x27;                            |
+| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |
+| quantity            | NUMBER  | Number of units ordered                                | 2                                             |
+| line_total          | NUMBER  | Total price for the line item (unit_price \* quantity) | 299.98                                        |
+| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |
+| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |
+| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | &#x27;Y&#x27;, &#x27;Premium&#x27;, &#x27;Basic&#x27;                       |
+| condition           | VARCHAR | Condition of product                                   | &#x27;New&#x27;, &#x27;Refurbished&#x27;                          |
+| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |
+| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |
+| product_status      | VARCHAR | Current status of the product                          | &#x27;Available&#x27;, &#x27;Discontinued&#x27;                   |
+| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |
+| stock_status        | VARCHAR | Status of current inventory levels                     | &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;        |
+
+### Calculated Fields
+
+| Column           | Type    | Description                                          | Example                                  |
+| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |
+| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |
+| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |
+| delivery_status  | VARCHAR | Current status of delivery                           | &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27; |
+| return_status    | VARCHAR | Status indicating if item was returned               | &#x27;Returned&#x27;, &#x27;Not Returned&#x27;               |
+
+### Timestamp Information
+
+| Column     | Type         | Description                                                             | Example                             |
+| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |
+| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |
+
+## Sources and Joins
+
+This model combines data from the following source tables:
+
+- `orders` - Primary table containing order header information
+- `customers` - Customer demographic and contact information
+- `addresses` - Billing and shipping address details
+- `countries` - Country information for addresses
+- `regions` - Regional information for addresses
+- `warehouses` - Warehouse details for order fulfillment
+- `promotions` - Promotion information applied to orders
+- `order_items` - Individual line items within each order
+- `products` - Product information for ordered items
+- `product_categories` - Category information for products
+- `inventories` - Inventory levels for products at warehouses
+
+## Data Tests
+
+The following data quality tests are applied to this model:
+
+### Primary Key Tests
+
+- `order_id` and `line_item_id` combination is unique
+- `order_id` is not null
+
+### Referential Integrity Tests
+
+- `customer_id` exists in the customers table
+- `product_id` exists in the products table
+- `warehouse_id` exists in the warehouses table
+- `promotion_id` exists in the promotions table (when not null)
+- `category_id` exists in the product_categories table
+
+### Value Tests
+
+- `unit_price` and `quantity` are positive values
+- `line_total` equals `unit_price` \* `quantity`
+- `order_status` contains valid status codes
+- `wait_till_complete_yn` contains only &#x27;Y&#x27; or &#x27;N&#x27;
+- `stock_status` contains only valid values: &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;, &#x27;Unknown&#x27;
+- `delivery_status` contains only valid values: &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27;, &#x27;Unknown&#x27;
+- `return_status` contains only valid values: &#x27;Returned&#x27;, &#x27;Not Returned&#x27;
+
+## Usage Examples
+
+### Basic Order Query
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    cust_first_name || &#x27; &#x27; || cust_last_name AS customer_name,
+    order_total,
+    delivery_status
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -1, CURRENT_DATE())
+ORDER BY order_date DESC
+```
+
+### Order Analysis by Category
+
+```sql
+SELECT
+    category_name,
+    COUNT(DISTINCT order_id) AS order_count,
+    SUM(line_total) AS total_revenue,
+    AVG(discount_percent) AS avg_discount_pct
+FROM order_details
+WHERE order_date &gt;= DATEADD(year, -1, CURRENT_DATE())
+GROUP BY category_name
+ORDER BY total_revenue DESC
+```
+
+### Delivery Performance
+
+```sql
+SELECT
+    warehouse_name,
+    delivery_type,
+    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,
+    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,
+    COUNT(*) AS shipment_count
+FROM order_details
+WHERE dispatch_date IS NOT NULL
+  AND order_date &gt;= DATEADD(month, -6, CURRENT_DATE())
+GROUP BY warehouse_name, delivery_type
+ORDER BY warehouse_name, avg_processing_days
+```
+
+### Returns Analysis
+
+```sql
+SELECT
+    product_name,
+    COUNT(*) AS total_ordered,
+    SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) AS total_returned,
+    (SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -3, CURRENT_DATE())
+GROUP BY product_name
+HAVING COUNT(*) &gt; 10
+ORDER BY return_rate DESC
+LIMIT 20
+```
+
+## Maintenance and Refresh
+
+As a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`
+
+## Dependencies
+
+This model depends on:
+
+- Source tables from the schema `order_entry`
+- Any data quality tests defined in the file `schema.yml`
+
+## Additional Notes
+
+- This model includes sensitive customer information. Ensure appropriate access controls are in place.
+- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.
+- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG</td><td class="src"><code>looker/Order Details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.alex@example.com</td><td class="src"><code>looker/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.bryan@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.jonny2@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.kirk@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.marty@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.sam@example.com</td><td class="src"><code>dbt/order_details</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/ORDER_DETAILS_REPLICA</b><span class="compte">13 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val"># Order Details Model
+
+## Overview
+
+The `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.
+
+This denormalized view is designed to support reporting, analysis, and operational insights across the order management process.
+
+## Model Information
+
+- **Name**: `order_details`
+- **Type**: View
+- **Source Schema**: `order_entry`
+- **Database**: `order_entry_db`
+- **Update Frequency**: Refreshed on query with current timestamp
+
+## Data Structure
+
+### Order Information
+
+| Column                | Type         | Description                                                | Example                            |
+| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |
+| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |
+| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |
+| order_mode            | VARCHAR      | Method of order placement                                  | &#x27;online&#x27;, &#x27;phone&#x27;, &#x27;direct&#x27;        |
+| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |
+| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |
+| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |
+| delivery_type         | VARCHAR      | Shipping method                                            | &#x27;Standard&#x27;, &#x27;Express&#x27;, &#x27;Overnight&#x27; |
+| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | &#x27;Y&#x27;, &#x27;N&#x27;                           |
+| payment_method_code   | VARCHAR      | Code indicating payment method used                        | &#x27;CC&#x27;, &#x27;PayPal&#x27;, &#x27;ApplePay&#x27;         |
+
+### Customer Information
+
+| Column          | Type    | Description                        | Example                      |
+| --------------- | ------- | ---------------------------------- | ---------------------------- |
+| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |
+| cust_first_name | VARCHAR | Customer first name                | &#x27;John&#x27;                       |
+| cust_last_name  | VARCHAR | Customer last name                 | &#x27;Smith&#x27;                      |
+| cust_email      | VARCHAR | Customer email address             | &#x27;john.smith@example.com&#x27;     |
+| phone_number    | VARCHAR | Customer contact phone number      | &#x27;555-123-4567&#x27;               |
+| customer_class  | VARCHAR | Classification of the customer     | &#x27;Platinum&#x27;, &#x27;Gold&#x27;, &#x27;Silver&#x27; |
+
+### Billing Address Information
+
+| Column                | Type    | Description                                   | Example         |
+| --------------------- | ------- | --------------------------------------------- | --------------- |
+| billing_address_line1 | VARCHAR | First line of customer billing address        | &#x27;123 Main St&#x27;   |
+| billing_address_line2 | VARCHAR | Second line of customer billing address       | &#x27;Apt 4B&#x27;        |
+| billing_town_city     | VARCHAR | Town or city of customer billing address      | &#x27;Springfield&#x27;   |
+| billing_country       | VARCHAR | Country name for the billing address          | &#x27;United States&#x27; |
+| billing_zipcode       | VARCHAR | Postal code of customer billing address       | &#x27;12345&#x27;         |
+| billing_region        | VARCHAR | Region/state/province for the billing address | &#x27;Illinois&#x27;      |
+
+### Shipping Address Information
+
+| Column                 | Type    | Description                                | Example         |
+| ---------------------- | ------- | ------------------------------------------ | --------------- |
+| shipping_address_line1 | VARCHAR | First line of customer shipping address    | &#x27;456 Oak St&#x27;    |
+| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | &#x27;Suite 101&#x27;     |
+| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | &#x27;Chicago&#x27;       |
+| shipping_country       | VARCHAR | Country name for the shipping address      | &#x27;United States&#x27; |
+| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | &#x27;60601&#x27;         |
+| shipping_region        | VARCHAR | Region/state/province for shipping address | &#x27;Illinois&#x27;      |
+
+### Warehouse Information
+
+| Column         | Type    | Description                                      | Example                       |
+| -------------- | ------- | ------------------------------------------------ | ----------------------------- |
+| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |
+| warehouse_name | VARCHAR | Name of the warehouse location                   | &#x27;Chicago Distribution Center&#x27; |
+
+### Promotion Information
+
+| Column                | Type    | Description                                      | Example                      |
+| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |
+| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |
+| promotion_name        | VARCHAR | Name of the marketing promotion                  | &#x27;Summer Sale 2023&#x27;           |
+| promotion_description | VARCHAR | Detailed description of the promotion            | &#x27;20% off all summer apparel&#x27; |
+
+### Order Line Item Information
+
+| Column              | Type    | Description                                            | Example                                       |
+| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |
+| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |
+| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |
+| product_name        | VARCHAR | Name of the product                                    | &#x27;Ergonomic Office Chair&#x27;                      |
+| product_description | VARCHAR | Brief description of the product                       | &#x27;Adjustable office chair with lumbar support&#x27; |
+| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |
+| category_name       | VARCHAR | Name of the product category                           | &#x27;Office Furniture&#x27;                            |
+| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |
+| quantity            | NUMBER  | Number of units ordered                                | 2                                             |
+| line_total          | NUMBER  | Total price for the line item (unit_price \* quantity) | 299.98                                        |
+| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |
+| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |
+| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | &#x27;Y&#x27;, &#x27;Premium&#x27;, &#x27;Basic&#x27;                       |
+| condition           | VARCHAR | Condition of product                                   | &#x27;New&#x27;, &#x27;Refurbished&#x27;                          |
+| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |
+| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |
+| product_status      | VARCHAR | Current status of the product                          | &#x27;Available&#x27;, &#x27;Discontinued&#x27;                   |
+| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |
+| stock_status        | VARCHAR | Status of current inventory levels                     | &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;        |
+
+### Calculated Fields
+
+| Column           | Type    | Description                                          | Example                                  |
+| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |
+| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |
+| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |
+| delivery_status  | VARCHAR | Current status of delivery                           | &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27; |
+| return_status    | VARCHAR | Status indicating if item was returned               | &#x27;Returned&#x27;, &#x27;Not Returned&#x27;               |
+
+### Timestamp Information
+
+| Column     | Type         | Description                                                             | Example                             |
+| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |
+| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |
+
+## Sources and Joins
+
+This model combines data from the following source tables:
+
+- `orders` - Primary table containing order header information
+- `customers` - Customer demographic and contact information
+- `addresses` - Billing and shipping address details
+- `countries` - Country information for addresses
+- `regions` - Regional information for addresses
+- `warehouses` - Warehouse details for order fulfillment
+- `promotions` - Promotion information applied to orders
+- `order_items` - Individual line items within each order
+- `products` - Product information for ordered items
+- `product_categories` - Category information for products
+- `inventories` - Inventory levels for products at warehouses
+
+## Data Tests
+
+The following data quality tests are applied to this model:
+
+### Primary Key Tests
+
+- `order_id` and `line_item_id` combination is unique
+- `order_id` is not null
+
+### Referential Integrity Tests
+
+- `customer_id` exists in the customers table
+- `product_id` exists in the products table
+- `warehouse_id` exists in the warehouses table
+- `promotion_id` exists in the promotions table (when not null)
+- `category_id` exists in the product_categories table
+
+### Value Tests
+
+- `unit_price` and `quantity` are positive values
+- `line_total` equals `unit_price` \* `quantity`
+- `order_status` contains valid status codes
+- `wait_till_complete_yn` contains only &#x27;Y&#x27; or &#x27;N&#x27;
+- `stock_status` contains only valid values: &#x27;Low Stock&#x27;, &#x27;In Stock&#x27;, &#x27;Overstocked&#x27;, &#x27;Unknown&#x27;
+- `delivery_status` contains only valid values: &#x27;Not Shipped&#x27;, &#x27;In Transit&#x27;, &#x27;Delivered&#x27;, &#x27;Unknown&#x27;
+- `return_status` contains only valid values: &#x27;Returned&#x27;, &#x27;Not Returned&#x27;
+
+## Usage Examples
+
+### Basic Order Query
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    cust_first_name || &#x27; &#x27; || cust_last_name AS customer_name,
+    order_total,
+    delivery_status
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -1, CURRENT_DATE())
+ORDER BY order_date DESC
+```
+
+### Order Analysis by Category
+
+```sql
+SELECT
+    category_name,
+    COUNT(DISTINCT order_id) AS order_count,
+    SUM(line_total) AS total_revenue,
+    AVG(discount_percent) AS avg_discount_pct
+FROM order_details
+WHERE order_date &gt;= DATEADD(year, -1, CURRENT_DATE())
+GROUP BY category_name
+ORDER BY total_revenue DESC
+```
+
+### Delivery Performance
+
+```sql
+SELECT
+    warehouse_name,
+    delivery_type,
+    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,
+    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,
+    COUNT(*) AS shipment_count
+FROM order_details
+WHERE dispatch_date IS NOT NULL
+  AND order_date &gt;= DATEADD(month, -6, CURRENT_DATE())
+GROUP BY warehouse_name, delivery_type
+ORDER BY warehouse_name, avg_processing_days
+```
+
+### Returns Analysis
+
+```sql
+SELECT
+    product_name,
+    COUNT(*) AS total_ordered,
+    SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) AS total_returned,
+    (SUM(CASE WHEN return_status = &#x27;Returned&#x27; THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate
+FROM order_details
+WHERE order_date &gt;= DATEADD(month, -3, CURRENT_DATE())
+GROUP BY product_name
+HAVING COUNT(*) &gt; 10
+ORDER BY return_rate DESC
+LIMIT 20
+```
+
+## Maintenance and Refresh
+
+As a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`
+
+## Dependencies
+
+This model depends on:
+
+- Source tables from the schema `order_entry`
+- Any data quality tests defined in the file `schema.yml`
+
+## Additional Notes
+
+- This model includes sensitive customer information. Ensure appropriate access controls are in place.
+- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.
+- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.1e0398a3-113f-475e-b6fc-32ab72a634d2</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG</td><td class="src"><code>looker/Order Details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.alex@example.com</td><td class="src"><code>looker/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.brock1@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.bryan@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.jonny1@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.jonny2@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.kirk@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.marty@example.com</td><td class="src"><code>dbt/order_details</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.sam@example.com</td><td class="src"><code>dbt/order_details</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/ORDER_HISTORY</b><span class="compte">2 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Incremental table containing all historical order information</td><td class="src"><code>dbt/order_history</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">E-Commerce</td><td class="src"><code>dbt/order_history</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/ORDER_ITEMS</b><span class="compte">16 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>condition</code></td><td class="genre">column description</td><td class="val">Condition of product (e.g., New, Refurbished)</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>dispatch_date</code></td><td class="genre">column description</td><td class="val">Date when item was dispatched from warehouse</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>estimated_delivery</code></td><td class="genre">column description</td><td class="val">Estimated delivery date for this item</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>gift_wrap</code></td><td class="genre">column description</td><td class="val">Flag or type of gift wrapping requested</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>line_item_id</code></td><td class="genre">column description</td><td class="val">Line item sequence number within the order</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>order_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the orders table</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>product_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the products table</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>quantity</code></td><td class="genre">column description</td><td class="val">Number of units ordered</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>return_date</code></td><td class="genre">column description</td><td class="val">Date when item was returned if applicable</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>supplier_id</code></td><td class="genre">column description</td><td class="val">ID of the supplier if dropshipped</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>unit_price</code></td><td class="genre">column description</td><td class="val">Selling price per unit at time of order</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>order_id</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>s3/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains line items for each order</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/order_items</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/order_items</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/PRODUCTS</b><span class="compte">1 gap</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains information about products available for sale</td><td class="src"><code>dbt/products</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/PRODUCT_CATEGORIES</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>category_description</code></td><td class="genre">column description</td><td class="val">Detailed description of the product category</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>category_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the product category</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>category_name</code></td><td class="genre">column description</td><td class="val">Name of the product category</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>parent_category_id</code></td><td class="genre">column description</td><td class="val">Self-referential key to parent category (allows hierarchy)</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Hierarchical product category classification system</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/product_categories</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/product_categories</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/PROMOTIONS</b><span class="compte">12 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>promotion_cost</code></td><td class="genre">column description</td><td class="val">Budgeted cost of running the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_description</code></td><td class="genre">column description</td><td class="val">Detailed description of the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_end_date</code></td><td class="genre">column description</td><td class="val">Ending date of the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_name</code></td><td class="genre">column description</td><td class="val">Name of the marketing promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_start_date</code></td><td class="genre">column description</td><td class="val">Starting date of the promotion</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_description</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:b2fd91.No Sample Values</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>promotion_id</code></td><td class="genre">glossary term</td><td class="val">urn:li:glossaryTerm:b2fd91.1598cf93-c199-43a1-8833-fce96faa9a1a</td><td class="src"><code>s3/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains information about marketing promotions and campaigns</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/promotions</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/REGIONS</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>country_id</code></td><td class="genre">column description</td><td class="val">Foreign key to the countries table</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>nls_language</code></td><td class="genre">column description</td><td class="val">Default language code for the region</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>region_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the region</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>region_name</code></td><td class="genre">column description</td><td class="val">Name of the region (state, province, etc.)</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Reference table for regional information within countries</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/regions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/regions</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>snowflake/WAREHOUSES</b><span class="compte">8 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>location_id</code></td><td class="genre">column description</td><td class="val">Reference to the physical location</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>warehouse_id</code></td><td class="genre">column description</td><td class="val">Unique identifier for the warehouse</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>warehouse_name</code></td><td class="genre">column description</td><td class="val">Name of the warehouse location</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>wh_geo_location</code></td><td class="genre">column description</td><td class="val">Geographic coordinates of the warehouse</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">description</td><td class="val">Contains information about physical distribution centers</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">domain</td><td class="val">Data Platform Team</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM</td><td class="src"><code>dbt/warehouses</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.EMP006</td><td class="src"><code>dbt/warehouses</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>tableau/Custom SQL Query · 37fcfb15</b><span class="compte">12 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>AVERAGE_ORDER_VALUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>AVERAGE_ORDER_VALUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>AVERAGE_ORDER_VALUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>ORDER_COUNT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>ORDER_COUNT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>ORDER_COUNT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>ORDER_MODE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>ORDER_MODE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>TOTAL_REVENUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>TOTAL_REVENUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>TOTAL_REVENUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Order Mode</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.brock1@example.com</td><td class="src"><code>tableau/Order Mode</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>tableau/Custom SQL Query · 4a3af1dd</b><span class="compte">12 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>AVERAGE_ORDER_VALUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>AVERAGE_ORDER_VALUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>AVERAGE_ORDER_VALUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>CATEGORY_NAME</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>CATEGORY_NAME</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:DIMENSION</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>ORDERS_COUNT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>ORDERS_COUNT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>ORDERS_COUNT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>TOTAL_REVENUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>TOTAL_REVENUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>TOTAL_REVENUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Top Product Category</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.brock1@example.com</td><td class="src"><code>tableau/Top Product Category</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>tableau/Custom SQL Query · 8bfe7483</b><span class="compte">16 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>AVERAGE_DISCOUNT_PERCENT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>AVERAGE_DISCOUNT_PERCENT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>AVERAGE_DISCOUNT_PERCENT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>AVERAGE_ORDER_VALUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>AVERAGE_ORDER_VALUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>AVERAGE_ORDER_VALUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>ORDERS_WITH_PROMOTION</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>ORDERS_WITH_PROMOTION</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>ORDERS_WITH_PROMOTION</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>PROMOTION_NAME</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>PROMOTION_NAME</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COUNT</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>PROMOTION_NAME</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:DIMENSION</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>TOTAL_REVENUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>TOTAL_REVENUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>TOTAL_REVENUE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Promotions</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.brock1@example.com</td><td class="src"><code>tableau/Promotions</code></td></tr></tbody></table></div></details>
+<details class="cible"><summary><b>tableau/Custom SQL Query · f32082e5</b><span class="compte">13 gaps</span></summary><div class="rouleau"><table><thead><tr><th>column</th><th>kind</th><th>value it is missing</th><th>copied from</th></tr></thead><tbody><tr><td><code>CATEGORY_NAME</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>CATEGORY_NAME</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COUNT</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>CATEGORY_NAME</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:DIMENSION</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>ORDER_COUNT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>ORDER_COUNT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>ORDER_COUNT</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>ORDER_DATE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>ORDER_DATE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COUNT</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>ORDER_DATE</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:DIMENSION</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>TOTAL_SALES</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:COLUMNFIELD</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>TOTAL_SALES</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:MEASURE</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>TOTAL_SALES</code></td><td class="genre">column tag</td><td class="val">urn:li:tag:SUM</td><td class="src"><code>tableau/Orders By Day</code></td></tr><tr><td><code>&mdash;</code></td><td class="genre">owner</td><td class="val">urn:li:corpuser:b2fd91.brock1@example.com</td><td class="src"><code>tableau/Orders By Day</code></td></tr></tbody></table></div></details>
+
+<h2>Why these are the same data</h2>
+<p class="avant">Names are wrong about one time in five, and the lineage graph is
+worse: every same-name pair in this catalog is connected, and so is every pair
+picked at random, at the same median distance. So structure only proposes.
+A model decides, one pair at a time, and its reason is kept. A reason is a
+comment, not a verified fact — which is exactly why none of them is ever
+written into the catalog.</p>
+<details class="groupe"><summary><b>addresses / ADDRESSES</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/addresses</code><code>postgres/addresses</code><code>s3/addresses</code><code>snowflake/ADDRESSES</code></div><ul class="verdicts"><li><code>dbt/addresses</code> &amp; <code>snowflake/ADDRESSES</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data types, indicating they are copies of each other.</blockquote></li><li><code>dbt/addresses</code> &amp; <code>postgres/addresses</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical structure and column names, despite minor data type differences.</blockquote></li><li><code>dbt/addresses</code> &amp; <code>s3/addresses</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical structure and column names, despite being on different platforms.</blockquote></li><li><code>snowflake/ADDRESSES</code> &amp; <code>postgres/addresses</code> <span class="conf conf-high">high confidence</span><blockquote>Identical structure and column names with minor type differences</blockquote></li><li><code>snowflake/ADDRESSES</code> &amp; <code>s3/addresses</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data structure despite different platforms and case differences</blockquote></li><li><code>postgres/addresses</code> &amp; <code>s3/addresses</code> <span class="conf conf-high">high confidence</span><blockquote>Identical structure and column names, despite different platforms</blockquote></li></ul></details>
+<details class="groupe"><summary><b>countries / COUNTRIES</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/countries</code><code>postgres/countries</code><code>s3/countries</code><code>snowflake/COUNTRIES</code></div><ul class="verdicts"><li><code>dbt/countries</code> &amp; <code>snowflake/COUNTRIES</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets describe the same real-world entities with identical columns and data types.</blockquote></li><li><code>dbt/countries</code> &amp; <code>postgres/countries</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name</blockquote></li><li><code>dbt/countries</code> &amp; <code>s3/countries</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same name, likely exported from the same source</blockquote></li><li><code>snowflake/COUNTRIES</code> &amp; <code>postgres/countries</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column names are just case variations</blockquote></li><li><code>snowflake/COUNTRIES</code> &amp; <code>s3/countries</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column names despite minor case differences</blockquote></li><li><code>postgres/countries</code> &amp; <code>s3/countries</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data and structure across platforms</blockquote></li></ul></details>
+<details class="groupe"><summary><b>Custom SQL Query / Order Mode</b><span class="plats">tableau · tableau</span><span class="compte">1 pair judged</span></summary><div class="jeux"><code>tableau/Custom SQL Query</code><code>tableau/Order Mode</code></div><ul class="verdicts"><li><code>tableau/Order Mode</code> &amp; <code>tableau/Custom SQL Query</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain the same columns with similar names and data types, indicating they likely hold the same data.</blockquote></li></ul></details>
+<details class="groupe"><summary><b>Custom SQL Query / Orders By Day</b><span class="plats">tableau · tableau</span><span class="compte">1 pair judged</span></summary><div class="jeux"><code>tableau/Custom SQL Query</code><code>tableau/Orders By Day</code></div><ul class="verdicts"><li><code>tableau/Orders By Day</code> &amp; <code>tableau/Custom SQL Query</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain the same columns with similar data types and likely represent the same underlying data.</blockquote></li></ul></details>
+<details class="groupe"><summary><b>Custom SQL Query / Promotions</b><span class="plats">tableau · tableau</span><span class="compte">1 pair judged</span></summary><div class="jeux"><code>tableau/Custom SQL Query</code><code>tableau/Promotions</code></div><ul class="verdicts"><li><code>tableau/Promotions</code> &amp; <code>tableau/Custom SQL Query</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain the same columns with the same data types and names, indicating they are likely copies of each other.</blockquote></li></ul></details>
+<details class="groupe"><summary><b>Custom SQL Query / Top Product Category</b><span class="plats">tableau · tableau</span><span class="compte">1 pair judged</span></summary><div class="jeux"><code>tableau/Custom SQL Query</code><code>tableau/Top Product Category</code></div><ul class="verdicts"><li><code>tableau/Top Product Category</code> &amp; <code>tableau/Custom SQL Query</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain the same columns with similar names and data types, indicating they likely hold the same data.</blockquote></li></ul></details>
+<details class="groupe"><summary><b>customers / CUSTOMERS</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/customers</code><code>postgres/customers</code><code>s3/customers</code><code>snowflake/CUSTOMERS</code></div><ul class="verdicts"><li><code>dbt/customers</code> &amp; <code>snowflake/CUSTOMERS</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data types, indicating they are likely copies of each other.</blockquote></li><li><code>dbt/customers</code> &amp; <code>postgres/customers</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data types, just different platform and minor data type variations</blockquote></li><li><code>dbt/customers</code> &amp; <code>s3/customers</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same platform origin</blockquote></li><li><code>snowflake/CUSTOMERS</code> &amp; <code>postgres/customers</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets describe the same table structure and columns, likely copied across platforms.</blockquote></li><li><code>snowflake/CUSTOMERS</code> &amp; <code>s3/customers</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same number of columns, and similar platform export</blockquote></li><li><code>postgres/customers</code> &amp; <code>s3/customers</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types across different platforms</blockquote></li></ul></details>
+<details class="groupe"><summary><b>inventories / INVENTORIES</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/inventories</code><code>postgres/inventories</code><code>s3/inventories</code><code>snowflake/INVENTORIES</code></div><ul class="verdicts"><li><code>dbt/inventories</code> &amp; <code>snowflake/INVENTORIES</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data structure across different platforms</blockquote></li><li><code>dbt/inventories</code> &amp; <code>postgres/inventories</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name</blockquote></li><li><code>dbt/inventories</code> &amp; <code>s3/inventories</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types across different platforms</blockquote></li><li><code>snowflake/INVENTORIES</code> &amp; <code>postgres/inventories</code> <span class="conf conf-high">high confidence</span><blockquote>Identical structure and column names, same data types, and same number of columns</blockquote></li><li><code>snowflake/INVENTORIES</code> &amp; <code>s3/inventories</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data structure across different platforms</blockquote></li><li><code>postgres/inventories</code> &amp; <code>s3/inventories</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data structure across different platforms</blockquote></li></ul></details>
+<details class="groupe"><summary><b>order_details / Order Details / ORDER_DETAILS / ORDER_DETAILS_REPLICA</b><span class="plats">dbt · looker · looker · powerbi · snowflake · snowflake</span><span class="compte">12 pairs judged</span></summary><div class="jeux"><code>dbt/order_details</code><code>looker/order_details</code><code>looker/Order Details</code><code>powerbi/ORDER_DETAILS</code><code>snowflake/ORDER_DETAILS</code><code>snowflake/ORDER_DETAILS_REPLICA</code></div><ul class="verdicts"><li><code>dbt/order_details</code> &amp; <code>snowflake/ORDER_DETAILS</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data types, indicating they are likely copies of each other.</blockquote></li><li><code>dbt/order_details</code> &amp; <code>snowflake/ORDER_DETAILS_REPLICA</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data types, suggesting a replica or export from one platform to another.</blockquote></li><li><code>snowflake/ORDER_DETAILS</code> &amp; <code>snowflake/ORDER_DETAILS_REPLICA</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and names, indicating they are replicas of each other.</blockquote></li><li><code>dbt/order_details</code> &amp; <code>powerbi/ORDER_DETAILS</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain identical columns and data structure, despite minor differences in platform and column naming conventions.</blockquote></li><li><code>snowflake/ORDER_DETAILS</code> &amp; <code>powerbi/ORDER_DETAILS</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data types, suggesting they are copies of each other.</blockquote></li><li><code>powerbi/ORDER_DETAILS</code> &amp; <code>snowflake/ORDER_DETAILS_REPLICA</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data structure, indicating a replica of the same data.</blockquote></li><li><code>looker/order_details</code> &amp; <code>snowflake/ORDER_DETAILS_REPLICA</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain identical rows about the same real-world entities, despite differences in column names and data types.</blockquote></li><li><code>looker/order_details</code> &amp; <code>powerbi/ORDER_DETAILS</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain identical columns and data structure, indicating they are likely copies of each other.</blockquote></li><li><code>looker/Order Details</code> &amp; <code>snowflake/ORDER_DETAILS</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain identical rows about the same real-world entities despite differences in platform, column names, and data types.</blockquote></li><li><code>looker/Order Details</code> &amp; <code>looker/order_details</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain identical columns and data structure, despite minor differences in column naming</blockquote></li><li><code>looker/Order Details</code> &amp; <code>powerbi/ORDER_DETAILS</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain identical rows and columns describing the same real-world entities, despite minor differences in column naming conventions.</blockquote></li><li><code>looker/Order Details</code> &amp; <code>snowflake/ORDER_DETAILS_REPLICA</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets contain identical rows and columns, albeit with minor differences in column names and data types, indicating a replica.</blockquote></li></ul></details>
+<details class="groupe"><summary><b>order_history / ORDER_HISTORY</b><span class="plats">dbt · snowflake</span><span class="compte">1 pair judged</span></summary><div class="jeux"><code>dbt/order_history</code><code>snowflake/ORDER_HISTORY</code></div><ul class="verdicts"><li><code>dbt/order_history</code> &amp; <code>snowflake/ORDER_HISTORY</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and columns, despite case differences</blockquote></li></ul></details>
+<details class="groupe"><summary><b>order_items / ORDER_ITEMS</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/order_items</code><code>postgres/order_items</code><code>s3/order_items</code><code>snowflake/ORDER_ITEMS</code></div><ul class="verdicts"><li><code>dbt/order_items</code> &amp; <code>snowflake/ORDER_ITEMS</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same real-world entities</blockquote></li><li><code>dbt/order_items</code> &amp; <code>postgres/order_items</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name</blockquote></li><li><code>dbt/order_items</code> &amp; <code>s3/order_items</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data types, indicating they are likely copies of each other.</blockquote></li><li><code>snowflake/ORDER_ITEMS</code> &amp; <code>postgres/order_items</code> <span class="conf conf-high">high confidence</span><blockquote>Identical schema and column names, just different data types and platform</blockquote></li><li><code>snowflake/ORDER_ITEMS</code> &amp; <code>s3/order_items</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, just different case</blockquote></li><li><code>postgres/order_items</code> &amp; <code>s3/order_items</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name</blockquote></li></ul></details>
+<details class="groupe"><summary><b>orders / ORDERS</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/orders</code><code>postgres/orders</code><code>s3/orders</code><code>snowflake/ORDERS</code></div><ul class="verdicts"><li><code>dbt/orders</code> &amp; <code>snowflake/ORDERS</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data types, indicating they are likely copies of each other.</blockquote></li><li><code>dbt/orders</code> &amp; <code>postgres/orders</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same platform, same name</blockquote></li><li><code>dbt/orders</code> &amp; <code>s3/orders</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same platform copy</blockquote></li><li><code>snowflake/ORDERS</code> &amp; <code>postgres/orders</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types across different platforms</blockquote></li><li><code>snowflake/ORDERS</code> &amp; <code>s3/orders</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types across different platforms</blockquote></li><li><code>postgres/orders</code> &amp; <code>s3/orders</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types across different platforms</blockquote></li></ul></details>
+<details class="groupe"><summary><b>product_categories / PRODUCT_CATEGORIES</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/product_categories</code><code>postgres/product_categories</code><code>s3/product_categories</code><code>snowflake/PRODUCT_CATEGORIES</code></div><ul class="verdicts"><li><code>dbt/product_categories</code> &amp; <code>snowflake/PRODUCT_CATEGORIES</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column types despite case differences</blockquote></li><li><code>dbt/product_categories</code> &amp; <code>postgres/product_categories</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical structure and column names, despite minor data type differences.</blockquote></li><li><code>dbt/product_categories</code> &amp; <code>s3/product_categories</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name</blockquote></li><li><code>snowflake/PRODUCT_CATEGORIES</code> &amp; <code>postgres/product_categories</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column types across different platforms</blockquote></li><li><code>snowflake/PRODUCT_CATEGORIES</code> &amp; <code>s3/product_categories</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column names are case-insensitive equivalents</blockquote></li><li><code>postgres/product_categories</code> &amp; <code>s3/product_categories</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column names with minor type differences</blockquote></li></ul></details>
+<details class="groupe"><summary><b>product_information</b><span class="plats">postgres · s3</span><span class="compte">1 pair judged</span></summary><div class="jeux"><code>postgres/product_information</code><code>s3/product_information</code></div><ul class="verdicts"><li><code>postgres/product_information</code> &amp; <code>s3/product_information</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name</blockquote></li></ul></details>
+<details class="groupe"><summary><b>products / PRODUCTS</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/products</code><code>postgres/products</code><code>s3/products</code><code>snowflake/PRODUCTS</code></div><ul class="verdicts"><li><code>dbt/products</code> &amp; <code>snowflake/PRODUCTS</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same platform data export</blockquote></li><li><code>dbt/products</code> &amp; <code>postgres/products</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same platform, same name</blockquote></li><li><code>dbt/products</code> &amp; <code>s3/products</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same platform copy</blockquote></li><li><code>snowflake/PRODUCTS</code> &amp; <code>postgres/products</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, just different platform and case</blockquote></li><li><code>snowflake/PRODUCTS</code> &amp; <code>s3/products</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same platform data export</blockquote></li><li><code>postgres/products</code> &amp; <code>s3/products</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data structure across different platforms</blockquote></li></ul></details>
+<details class="groupe"><summary><b>promotions / PROMOTIONS</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/promotions</code><code>postgres/promotions</code><code>s3/promotions</code><code>snowflake/PROMOTIONS</code></div><ul class="verdicts"><li><code>dbt/promotions</code> &amp; <code>snowflake/PROMOTIONS</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column names with minor differences in data types</blockquote></li><li><code>dbt/promotions</code> &amp; <code>postgres/promotions</code> <span class="conf conf-high">high confidence</span><blockquote>Identical structure and data types, same column names, same data entity</blockquote></li><li><code>dbt/promotions</code> &amp; <code>s3/promotions</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name, likely a copy</blockquote></li><li><code>snowflake/PROMOTIONS</code> &amp; <code>postgres/promotions</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, just different platform and case</blockquote></li><li><code>snowflake/PROMOTIONS</code> &amp; <code>s3/promotions</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, likely a copy or export</blockquote></li><li><code>postgres/promotions</code> &amp; <code>s3/promotions</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name</blockquote></li></ul></details>
+<details class="groupe"><summary><b>regions / REGIONS</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/regions</code><code>postgres/regions</code><code>s3/regions</code><code>snowflake/REGIONS</code></div><ul class="verdicts"><li><code>dbt/regions</code> &amp; <code>snowflake/REGIONS</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column types across different platforms</blockquote></li><li><code>dbt/regions</code> &amp; <code>postgres/regions</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name, likely a copy or export</blockquote></li><li><code>dbt/regions</code> &amp; <code>s3/regions</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical columns and data types, indicating they are likely copies of each other.</blockquote></li><li><code>snowflake/REGIONS</code> &amp; <code>postgres/regions</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column names with minor differences in data types and case</blockquote></li><li><code>snowflake/REGIONS</code> &amp; <code>s3/regions</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, just different case</blockquote></li><li><code>postgres/regions</code> &amp; <code>s3/regions</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types across different platforms</blockquote></li></ul></details>
+<details class="groupe"><summary><b>warehouses / WAREHOUSES</b><span class="plats">dbt · postgres · s3 · snowflake</span><span class="compte">6 pairs judged</span></summary><div class="jeux"><code>dbt/warehouses</code><code>postgres/warehouses</code><code>s3/warehouses</code><code>snowflake/WAREHOUSES</code></div><ul class="verdicts"><li><code>dbt/warehouses</code> &amp; <code>snowflake/WAREHOUSES</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name with case difference</blockquote></li><li><code>dbt/warehouses</code> &amp; <code>postgres/warehouses</code> <span class="conf conf-high">high confidence</span><blockquote>Both datasets have identical structure and column names, despite different platforms and data types</blockquote></li><li><code>dbt/warehouses</code> &amp; <code>s3/warehouses</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same table name</blockquote></li><li><code>snowflake/WAREHOUSES</code> &amp; <code>postgres/warehouses</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same schema, likely copied or exported</blockquote></li><li><code>snowflake/WAREHOUSES</code> &amp; <code>s3/warehouses</code> <span class="conf conf-high">high confidence</span><blockquote>Identical columns and data types, same real-world entities</blockquote></li><li><code>postgres/warehouses</code> &amp; <code>s3/warehouses</code> <span class="conf conf-high">high confidence</span><blockquote>Identical data structure and column names, despite different platforms</blockquote></li></ul></details>
+
+<h2>Writing takes a second argument</h2>
+<p class="avant">Asking Fadlie to fix a dataset does not fix it. The dry run is
+the default in the code, not in the interface, so a call that forgets the flag
+changes nothing at all. Here is the answer to
+<code>apply_governance(dataset="order_details")</code>, exactly as the deployed
+agent returned it:</p>
+<div class="rouleau"><table class="blanc"><tr><td><code>dry_run</code></td>
+<td class="val"><code>true</code></td></tr>
+<tr><td><code>applied</code></td>
+<td class="val"><code>0</code></td></tr>
+<tr><td><code>would_apply</code></td>
+<td class="val"><code>56</code></td></tr>
+<tr><td><code>summary</code></td>
+<td class="val">56 gaps simulated, nothing was written</td></tr></table></div>
+
+<footer>
+<p>Generated by <code>python scripts/faire-la-page.py</code>, which reads
+<code>examples/*.json</code> and connects to nothing. Every count on this page
+is computed from those files, none is written into the template &mdash; so the
+page cannot drift from the capture it describes.</p>
+<p>The totals move a little between runs: the judge confirms
+84 of the
+97 pairs it examined here, and neighbouring runs land a
+pair or two either side. The structural findings do not move. The catalog is
+also live, and Fadlie has already levelled three of its groups &mdash; reload
+the contest datapack into a fresh DataHub and the original state comes back
+exactly.</p>
+<p>Apache&nbsp;2.0 &middot; built for Build with DataHub: The Agent
+Hackathon.</p>
+</footer>
+</main>
+</body>
+</html>
