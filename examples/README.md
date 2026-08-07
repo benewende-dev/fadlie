@@ -23,6 +23,13 @@ capture refuses to save unless the response confirms that nothing was written.
 | [`governance_gaps_all.json`](governance_gaps_all.json) | `governance_gaps()` — every gap, unfiltered |
 | [`apply_governance_dry_run.json`](apply_governance_dry_run.json) | `apply_governance(dataset="order_details")` |
 
+One more file is not a tool call.
+[`lineage_graph.json`](lineage_graph.json) holds the lineage measurement the
+whole design rests on — the graph, and the distance between every same-name
+pair and every pair picked at random. `scripts/capturer-lignage.py` writes it
+against DataHub; `scripts/dessiner-le-lignage.py` turns it into the figure in
+the README without touching the network.
+
 `governance_gaps_all.json` is also what the browsable page is built from —
 `python scripts/faire-la-page.py` turns these files into a single HTML page and
 connects to nothing while doing it.

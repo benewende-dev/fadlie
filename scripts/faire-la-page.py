@@ -247,6 +247,9 @@ vertical-align:top}
 overflow:hidden;min-width:3rem}
 .barre .jauge i{display:block;height:100%;background:var(--doux)}
 .barre .n{width:2.4rem;flex:none;text-align:right;font-variant-numeric:tabular-nums}
+figure{margin:1.2rem 0;background:var(--carte);border:1px solid var(--trait);
+border-radius:9px;padding:.9rem}
+figure img{display:block;width:100%;height:auto}
 .genres{background:var(--carte);border:1px solid var(--trait);border-radius:9px;
 padding:.9rem 1rem;margin:1rem 0 1.4rem}
 table.blanc{width:100%;border-collapse:collapse;background:var(--carte);
@@ -266,6 +269,7 @@ def construire() -> str:
     tous = json.loads((EXEMPLES / "governance_gaps_all.json").read_text("utf-8"))
     blanc = json.loads(
         (EXEMPLES / "apply_governance_dry_run.json").read_text("utf-8"))
+    lignage = json.loads((EXEMPLES / "lineage_graph.json").read_text("utf-8"))
 
     gaps = tous["gaps"]
     if tous["returned"] != tous["total"]:
@@ -318,12 +322,17 @@ constructed without a source. Open a dataset to see its own.</p>
 {bloc_ecarts(gaps, noms)}
 
 <h2>Why these are the same data</h2>
-<p class="avant">Names are wrong about one time in five, and the lineage graph is
-worse: every same-name pair in this catalog is connected, and so is every pair
-picked at random, at the same median distance. So structure only proposes.
-A model decides, one pair at a time, and its reason is kept. A reason is a
-comment, not a verified fact — which is exactly why none of them is ever
-written into the catalog.</p>
+<p class="avant">Names are wrong about one time in five, and the lineage graph
+is worse. Every one of the {lignage["same_name_pairs"]["pairs"]} same-name pairs
+in this catalog is connected &mdash; and so is every one of the
+{lignage["random_pairs"]["pairs"]} pairs picked at random. Connectivity carries
+no information at all, and distance carries almost none:</p>
+<figure><img src="images/lignage.svg" alt="Lineage distance for same-name pairs
+and for pairs picked at random: two distributions that overlap, with no
+threshold separating them"></figure>
+<p class="avant">So structure only proposes. A model decides, one pair at a
+time, and its reason is kept. A reason is a comment, not a verified fact &mdash;
+which is exactly why none of them is ever written into the catalog.</p>
 {bloc_groupes(groupes)}
 
 <h2>Writing takes a second argument</h2>

@@ -36,9 +36,24 @@ Run `python scripts/mesurer-jumeaux.py` to reproduce all of this.
 
 **The lineage graph tells you nothing about whether two datasets hold the same
 data.** The graph is a single component: 103 nodes, 161 edges, no isolated
-dataset. All 88 same-name pairs are connected — at distance 2 or 4. The median
-distance between two datasets picked *at random* is also 4. Twins are
-indistinguishable from strangers.
+dataset. All 88 same-name pairs are connected — and so is every one of the 316
+pairs picked at random. Connectivity carries no information whatsoever.
+
+Distance carries almost none. Set the threshold at 4 hops and you catch 86 of
+the 88 same-name pairs, along with 199 of the 316 strangers. There is no cut
+that keeps the twins and drops the rest.
+
+![Lineage distance for same-name pairs and for pairs picked at random: two
+distributions that overlap, with no threshold separating
+them](docs/images/lignage.svg)
+
+`python scripts/capturer-lignage.py` writes the numbers behind that figure to
+[`examples/lineage_graph.json`](examples/lineage_graph.json), and
+`scripts/dessiner-le-lignage.py` draws it from that file without touching the
+network. The capture also checks something the figure depends on: charts and
+dashboards hang off the graph as leaves that cannot be traversed, so dropping
+them leaves 90 nodes and 123 edges and **not one distance changes** — verified
+across all 4 489 pairs rather than assumed.
 
 **Names tell you almost as little.** Three of fifteen same-name groups are not
 the same thing: four Tableau datasets called `Custom SQL Query` share 0 % of

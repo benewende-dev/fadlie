@@ -11,10 +11,11 @@ C'est la mesure qui fonde Fadlie. Elle établit quatre choses.
 3. **Le nom ne peut pas trancher** : trois groupes homonymes sur quinze ne sont
    pas la même chose — `custom_sql_query` recouvre 0 %, `promotions` 9 %.
 4. **Le lignage ne peut pas trancher non plus**, et c'est le résultat le plus
-   utile. Le graphe est d'un seul tenant : 103 sommets, 0 jeu isolé, et les 88
-   couples d'homonymes sont **tous** reliés — à distance 2 ou 4, c'est-à-dire
-   la distance médiane entre deux jeux pris au hasard. La connexité ne porte
-   aucune information sur « est-ce la même donnée ».
+   utile. Le graphe est d'un seul tenant : 103 sommets, 0 jeu isolé, les 88
+   couples d'homonymes sont **tous** reliés — et les 316 couples tirés au
+   hasard aussi. La connexité ne porte donc aucune information. La distance
+   presque pas : `scripts/capturer-lignage.py` en donne les deux distributions,
+   et elles se chevauchent.
 
 Il reste donc la structure, qui dit « peut-être », et un juge, qui tranche.
 

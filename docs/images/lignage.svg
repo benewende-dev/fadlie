@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 448"
+     width="920" height="448" role="img"
+     aria-label="Lineage distance between same-name dataset pairs and pairs
+     picked at random. The two distributions overlap: no threshold separates
+     them.">
+<style>
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,
+       sans-serif;fill:#16181d}
+  .titre{font-size:21px;font-weight:650;letter-spacing:-.3px}
+  .sous{font-size:13.5px;fill:#5b6270}
+  .axe{font-size:11.5px;fill:#5b6270}
+  .leg{font-size:12.5px;fill:#5b6270}
+  .pied{font-size:13px;fill:#5b6270}
+  .pied.fort{fill:#16181d}
+  .grille{stroke:#e3e6ea;stroke-width:1}
+  .sol{stroke:#b9bfc8;stroke-width:1}
+  @media (prefers-color-scheme:dark){
+    text{fill:#e6e9ef} .sous,.axe,.leg,.pied{fill:#98a1b0}
+    .pied.fort{fill:#e6e9ef}
+    .grille{stroke:#242a33} .sol{stroke:#3a424e}
+  }
+</style>
+<text class="titre" x="58" y="38">Lineage cannot tell a twin from a
+stranger</text>
+<text class="sous" x="58" y="60">103 nodes, 161 edges, 1 component, 0 isolated datasets &#8212; every pair of datasets is connected, both kinds.</text>
+<text class="axe" x="58" y="92">share of pairs at each lineage
+distance</text>
+<g transform="translate(596,82)"><rect width="11" height="11" rx="2" fill="#2e9e6b"/><text class="leg" x="17" y="10">same name (88 pairs)</text><rect x="150" width="11" height="11" rx="2" fill="#c68a2e"/><text class="leg" x="167" y="10">picked at random (316)</text></g>
+<line class="grille" x1="58" x2="896" y1="281.2" y2="281.2"/><text class="axe" x="48" y="285.2" text-anchor="end">10%</text>
+<line class="grille" x1="58" x2="896" y1="250.4" y2="250.4"/><text class="axe" x="48" y="254.4" text-anchor="end">20%</text>
+<line class="grille" x1="58" x2="896" y1="219.6" y2="219.6"/><text class="axe" x="48" y="223.6" text-anchor="end">30%</text>
+<line class="grille" x1="58" x2="896" y1="188.8" y2="188.8"/><text class="axe" x="48" y="192.8" text-anchor="end">40%</text>
+<line class="grille" x1="58" x2="896" y1="158.0" y2="158.0"/><text class="axe" x="48" y="162.0" text-anchor="end">50%</text>
+<line class="grille" x1="58" x2="896" y1="127.2" y2="127.2"/><text class="axe" x="48" y="131.2" text-anchor="end">60%</text>
+<rect x="72.3" y="294.5" width="26.8" height="17.5" rx="2" fill="#2e9e6b"/>
+<rect x="100.8" y="304.2" width="26.8" height="7.8" rx="2" fill="#c68a2e"/>
+<text class="axe" x="85.7" y="332" text-anchor="middle">1</text>
+<rect x="156.1" y="116.0" width="26.8" height="196.0" rx="2" fill="#2e9e6b"/>
+<rect x="184.6" y="211.6" width="26.8" height="100.4" rx="2" fill="#c68a2e"/>
+<text class="axe" x="169.5" y="332" text-anchor="middle">2</text>
+<rect x="239.9" y="301.5" width="26.8" height="10.5" rx="2" fill="#2e9e6b"/>
+<rect x="268.4" y="293.5" width="26.8" height="18.5" rx="2" fill="#c68a2e"/>
+<text class="axe" x="253.3" y="332" text-anchor="middle">3</text>
+<rect x="323.7" y="235.0" width="26.8" height="77.0" rx="2" fill="#2e9e6b"/>
+<rect x="352.2" y="244.7" width="26.8" height="67.3" rx="2" fill="#c68a2e"/>
+<text class="axe" x="337.1" y="332" text-anchor="middle">4</text>
+<rect x="407.5" y="308.5" width="26.8" height="3.5" rx="2" fill="#2e9e6b"/>
+<rect x="436.0" y="305.2" width="26.8" height="6.8" rx="2" fill="#c68a2e"/>
+<text class="axe" x="420.9" y="332" text-anchor="middle">5</text>
+<rect x="519.8" y="242.8" width="26.8" height="69.2" rx="2" fill="#c68a2e"/>
+<text class="axe" x="504.7" y="332" text-anchor="middle">6</text>
+<rect x="575.1" y="308.5" width="26.8" height="3.5" rx="2" fill="#2e9e6b"/>
+<rect x="603.6" y="306.2" width="26.8" height="5.8" rx="2" fill="#c68a2e"/>
+<text class="axe" x="588.5" y="332" text-anchor="middle">7</text>
+<rect x="687.4" y="290.6" width="26.8" height="21.4" rx="2" fill="#c68a2e"/>
+<text class="axe" x="672.3" y="332" text-anchor="middle">8</text>
+<text class="axe" x="756.1" y="332" text-anchor="middle">9</text>
+<rect x="855.0" y="301.3" width="26.8" height="10.7" rx="2" fill="#c68a2e"/>
+<text class="axe" x="839.9" y="332" text-anchor="middle">10</text>
+<line class="sol" x1="58" x2="896" y1="312" y2="312"/>
+<text class="pied fort" x="58" y="406">Set the threshold at 4: it catches 86 of the 88 same-name pairs &#8212; and 199 of the 316 pairs picked at random (63%).</text>
+<text class="pied" x="58" y="425">There is no cut that keeps the twins and drops the strangers. Structure proposes; a model decides.</text>
+<text class="axe" x="896" y="354" text-anchor="end">shortest
+path, in hops</text>
+</svg>

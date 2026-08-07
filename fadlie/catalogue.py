@@ -278,9 +278,11 @@ class Catalogue:
         """Le graphe de lignage entier, non orienté, traitements compris.
 
         Mesuré, et c'est le résultat qui fonde Fadlie : **ce graphe est une seule
-        composante**. 103 sommets, tout jeu atteint tout autre, distance médiane
-        4 — et les copies d'une même table sont à 2 ou 4, c'est-à-dire
-        indiscernables d'un couple pris au hasard.
+        composante**. Tout jeu atteint tout autre — la connexité ne porte donc
+        aucune information. Et la distance presque pas : au seuil de 4, on
+        attrape 86 des 88 couples d'homonymes, mais aussi 199 des 316 couples
+        tirés au hasard. Aucune coupure ne garde les jumeaux et jette le reste
+        (`scripts/capturer-lignage.py`).
 
         Autrement dit la connexité ne dit **rien** sur « est-ce la même donnée ».
         On construit quand même le graphe, parce qu'une distance courte reste une
