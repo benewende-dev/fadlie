@@ -22,6 +22,12 @@ groups of copies, 53 gaps on the `products` copies alone — then zero. The full
 video, two minutes and forty seconds, is at
 <https://youtu.be/YXff0HNRAwU>.*
 
+**Every finding, browsable, nothing to install:
+<https://benewende-dev.github.io/fadlie/>** — each gap with the dataset its
+value would be copied from, the judge's reason for every pair, and the one
+conflict Fadlie refuses to settle. That page is generated from
+[`examples/`](examples/) by a script that connects to nothing.
+
 ---
 
 ## What the measurements found
