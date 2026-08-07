@@ -1,0 +1,8 @@
+{
+  "dry_run": true,
+  "applied": 0,
+  "would_apply": 56,
+  "failed": 0,
+  "failures": [],
+  "summary": "56 gaps simulated, nothing was written"
+}

@@ -1,0 +1,9 @@
+{
+  "pairs_examined": 97,
+  "pairs_confirmed_same_data": 84,
+  "duplicate_groups": 18,
+  "governance_gaps": 373,
+  "datasets_with_gaps": 46,
+  "disagreements": 1,
+  "analysis_age_seconds": 347
+}

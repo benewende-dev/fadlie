@@ -1,0 +1,485 @@
+{
+  "total": 56,
+  "returned": 50,
+  "gaps": [
+    {
+      "dataset": "looker/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+      "column": null,
+      "kind": "description",
+      "value": "# Order Details Model\n\n## Overview\n\nThe `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.\n\nThis denormalized view is designed to support reporting, analysis, and operational insights across the order management process.\n\n## Model Information\n\n- **Name**: `order_details`\n- **Type**: View\n- **Source Schema**: `order_entry`\n- **Database**: `order_entry_db`\n- **Update Frequency**: Refreshed on query with current timestamp\n\n## Data Structure\n\n### Order Information\n\n| Column                | Type         | Description                                                | Example                            |\n| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |\n| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |\n| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |\n| order_mode            | VARCHAR      | Method of order placement                                  | 'online', 'phone', 'direct'        |\n| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |\n| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |\n| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |\n| delivery_type         | VARCHAR      | Shipping method                                            | 'Standard', 'Express', 'Overnight' |\n| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | 'Y', 'N'                           |\n| payment_method_code   | VARCHAR      | Code indicating payment method used                        | 'CC', 'PayPal', 'ApplePay'         |\n\n### Customer Information\n\n| Column          | Type    | Description                        | Example                      |\n| --------------- | ------- | ---------------------------------- | ---------------------------- |\n| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |\n| cust_first_name | VARCHAR | Customer first name                | 'John'                       |\n| cust_last_name  | VARCHAR | Customer last name                 | 'Smith'                      |\n| cust_email      | VARCHAR | Customer email address             | 'john.smith@example.com'     |\n| phone_number    | VARCHAR | Customer contact phone number      | '555-123-4567'               |\n| customer_class  | VARCHAR | Classification of the customer     | 'Platinum', 'Gold', 'Silver' |\n\n### Billing Address Information\n\n| Column                | Type    | Description                                   | Example         |\n| --------------------- | ------- | --------------------------------------------- | --------------- |\n| billing_address_line1 | VARCHAR | First line of customer billing address        | '123 Main St'   |\n| billing_address_line2 | VARCHAR | Second line of customer billing address       | 'Apt 4B'        |\n| billing_town_city     | VARCHAR | Town or city of customer billing address      | 'Springfield'   |\n| billing_country       | VARCHAR | Country name for the billing address          | 'United States' |\n| billing_zipcode       | VARCHAR | Postal code of customer billing address       | '12345'         |\n| billing_region        | VARCHAR | Region/state/province for the billing address | 'Illinois'      |\n\n### Shipping Address Information\n\n| Column                 | Type    | Description                                | Example         |\n| ---------------------- | ------- | ------------------------------------------ | --------------- |\n| shipping_address_line1 | VARCHAR | First line of customer shipping address    | '456 Oak St'    |\n| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | 'Suite 101'     |\n| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | 'Chicago'       |\n| shipping_country       | VARCHAR | Country name for the shipping address      | 'United States' |\n| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | '60601'         |\n| shipping_region        | VARCHAR | Region/state/province for shipping address | 'Illinois'      |\n\n### Warehouse Information\n\n| Column         | Type    | Description                                      | Example                       |\n| -------------- | ------- | ------------------------------------------------ | ----------------------------- |\n| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |\n| warehouse_name | VARCHAR | Name of the warehouse location                   | 'Chicago Distribution Center' |\n\n### Promotion Information\n\n| Column                | Type    | Description                                      | Example                      |\n| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |\n| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |\n| promotion_name        | VARCHAR | Name of the marketing promotion                  | 'Summer Sale 2023'           |\n| promotion_description | VARCHAR | Detailed description of the promotion            | '20% off all summer apparel' |\n\n### Order Line Item Information\n\n| Column              | Type    | Description                                            | Example                                       |\n| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |\n| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |\n| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |\n| product_name        | VARCHAR | Name of the product                                    | 'Ergonomic Office Chair'                      |\n| product_description | VARCHAR | Brief description of the product                       | 'Adjustable office chair with lumbar support' |\n| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |\n| category_name       | VARCHAR | Name of the product category                           | 'Office Furniture'                            |\n| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |\n| quantity            | NUMBER  | Number of units ordered                                | 2                                             |\n| line_total          | NUMBER  | Total price for the line item (unit_price \\* quantity) | 299.98                                        |\n| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |\n| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |\n| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | 'Y', 'Premium', 'Basic'                       |\n| condition           | VARCHAR | Condition of product                                   | 'New', 'Refurbished'                          |\n| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |\n| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |\n| product_status      | VARCHAR | Current status of the product                          | 'Available', 'Discontinued'                   |\n| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |\n| stock_status        | VARCHAR | Status of current inventory levels                     | 'Low Stock', 'In Stock', 'Overstocked'        |\n\n### Calculated Fields\n\n| Column           | Type    | Description                                          | Example                                  |\n| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |\n| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |\n| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |\n| delivery_status  | VARCHAR | Current status of delivery                           | 'Not Shipped', 'In Transit', 'Delivered' |\n| return_status    | VARCHAR | Status indicating if item was returned               | 'Returned', 'Not Returned'               |\n\n### Timestamp Information\n\n| Column     | Type         | Description                                                             | Example                             |\n| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |\n| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |\n\n## Sources and Joins\n\nThis model combines data from the following source tables:\n\n- `orders` - Primary table containing order header information\n- `customers` - Customer demographic and contact information\n- `addresses` - Billing and shipping address details\n- `countries` - Country information for addresses\n- `regions` - Regional information for addresses\n- `warehouses` - Warehouse details for order fulfillment\n- `promotions` - Promotion information applied to orders\n- `order_items` - Individual line items within each order\n- `products` - Product information for ordered items\n- `product_categories` - Category information for products\n- `inventories` - Inventory levels for products at warehouses\n\n## Data Tests\n\nThe following data quality tests are applied to this model:\n\n### Primary Key Tests\n\n- `order_id` and `line_item_id` combination is unique\n- `order_id` is not null\n\n### Referential Integrity Tests\n\n- `customer_id` exists in the customers table\n- `product_id` exists in the products table\n- `warehouse_id` exists in the warehouses table\n- `promotion_id` exists in the promotions table (when not null)\n- `category_id` exists in the product_categories table\n\n### Value Tests\n\n- `unit_price` and `quantity` are positive values\n- `line_total` equals `unit_price` \\* `quantity`\n- `order_status` contains valid status codes\n- `wait_till_complete_yn` contains only 'Y' or 'N'\n- `stock_status` contains only valid values: 'Low Stock', 'In Stock', 'Overstocked', 'Unknown'\n- `delivery_status` contains only valid values: 'Not Shipped', 'In Transit', 'Delivered', 'Unknown'\n- `return_status` contains only valid values: 'Returned', 'Not Returned'\n\n## Usage Examples\n\n### Basic Order Query\n\n```sql\nSELECT\n    order_id,\n    order_date,\n    cust_first_name || ' ' || cust_last_name AS customer_name,\n    order_total,\n    delivery_status\nFROM order_details\nWHERE order_date >= DATEADD(month, -1, CURRENT_DATE())\nORDER BY order_date DESC\n```\n\n### Order Analysis by Category\n\n```sql\nSELECT\n    category_name,\n    COUNT(DISTINCT order_id) AS order_count,\n    SUM(line_total) AS total_revenue,\n    AVG(discount_percent) AS avg_discount_pct\nFROM order_details\nWHERE order_date >= DATEADD(year, -1, CURRENT_DATE())\nGROUP BY category_name\nORDER BY total_revenue DESC\n```\n\n### Delivery Performance\n\n```sql\nSELECT\n    warehouse_name,\n    delivery_type,\n    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,\n    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,\n    COUNT(*) AS shipment_count\nFROM order_details\nWHERE dispatch_date IS NOT NULL\n  AND order_date >= DATEADD(month, -6, CURRENT_DATE())\nGROUP BY warehouse_name, delivery_type\nORDER BY warehouse_name, avg_processing_days\n```\n\n### Returns Analysis\n\n```sql\nSELECT\n    product_name,\n    COUNT(*) AS total_ordered,\n    SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) AS total_returned,\n    (SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate\nFROM order_details\nWHERE order_date >= DATEADD(month, -3, CURRENT_DATE())\nGROUP BY product_name\nHAVING COUNT(*) > 10\nORDER BY return_rate DESC\nLIMIT 20\n```\n\n## Maintenance and Refresh\n\nAs a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`\n\n## Dependencies\n\nThis model depends on:\n\n- Source tables from the schema `order_entry`\n- Any data quality tests defined in the file `schema.yml`\n\n## Additional Notes\n\n- This model includes sensitive customer information. Ensure appropriate access controls are in place.\n- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.\n- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "description",
+      "value": "# Order Details Model\n\n## Overview\n\nThe `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.\n\nThis denormalized view is designed to support reporting, analysis, and operational insights across the order management process.\n\n## Model Information\n\n- **Name**: `order_details`\n- **Type**: View\n- **Source Schema**: `order_entry`\n- **Database**: `order_entry_db`\n- **Update Frequency**: Refreshed on query with current timestamp\n\n## Data Structure\n\n### Order Information\n\n| Column                | Type         | Description                                                | Example                            |\n| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |\n| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |\n| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |\n| order_mode            | VARCHAR      | Method of order placement                                  | 'online', 'phone', 'direct'        |\n| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |\n| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |\n| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |\n| delivery_type         | VARCHAR      | Shipping method                                            | 'Standard', 'Express', 'Overnight' |\n| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | 'Y', 'N'                           |\n| payment_method_code   | VARCHAR      | Code indicating payment method used                        | 'CC', 'PayPal', 'ApplePay'         |\n\n### Customer Information\n\n| Column          | Type    | Description                        | Example                      |\n| --------------- | ------- | ---------------------------------- | ---------------------------- |\n| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |\n| cust_first_name | VARCHAR | Customer first name                | 'John'                       |\n| cust_last_name  | VARCHAR | Customer last name                 | 'Smith'                      |\n| cust_email      | VARCHAR | Customer email address             | 'john.smith@example.com'     |\n| phone_number    | VARCHAR | Customer contact phone number      | '555-123-4567'               |\n| customer_class  | VARCHAR | Classification of the customer     | 'Platinum', 'Gold', 'Silver' |\n\n### Billing Address Information\n\n| Column                | Type    | Description                                   | Example         |\n| --------------------- | ------- | --------------------------------------------- | --------------- |\n| billing_address_line1 | VARCHAR | First line of customer billing address        | '123 Main St'   |\n| billing_address_line2 | VARCHAR | Second line of customer billing address       | 'Apt 4B'        |\n| billing_town_city     | VARCHAR | Town or city of customer billing address      | 'Springfield'   |\n| billing_country       | VARCHAR | Country name for the billing address          | 'United States' |\n| billing_zipcode       | VARCHAR | Postal code of customer billing address       | '12345'         |\n| billing_region        | VARCHAR | Region/state/province for the billing address | 'Illinois'      |\n\n### Shipping Address Information\n\n| Column                 | Type    | Description                                | Example         |\n| ---------------------- | ------- | ------------------------------------------ | --------------- |\n| shipping_address_line1 | VARCHAR | First line of customer shipping address    | '456 Oak St'    |\n| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | 'Suite 101'     |\n| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | 'Chicago'       |\n| shipping_country       | VARCHAR | Country name for the shipping address      | 'United States' |\n| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | '60601'         |\n| shipping_region        | VARCHAR | Region/state/province for shipping address | 'Illinois'      |\n\n### Warehouse Information\n\n| Column         | Type    | Description                                      | Example                       |\n| -------------- | ------- | ------------------------------------------------ | ----------------------------- |\n| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |\n| warehouse_name | VARCHAR | Name of the warehouse location                   | 'Chicago Distribution Center' |\n\n### Promotion Information\n\n| Column                | Type    | Description                                      | Example                      |\n| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |\n| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |\n| promotion_name        | VARCHAR | Name of the marketing promotion                  | 'Summer Sale 2023'           |\n| promotion_description | VARCHAR | Detailed description of the promotion            | '20% off all summer apparel' |\n\n### Order Line Item Information\n\n| Column              | Type    | Description                                            | Example                                       |\n| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |\n| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |\n| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |\n| product_name        | VARCHAR | Name of the product                                    | 'Ergonomic Office Chair'                      |\n| product_description | VARCHAR | Brief description of the product                       | 'Adjustable office chair with lumbar support' |\n| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |\n| category_name       | VARCHAR | Name of the product category                           | 'Office Furniture'                            |\n| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |\n| quantity            | NUMBER  | Number of units ordered                                | 2                                             |\n| line_total          | NUMBER  | Total price for the line item (unit_price \\* quantity) | 299.98                                        |\n| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |\n| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |\n| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | 'Y', 'Premium', 'Basic'                       |\n| condition           | VARCHAR | Condition of product                                   | 'New', 'Refurbished'                          |\n| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |\n| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |\n| product_status      | VARCHAR | Current status of the product                          | 'Available', 'Discontinued'                   |\n| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |\n| stock_status        | VARCHAR | Status of current inventory levels                     | 'Low Stock', 'In Stock', 'Overstocked'        |\n\n### Calculated Fields\n\n| Column           | Type    | Description                                          | Example                                  |\n| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |\n| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |\n| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |\n| delivery_status  | VARCHAR | Current status of delivery                           | 'Not Shipped', 'In Transit', 'Delivered' |\n| return_status    | VARCHAR | Status indicating if item was returned               | 'Returned', 'Not Returned'               |\n\n### Timestamp Information\n\n| Column     | Type         | Description                                                             | Example                             |\n| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |\n| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |\n\n## Sources and Joins\n\nThis model combines data from the following source tables:\n\n- `orders` - Primary table containing order header information\n- `customers` - Customer demographic and contact information\n- `addresses` - Billing and shipping address details\n- `countries` - Country information for addresses\n- `regions` - Regional information for addresses\n- `warehouses` - Warehouse details for order fulfillment\n- `promotions` - Promotion information applied to orders\n- `order_items` - Individual line items within each order\n- `products` - Product information for ordered items\n- `product_categories` - Category information for products\n- `inventories` - Inventory levels for products at warehouses\n\n## Data Tests\n\nThe following data quality tests are applied to this model:\n\n### Primary Key Tests\n\n- `order_id` and `line_item_id` combination is unique\n- `order_id` is not null\n\n### Referential Integrity Tests\n\n- `customer_id` exists in the customers table\n- `product_id` exists in the products table\n- `warehouse_id` exists in the warehouses table\n- `promotion_id` exists in the promotions table (when not null)\n- `category_id` exists in the product_categories table\n\n### Value Tests\n\n- `unit_price` and `quantity` are positive values\n- `line_total` equals `unit_price` \\* `quantity`\n- `order_status` contains valid status codes\n- `wait_till_complete_yn` contains only 'Y' or 'N'\n- `stock_status` contains only valid values: 'Low Stock', 'In Stock', 'Overstocked', 'Unknown'\n- `delivery_status` contains only valid values: 'Not Shipped', 'In Transit', 'Delivered', 'Unknown'\n- `return_status` contains only valid values: 'Returned', 'Not Returned'\n\n## Usage Examples\n\n### Basic Order Query\n\n```sql\nSELECT\n    order_id,\n    order_date,\n    cust_first_name || ' ' || cust_last_name AS customer_name,\n    order_total,\n    delivery_status\nFROM order_details\nWHERE order_date >= DATEADD(month, -1, CURRENT_DATE())\nORDER BY order_date DESC\n```\n\n### Order Analysis by Category\n\n```sql\nSELECT\n    category_name,\n    COUNT(DISTINCT order_id) AS order_count,\n    SUM(line_total) AS total_revenue,\n    AVG(discount_percent) AS avg_discount_pct\nFROM order_details\nWHERE order_date >= DATEADD(year, -1, CURRENT_DATE())\nGROUP BY category_name\nORDER BY total_revenue DESC\n```\n\n### Delivery Performance\n\n```sql\nSELECT\n    warehouse_name,\n    delivery_type,\n    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,\n    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,\n    COUNT(*) AS shipment_count\nFROM order_details\nWHERE dispatch_date IS NOT NULL\n  AND order_date >= DATEADD(month, -6, CURRENT_DATE())\nGROUP BY warehouse_name, delivery_type\nORDER BY warehouse_name, avg_processing_days\n```\n\n### Returns Analysis\n\n```sql\nSELECT\n    product_name,\n    COUNT(*) AS total_ordered,\n    SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) AS total_returned,\n    (SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate\nFROM order_details\nWHERE order_date >= DATEADD(month, -3, CURRENT_DATE())\nGROUP BY product_name\nHAVING COUNT(*) > 10\nORDER BY return_rate DESC\nLIMIT 20\n```\n\n## Maintenance and Refresh\n\nAs a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`\n\n## Dependencies\n\nThis model depends on:\n\n- Source tables from the schema `order_entry`\n- Any data quality tests defined in the file `schema.yml`\n\n## Additional Notes\n\n- This model includes sensitive customer information. Ensure appropriate access controls are in place.\n- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.\n- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "description",
+      "value": "# Order Details Model\n\n## Overview\n\nThe `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.\n\nThis denormalized view is designed to support reporting, analysis, and operational insights across the order management process.\n\n## Model Information\n\n- **Name**: `order_details`\n- **Type**: View\n- **Source Schema**: `order_entry`\n- **Database**: `order_entry_db`\n- **Update Frequency**: Refreshed on query with current timestamp\n\n## Data Structure\n\n### Order Information\n\n| Column                | Type         | Description                                                | Example                            |\n| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |\n| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |\n| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |\n| order_mode            | VARCHAR      | Method of order placement                                  | 'online', 'phone', 'direct'        |\n| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |\n| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |\n| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |\n| delivery_type         | VARCHAR      | Shipping method                                            | 'Standard', 'Express', 'Overnight' |\n| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | 'Y', 'N'                           |\n| payment_method_code   | VARCHAR      | Code indicating payment method used                        | 'CC', 'PayPal', 'ApplePay'         |\n\n### Customer Information\n\n| Column          | Type    | Description                        | Example                      |\n| --------------- | ------- | ---------------------------------- | ---------------------------- |\n| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |\n| cust_first_name | VARCHAR | Customer first name                | 'John'                       |\n| cust_last_name  | VARCHAR | Customer last name                 | 'Smith'                      |\n| cust_email      | VARCHAR | Customer email address             | 'john.smith@example.com'     |\n| phone_number    | VARCHAR | Customer contact phone number      | '555-123-4567'               |\n| customer_class  | VARCHAR | Classification of the customer     | 'Platinum', 'Gold', 'Silver' |\n\n### Billing Address Information\n\n| Column                | Type    | Description                                   | Example         |\n| --------------------- | ------- | --------------------------------------------- | --------------- |\n| billing_address_line1 | VARCHAR | First line of customer billing address        | '123 Main St'   |\n| billing_address_line2 | VARCHAR | Second line of customer billing address       | 'Apt 4B'        |\n| billing_town_city     | VARCHAR | Town or city of customer billing address      | 'Springfield'   |\n| billing_country       | VARCHAR | Country name for the billing address          | 'United States' |\n| billing_zipcode       | VARCHAR | Postal code of customer billing address       | '12345'         |\n| billing_region        | VARCHAR | Region/state/province for the billing address | 'Illinois'      |\n\n### Shipping Address Information\n\n| Column                 | Type    | Description                                | Example         |\n| ---------------------- | ------- | ------------------------------------------ | --------------- |\n| shipping_address_line1 | VARCHAR | First line of customer shipping address    | '456 Oak St'    |\n| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | 'Suite 101'     |\n| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | 'Chicago'       |\n| shipping_country       | VARCHAR | Country name for the shipping address      | 'United States' |\n| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | '60601'         |\n| shipping_region        | VARCHAR | Region/state/province for shipping address | 'Illinois'      |\n\n### Warehouse Information\n\n| Column         | Type    | Description                                      | Example                       |\n| -------------- | ------- | ------------------------------------------------ | ----------------------------- |\n| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |\n| warehouse_name | VARCHAR | Name of the warehouse location                   | 'Chicago Distribution Center' |\n\n### Promotion Information\n\n| Column                | Type    | Description                                      | Example                      |\n| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |\n| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |\n| promotion_name        | VARCHAR | Name of the marketing promotion                  | 'Summer Sale 2023'           |\n| promotion_description | VARCHAR | Detailed description of the promotion            | '20% off all summer apparel' |\n\n### Order Line Item Information\n\n| Column              | Type    | Description                                            | Example                                       |\n| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |\n| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |\n| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |\n| product_name        | VARCHAR | Name of the product                                    | 'Ergonomic Office Chair'                      |\n| product_description | VARCHAR | Brief description of the product                       | 'Adjustable office chair with lumbar support' |\n| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |\n| category_name       | VARCHAR | Name of the product category                           | 'Office Furniture'                            |\n| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |\n| quantity            | NUMBER  | Number of units ordered                                | 2                                             |\n| line_total          | NUMBER  | Total price for the line item (unit_price \\* quantity) | 299.98                                        |\n| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |\n| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |\n| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | 'Y', 'Premium', 'Basic'                       |\n| condition           | VARCHAR | Condition of product                                   | 'New', 'Refurbished'                          |\n| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |\n| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |\n| product_status      | VARCHAR | Current status of the product                          | 'Available', 'Discontinued'                   |\n| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |\n| stock_status        | VARCHAR | Status of current inventory levels                     | 'Low Stock', 'In Stock', 'Overstocked'        |\n\n### Calculated Fields\n\n| Column           | Type    | Description                                          | Example                                  |\n| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |\n| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |\n| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |\n| delivery_status  | VARCHAR | Current status of delivery                           | 'Not Shipped', 'In Transit', 'Delivered' |\n| return_status    | VARCHAR | Status indicating if item was returned               | 'Returned', 'Not Returned'               |\n\n### Timestamp Information\n\n| Column     | Type         | Description                                                             | Example                             |\n| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |\n| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |\n\n## Sources and Joins\n\nThis model combines data from the following source tables:\n\n- `orders` - Primary table containing order header information\n- `customers` - Customer demographic and contact information\n- `addresses` - Billing and shipping address details\n- `countries` - Country information for addresses\n- `regions` - Regional information for addresses\n- `warehouses` - Warehouse details for order fulfillment\n- `promotions` - Promotion information applied to orders\n- `order_items` - Individual line items within each order\n- `products` - Product information for ordered items\n- `product_categories` - Category information for products\n- `inventories` - Inventory levels for products at warehouses\n\n## Data Tests\n\nThe following data quality tests are applied to this model:\n\n### Primary Key Tests\n\n- `order_id` and `line_item_id` combination is unique\n- `order_id` is not null\n\n### Referential Integrity Tests\n\n- `customer_id` exists in the customers table\n- `product_id` exists in the products table\n- `warehouse_id` exists in the warehouses table\n- `promotion_id` exists in the promotions table (when not null)\n- `category_id` exists in the product_categories table\n\n### Value Tests\n\n- `unit_price` and `quantity` are positive values\n- `line_total` equals `unit_price` \\* `quantity`\n- `order_status` contains valid status codes\n- `wait_till_complete_yn` contains only 'Y' or 'N'\n- `stock_status` contains only valid values: 'Low Stock', 'In Stock', 'Overstocked', 'Unknown'\n- `delivery_status` contains only valid values: 'Not Shipped', 'In Transit', 'Delivered', 'Unknown'\n- `return_status` contains only valid values: 'Returned', 'Not Returned'\n\n## Usage Examples\n\n### Basic Order Query\n\n```sql\nSELECT\n    order_id,\n    order_date,\n    cust_first_name || ' ' || cust_last_name AS customer_name,\n    order_total,\n    delivery_status\nFROM order_details\nWHERE order_date >= DATEADD(month, -1, CURRENT_DATE())\nORDER BY order_date DESC\n```\n\n### Order Analysis by Category\n\n```sql\nSELECT\n    category_name,\n    COUNT(DISTINCT order_id) AS order_count,\n    SUM(line_total) AS total_revenue,\n    AVG(discount_percent) AS avg_discount_pct\nFROM order_details\nWHERE order_date >= DATEADD(year, -1, CURRENT_DATE())\nGROUP BY category_name\nORDER BY total_revenue DESC\n```\n\n### Delivery Performance\n\n```sql\nSELECT\n    warehouse_name,\n    delivery_type,\n    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,\n    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,\n    COUNT(*) AS shipment_count\nFROM order_details\nWHERE dispatch_date IS NOT NULL\n  AND order_date >= DATEADD(month, -6, CURRENT_DATE())\nGROUP BY warehouse_name, delivery_type\nORDER BY warehouse_name, avg_processing_days\n```\n\n### Returns Analysis\n\n```sql\nSELECT\n    product_name,\n    COUNT(*) AS total_ordered,\n    SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) AS total_returned,\n    (SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate\nFROM order_details\nWHERE order_date >= DATEADD(month, -3, CURRENT_DATE())\nGROUP BY product_name\nHAVING COUNT(*) > 10\nORDER BY return_rate DESC\nLIMIT 20\n```\n\n## Maintenance and Refresh\n\nAs a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`\n\n## Dependencies\n\nThis model depends on:\n\n- Source tables from the schema `order_entry`\n- Any data quality tests defined in the file `schema.yml`\n\n## Additional Notes\n\n- This model includes sensitive customer information. Ensure appropriate access controls are in place.\n- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.\n- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "description",
+      "value": "# Order Details Model\n\n## Overview\n\nThe `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.\n\nThis denormalized view is designed to support reporting, analysis, and operational insights across the order management process.\n\n## Model Information\n\n- **Name**: `order_details`\n- **Type**: View\n- **Source Schema**: `order_entry`\n- **Database**: `order_entry_db`\n- **Update Frequency**: Refreshed on query with current timestamp\n\n## Data Structure\n\n### Order Information\n\n| Column                | Type         | Description                                                | Example                            |\n| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |\n| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |\n| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |\n| order_mode            | VARCHAR      | Method of order placement                                  | 'online', 'phone', 'direct'        |\n| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |\n| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |\n| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |\n| delivery_type         | VARCHAR      | Shipping method                                            | 'Standard', 'Express', 'Overnight' |\n| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | 'Y', 'N'                           |\n| payment_method_code   | VARCHAR      | Code indicating payment method used                        | 'CC', 'PayPal', 'ApplePay'         |\n\n### Customer Information\n\n| Column          | Type    | Description                        | Example                      |\n| --------------- | ------- | ---------------------------------- | ---------------------------- |\n| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |\n| cust_first_name | VARCHAR | Customer first name                | 'John'                       |\n| cust_last_name  | VARCHAR | Customer last name                 | 'Smith'                      |\n| cust_email      | VARCHAR | Customer email address             | 'john.smith@example.com'     |\n| phone_number    | VARCHAR | Customer contact phone number      | '555-123-4567'               |\n| customer_class  | VARCHAR | Classification of the customer     | 'Platinum', 'Gold', 'Silver' |\n\n### Billing Address Information\n\n| Column                | Type    | Description                                   | Example         |\n| --------------------- | ------- | --------------------------------------------- | --------------- |\n| billing_address_line1 | VARCHAR | First line of customer billing address        | '123 Main St'   |\n| billing_address_line2 | VARCHAR | Second line of customer billing address       | 'Apt 4B'        |\n| billing_town_city     | VARCHAR | Town or city of customer billing address      | 'Springfield'   |\n| billing_country       | VARCHAR | Country name for the billing address          | 'United States' |\n| billing_zipcode       | VARCHAR | Postal code of customer billing address       | '12345'         |\n| billing_region        | VARCHAR | Region/state/province for the billing address | 'Illinois'      |\n\n### Shipping Address Information\n\n| Column                 | Type    | Description                                | Example         |\n| ---------------------- | ------- | ------------------------------------------ | --------------- |\n| shipping_address_line1 | VARCHAR | First line of customer shipping address    | '456 Oak St'    |\n| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | 'Suite 101'     |\n| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | 'Chicago'       |\n| shipping_country       | VARCHAR | Country name for the shipping address      | 'United States' |\n| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | '60601'         |\n| shipping_region        | VARCHAR | Region/state/province for shipping address | 'Illinois'      |\n\n### Warehouse Information\n\n| Column         | Type    | Description                                      | Example                       |\n| -------------- | ------- | ------------------------------------------------ | ----------------------------- |\n| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |\n| warehouse_name | VARCHAR | Name of the warehouse location                   | 'Chicago Distribution Center' |\n\n### Promotion Information\n\n| Column                | Type    | Description                                      | Example                      |\n| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |\n| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |\n| promotion_name        | VARCHAR | Name of the marketing promotion                  | 'Summer Sale 2023'           |\n| promotion_description | VARCHAR | Detailed description of the promotion            | '20% off all summer apparel' |\n\n### Order Line Item Information\n\n| Column              | Type    | Description                                            | Example                                       |\n| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |\n| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |\n| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |\n| product_name        | VARCHAR | Name of the product                                    | 'Ergonomic Office Chair'                      |\n| product_description | VARCHAR | Brief description of the product                       | 'Adjustable office chair with lumbar support' |\n| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |\n| category_name       | VARCHAR | Name of the product category                           | 'Office Furniture'                            |\n| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |\n| quantity            | NUMBER  | Number of units ordered                                | 2                                             |\n| line_total          | NUMBER  | Total price for the line item (unit_price \\* quantity) | 299.98                                        |\n| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |\n| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |\n| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | 'Y', 'Premium', 'Basic'                       |\n| condition           | VARCHAR | Condition of product                                   | 'New', 'Refurbished'                          |\n| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |\n| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |\n| product_status      | VARCHAR | Current status of the product                          | 'Available', 'Discontinued'                   |\n| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |\n| stock_status        | VARCHAR | Status of current inventory levels                     | 'Low Stock', 'In Stock', 'Overstocked'        |\n\n### Calculated Fields\n\n| Column           | Type    | Description                                          | Example                                  |\n| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |\n| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |\n| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |\n| delivery_status  | VARCHAR | Current status of delivery                           | 'Not Shipped', 'In Transit', 'Delivered' |\n| return_status    | VARCHAR | Status indicating if item was returned               | 'Returned', 'Not Returned'               |\n\n### Timestamp Information\n\n| Column     | Type         | Description                                                             | Example                             |\n| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |\n| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |\n\n## Sources and Joins\n\nThis model combines data from the following source tables:\n\n- `orders` - Primary table containing order header information\n- `customers` - Customer demographic and contact information\n- `addresses` - Billing and shipping address details\n- `countries` - Country information for addresses\n- `regions` - Regional information for addresses\n- `warehouses` - Warehouse details for order fulfillment\n- `promotions` - Promotion information applied to orders\n- `order_items` - Individual line items within each order\n- `products` - Product information for ordered items\n- `product_categories` - Category information for products\n- `inventories` - Inventory levels for products at warehouses\n\n## Data Tests\n\nThe following data quality tests are applied to this model:\n\n### Primary Key Tests\n\n- `order_id` and `line_item_id` combination is unique\n- `order_id` is not null\n\n### Referential Integrity Tests\n\n- `customer_id` exists in the customers table\n- `product_id` exists in the products table\n- `warehouse_id` exists in the warehouses table\n- `promotion_id` exists in the promotions table (when not null)\n- `category_id` exists in the product_categories table\n\n### Value Tests\n\n- `unit_price` and `quantity` are positive values\n- `line_total` equals `unit_price` \\* `quantity`\n- `order_status` contains valid status codes\n- `wait_till_complete_yn` contains only 'Y' or 'N'\n- `stock_status` contains only valid values: 'Low Stock', 'In Stock', 'Overstocked', 'Unknown'\n- `delivery_status` contains only valid values: 'Not Shipped', 'In Transit', 'Delivered', 'Unknown'\n- `return_status` contains only valid values: 'Returned', 'Not Returned'\n\n## Usage Examples\n\n### Basic Order Query\n\n```sql\nSELECT\n    order_id,\n    order_date,\n    cust_first_name || ' ' || cust_last_name AS customer_name,\n    order_total,\n    delivery_status\nFROM order_details\nWHERE order_date >= DATEADD(month, -1, CURRENT_DATE())\nORDER BY order_date DESC\n```\n\n### Order Analysis by Category\n\n```sql\nSELECT\n    category_name,\n    COUNT(DISTINCT order_id) AS order_count,\n    SUM(line_total) AS total_revenue,\n    AVG(discount_percent) AS avg_discount_pct\nFROM order_details\nWHERE order_date >= DATEADD(year, -1, CURRENT_DATE())\nGROUP BY category_name\nORDER BY total_revenue DESC\n```\n\n### Delivery Performance\n\n```sql\nSELECT\n    warehouse_name,\n    delivery_type,\n    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,\n    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,\n    COUNT(*) AS shipment_count\nFROM order_details\nWHERE dispatch_date IS NOT NULL\n  AND order_date >= DATEADD(month, -6, CURRENT_DATE())\nGROUP BY warehouse_name, delivery_type\nORDER BY warehouse_name, avg_processing_days\n```\n\n### Returns Analysis\n\n```sql\nSELECT\n    product_name,\n    COUNT(*) AS total_ordered,\n    SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) AS total_returned,\n    (SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate\nFROM order_details\nWHERE order_date >= DATEADD(month, -3, CURRENT_DATE())\nGROUP BY product_name\nHAVING COUNT(*) > 10\nORDER BY return_rate DESC\nLIMIT 20\n```\n\n## Maintenance and Refresh\n\nAs a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`\n\n## Dependencies\n\nThis model depends on:\n\n- Source tables from the schema `order_entry`\n- Any data quality tests defined in the file `schema.yml`\n\n## Additional Notes\n\n- This model includes sensitive customer information. Ensure appropriate access controls are in place.\n- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.\n- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS_REPLICA",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details_replica,PROD)",
+      "column": null,
+      "kind": "description",
+      "value": "# Order Details Model\n\n## Overview\n\nThe `order_details` model provides a comprehensive view of customer orders by combining data from multiple tables in the `order_entry` schema. It includes detailed information about orders, customers, products, shipping, billing, inventory, and promotions.\n\nThis denormalized view is designed to support reporting, analysis, and operational insights across the order management process.\n\n## Model Information\n\n- **Name**: `order_details`\n- **Type**: View\n- **Source Schema**: `order_entry`\n- **Database**: `order_entry_db`\n- **Update Frequency**: Refreshed on query with current timestamp\n\n## Data Structure\n\n### Order Information\n\n| Column                | Type         | Description                                                | Example                            |\n| --------------------- | ------------ | ---------------------------------------------------------- | ---------------------------------- |\n| order_id              | NUMBER       | Unique identifier for the order                            | 12345                              |\n| order_date            | TIMESTAMP_TZ | Date and time when the order was placed including timezone | 2023-05-01 14:30:00-07:00          |\n| order_mode            | VARCHAR      | Method of order placement                                  | 'online', 'phone', 'direct'        |\n| order_status          | NUMBER       | Current status of the order                                | 1=Pending, 2=Processing, 3=Shipped |\n| order_total           | NUMBER       | Total monetary value of the order                          | 156.78                             |\n| cost_of_delivery      | NUMBER       | Shipping and handling cost                                 | 12.99                              |\n| delivery_type         | VARCHAR      | Shipping method                                            | 'Standard', 'Express', 'Overnight' |\n| wait_till_complete_yn | VARCHAR      | Ship complete order or partial                             | 'Y', 'N'                           |\n| payment_method_code   | VARCHAR      | Code indicating payment method used                        | 'CC', 'PayPal', 'ApplePay'         |\n\n### Customer Information\n\n| Column          | Type    | Description                        | Example                      |\n| --------------- | ------- | ---------------------------------- | ---------------------------- |\n| customer_id     | NUMBER  | Unique identifier for the customer | 5001                         |\n| cust_first_name | VARCHAR | Customer first name                | 'John'                       |\n| cust_last_name  | VARCHAR | Customer last name                 | 'Smith'                      |\n| cust_email      | VARCHAR | Customer email address             | 'john.smith@example.com'     |\n| phone_number    | VARCHAR | Customer contact phone number      | '555-123-4567'               |\n| customer_class  | VARCHAR | Classification of the customer     | 'Platinum', 'Gold', 'Silver' |\n\n### Billing Address Information\n\n| Column                | Type    | Description                                   | Example         |\n| --------------------- | ------- | --------------------------------------------- | --------------- |\n| billing_address_line1 | VARCHAR | First line of customer billing address        | '123 Main St'   |\n| billing_address_line2 | VARCHAR | Second line of customer billing address       | 'Apt 4B'        |\n| billing_town_city     | VARCHAR | Town or city of customer billing address      | 'Springfield'   |\n| billing_country       | VARCHAR | Country name for the billing address          | 'United States' |\n| billing_zipcode       | VARCHAR | Postal code of customer billing address       | '12345'         |\n| billing_region        | VARCHAR | Region/state/province for the billing address | 'Illinois'      |\n\n### Shipping Address Information\n\n| Column                 | Type    | Description                                | Example         |\n| ---------------------- | ------- | ------------------------------------------ | --------------- |\n| shipping_address_line1 | VARCHAR | First line of customer shipping address    | '456 Oak St'    |\n| shipping_address_line2 | VARCHAR | Second line of customer shipping address   | 'Suite 101'     |\n| shipping_town_city     | VARCHAR | Town or city of customer shipping address  | 'Chicago'       |\n| shipping_country       | VARCHAR | Country name for the shipping address      | 'United States' |\n| shipping_zipcode       | VARCHAR | Postal code of customer shipping address   | '60601'         |\n| shipping_region        | VARCHAR | Region/state/province for shipping address | 'Illinois'      |\n\n### Warehouse Information\n\n| Column         | Type    | Description                                      | Example                       |\n| -------------- | ------- | ------------------------------------------------ | ----------------------------- |\n| warehouse_id   | NUMBER  | Identifier of the warehouse fulfilling the order | 3                             |\n| warehouse_name | VARCHAR | Name of the warehouse location                   | 'Chicago Distribution Center' |\n\n### Promotion Information\n\n| Column                | Type    | Description                                      | Example                      |\n| --------------------- | ------- | ------------------------------------------------ | ---------------------------- |\n| promotion_id          | NUMBER  | Identifier of the promotion applied to the order | 42                           |\n| promotion_name        | VARCHAR | Name of the marketing promotion                  | 'Summer Sale 2023'           |\n| promotion_description | VARCHAR | Detailed description of the promotion            | '20% off all summer apparel' |\n\n### Order Line Item Information\n\n| Column              | Type    | Description                                            | Example                                       |\n| ------------------- | ------- | ------------------------------------------------------ | --------------------------------------------- |\n| line_item_id        | NUMBER  | Line item sequence number within the order             | 1                                             |\n| product_id          | NUMBER  | Identifier of the product ordered                      | 10042                                         |\n| product_name        | VARCHAR | Name of the product                                    | 'Ergonomic Office Chair'                      |\n| product_description | VARCHAR | Brief description of the product                       | 'Adjustable office chair with lumbar support' |\n| category_id         | NUMBER  | Identifier of the product category                     | 15                                            |\n| category_name       | VARCHAR | Name of the product category                           | 'Office Furniture'                            |\n| unit_price          | NUMBER  | Selling price per unit at time of order                | 149.99                                        |\n| quantity            | NUMBER  | Number of units ordered                                | 2                                             |\n| line_total          | NUMBER  | Total price for the line item (unit_price \\* quantity) | 299.98                                        |\n| dispatch_date       | DATE    | Date when item was dispatched from warehouse           | 2023-05-03                                    |\n| return_date         | DATE    | Date when item was returned if applicable              | 2023-05-15                                    |\n| gift_wrap           | VARCHAR | Flag or type of gift wrapping requested                | 'Y', 'Premium', 'Basic'                       |\n| condition           | VARCHAR | Condition of product                                   | 'New', 'Refurbished'                          |\n| estimated_delivery  | DATE    | Estimated delivery date for this item                  | 2023-05-07                                    |\n| list_price          | NUMBER  | Standard list price for the product                    | 179.99                                        |\n| product_status      | VARCHAR | Current status of the product                          | 'Available', 'Discontinued'                   |\n| quantity_on_hand    | NUMBER  | Current inventory count in the fulfilling warehouse    | 24                                            |\n| stock_status        | VARCHAR | Status of current inventory levels                     | 'Low Stock', 'In Stock', 'Overstocked'        |\n\n### Calculated Fields\n\n| Column           | Type    | Description                                          | Example                                  |\n| ---------------- | ------- | ---------------------------------------------------- | ---------------------------------------- |\n| discount_amount  | NUMBER  | Amount of discount applied (list_price - unit_price) | 30.00                                    |\n| discount_percent | NUMBER  | Percentage discount applied                          | 16.67                                    |\n| delivery_status  | VARCHAR | Current status of delivery                           | 'Not Shipped', 'In Transit', 'Delivered' |\n| return_status    | VARCHAR | Status indicating if item was returned               | 'Returned', 'Not Returned'               |\n\n### Timestamp Information\n\n| Column     | Type         | Description                                                             | Example                             |\n| ---------- | ------------ | ----------------------------------------------------------------------- | ----------------------------------- |\n| updated_at | TIMESTAMP_TZ | Timestamp when this record was last refreshed with nanosecond precision | 2023-07-15 08:23:45.123456789-07:00 |\n\n## Sources and Joins\n\nThis model combines data from the following source tables:\n\n- `orders` - Primary table containing order header information\n- `customers` - Customer demographic and contact information\n- `addresses` - Billing and shipping address details\n- `countries` - Country information for addresses\n- `regions` - Regional information for addresses\n- `warehouses` - Warehouse details for order fulfillment\n- `promotions` - Promotion information applied to orders\n- `order_items` - Individual line items within each order\n- `products` - Product information for ordered items\n- `product_categories` - Category information for products\n- `inventories` - Inventory levels for products at warehouses\n\n## Data Tests\n\nThe following data quality tests are applied to this model:\n\n### Primary Key Tests\n\n- `order_id` and `line_item_id` combination is unique\n- `order_id` is not null\n\n### Referential Integrity Tests\n\n- `customer_id` exists in the customers table\n- `product_id` exists in the products table\n- `warehouse_id` exists in the warehouses table\n- `promotion_id` exists in the promotions table (when not null)\n- `category_id` exists in the product_categories table\n\n### Value Tests\n\n- `unit_price` and `quantity` are positive values\n- `line_total` equals `unit_price` \\* `quantity`\n- `order_status` contains valid status codes\n- `wait_till_complete_yn` contains only 'Y' or 'N'\n- `stock_status` contains only valid values: 'Low Stock', 'In Stock', 'Overstocked', 'Unknown'\n- `delivery_status` contains only valid values: 'Not Shipped', 'In Transit', 'Delivered', 'Unknown'\n- `return_status` contains only valid values: 'Returned', 'Not Returned'\n\n## Usage Examples\n\n### Basic Order Query\n\n```sql\nSELECT\n    order_id,\n    order_date,\n    cust_first_name || ' ' || cust_last_name AS customer_name,\n    order_total,\n    delivery_status\nFROM order_details\nWHERE order_date >= DATEADD(month, -1, CURRENT_DATE())\nORDER BY order_date DESC\n```\n\n### Order Analysis by Category\n\n```sql\nSELECT\n    category_name,\n    COUNT(DISTINCT order_id) AS order_count,\n    SUM(line_total) AS total_revenue,\n    AVG(discount_percent) AS avg_discount_pct\nFROM order_details\nWHERE order_date >= DATEADD(year, -1, CURRENT_DATE())\nGROUP BY category_name\nORDER BY total_revenue DESC\n```\n\n### Delivery Performance\n\n```sql\nSELECT\n    warehouse_name,\n    delivery_type,\n    AVG(DATEDIFF(day, order_date, dispatch_date)) AS avg_processing_days,\n    AVG(DATEDIFF(day, dispatch_date, estimated_delivery)) AS avg_transit_days,\n    COUNT(*) AS shipment_count\nFROM order_details\nWHERE dispatch_date IS NOT NULL\n  AND order_date >= DATEADD(month, -6, CURRENT_DATE())\nGROUP BY warehouse_name, delivery_type\nORDER BY warehouse_name, avg_processing_days\n```\n\n### Returns Analysis\n\n```sql\nSELECT\n    product_name,\n    COUNT(*) AS total_ordered,\n    SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) AS total_returned,\n    (SUM(CASE WHEN return_status = 'Returned' THEN 1 ELSE 0 END) / COUNT(*)::float) * 100 AS return_rate\nFROM order_details\nWHERE order_date >= DATEADD(month, -3, CURRENT_DATE())\nGROUP BY product_name\nHAVING COUNT(*) > 10\nORDER BY return_rate DESC\nLIMIT 20\n```\n\n## Maintenance and Refresh\n\nAs a view, this model is refreshed with each query. The timestamp indicates when the data was last queried and can be used to track data freshness. Since the model pulls directly from source tables, it always reflects the current state of the data. `updated_at`\n\n## Dependencies\n\nThis model depends on:\n\n- Source tables from the schema `order_entry`\n- Any data quality tests defined in the file `schema.yml`\n\n## Additional Notes\n\n- This model includes sensitive customer information. Ensure appropriate access controls are in place.\n- Performance considerations: This view joins multiple tables and may be resource-intensive for large datasets. Consider materializing as a table with scheduled refreshes for frequent reporting needs.\n- For large reporting needs, consider creating aggregated models derived from this model rather than running complex aggregations directly.",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "dbt/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG",
+      "copied_from": "looker/Order Details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)"
+    },
+    {
+      "dataset": "dbt/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.alex@example.com",
+      "copied_from": "looker/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.1e0398a3-113f-475e-b6fc-32ab72a634d2",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG",
+      "copied_from": "looker/Order Details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.brock1@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.bryan@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.jonny1@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.jonny2@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.kirk@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/order_details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.sam@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.1e0398a3-113f-475e-b6fc-32ab72a634d2",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.alex@example.com",
+      "copied_from": "looker/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.brock1@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.bryan@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.jonny1@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.jonny2@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.kirk@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.marty@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "looker/Order Details",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.sam@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.1e0398a3-113f-475e-b6fc-32ab72a634d2",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG",
+      "copied_from": "looker/Order Details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.EMP006",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.alex@example.com",
+      "copied_from": "looker/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.brock1@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.bryan@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.jonny1@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.jonny2@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.marty@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "powerbi/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.sam@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG",
+      "copied_from": "looker/Order Details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.EMP006",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.alex@example.com",
+      "copied_from": "looker/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.bryan@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.jonny2@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.kirk@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.marty@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.sam@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS_REPLICA",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details_replica,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.1e0398a3-113f-475e-b6fc-32ab72a634d2",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS_REPLICA",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details_replica,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.ORG_BACKEND_ENG",
+      "copied_from": "looker/Order Details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS_REPLICA",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details_replica,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpGroup:b2fd91.ORG_DATA_PLATFORM",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS_REPLICA",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details_replica,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.EMP006",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS_REPLICA",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details_replica,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.alex@example.com",
+      "copied_from": "looker/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)"
+    },
+    {
+      "dataset": "snowflake/ORDER_DETAILS_REPLICA",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details_replica,PROD)",
+      "column": null,
+      "kind": "owner",
+      "value": "urn:li:corpuser:b2fd91.brock1@example.com",
+      "copied_from": "dbt/order_details",
+      "copied_from_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)"
+    }
+  ],
+  "disagreements": [
+    {
+      "kind": "domain",
+      "column": null,
+      "values": [
+        {
+          "dataset": "dbt/order_details",
+          "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)",
+          "value": "Data Platform Team"
+        },
+        {
+          "dataset": "looker/order_details",
+          "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+          "value": "Data Platform Team"
+        },
+        {
+          "dataset": "looker/Order Details",
+          "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+          "value": "Data Platform Team"
+        },
+        {
+          "dataset": "snowflake/ORDER_DETAILS",
+          "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+          "value": "Ecommerce Operations"
+        }
+      ],
+      "resolution": "left to a human: Fadlie reports the conflict, it does not pick"
+    }
+  ]
+}

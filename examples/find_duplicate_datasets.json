@@ -1,0 +1,892 @@
+{
+  "groups": [
+    {
+      "name": "order_history / ORDER_HISTORY",
+      "platforms": [
+        "dbt",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/order_history",
+        "snowflake/ORDER_HISTORY"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_history,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_history,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/order_history",
+          "b": "snowflake/ORDER_HISTORY",
+          "confidence": "high",
+          "reason": "Identical data structure and columns, despite case differences"
+        }
+      ]
+    },
+    {
+      "name": "addresses / ADDRESSES",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/addresses",
+        "postgres/addresses",
+        "s3/addresses",
+        "snowflake/ADDRESSES"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.addresses,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.addresses,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/addresses,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.addresses,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/addresses",
+          "b": "snowflake/ADDRESSES",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data types, indicating they are copies of each other."
+        },
+        {
+          "a": "dbt/addresses",
+          "b": "postgres/addresses",
+          "confidence": "high",
+          "reason": "Both datasets have identical structure and column names, despite minor data type differences."
+        },
+        {
+          "a": "dbt/addresses",
+          "b": "s3/addresses",
+          "confidence": "high",
+          "reason": "Both datasets have identical structure and column names, despite being on different platforms."
+        },
+        {
+          "a": "snowflake/ADDRESSES",
+          "b": "postgres/addresses",
+          "confidence": "high",
+          "reason": "Identical structure and column names with minor type differences"
+        },
+        {
+          "a": "snowflake/ADDRESSES",
+          "b": "s3/addresses",
+          "confidence": "high",
+          "reason": "Identical columns and data structure despite different platforms and case differences"
+        },
+        {
+          "a": "postgres/addresses",
+          "b": "s3/addresses",
+          "confidence": "high",
+          "reason": "Identical structure and column names, despite different platforms"
+        }
+      ]
+    },
+    {
+      "name": "countries / COUNTRIES",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/countries",
+        "postgres/countries",
+        "s3/countries",
+        "snowflake/COUNTRIES"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.countries,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.countries,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/countries,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.countries,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/countries",
+          "b": "snowflake/COUNTRIES",
+          "confidence": "high",
+          "reason": "Both datasets describe the same real-world entities with identical columns and data types."
+        },
+        {
+          "a": "dbt/countries",
+          "b": "postgres/countries",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name"
+        },
+        {
+          "a": "dbt/countries",
+          "b": "s3/countries",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same name, likely exported from the same source"
+        },
+        {
+          "a": "snowflake/COUNTRIES",
+          "b": "postgres/countries",
+          "confidence": "high",
+          "reason": "Identical data structure and column names are just case variations"
+        },
+        {
+          "a": "snowflake/COUNTRIES",
+          "b": "s3/countries",
+          "confidence": "high",
+          "reason": "Identical data structure and column names despite minor case differences"
+        },
+        {
+          "a": "postgres/countries",
+          "b": "s3/countries",
+          "confidence": "high",
+          "reason": "Identical data and structure across platforms"
+        }
+      ]
+    },
+    {
+      "name": "customers / CUSTOMERS",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/customers",
+        "postgres/customers",
+        "s3/customers",
+        "snowflake/CUSTOMERS"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.customers,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.customers,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/customers,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.customers,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/customers",
+          "b": "snowflake/CUSTOMERS",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data types, indicating they are likely copies of each other."
+        },
+        {
+          "a": "dbt/customers",
+          "b": "postgres/customers",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data types, just different platform and minor data type variations"
+        },
+        {
+          "a": "dbt/customers",
+          "b": "s3/customers",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same platform origin"
+        },
+        {
+          "a": "snowflake/CUSTOMERS",
+          "b": "postgres/customers",
+          "confidence": "high",
+          "reason": "Both datasets describe the same table structure and columns, likely copied across platforms."
+        },
+        {
+          "a": "snowflake/CUSTOMERS",
+          "b": "s3/customers",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same number of columns, and similar platform export"
+        },
+        {
+          "a": "postgres/customers",
+          "b": "s3/customers",
+          "confidence": "high",
+          "reason": "Identical columns and data types across different platforms"
+        }
+      ]
+    },
+    {
+      "name": "inventories / INVENTORIES",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/inventories",
+        "postgres/inventories",
+        "s3/inventories",
+        "snowflake/INVENTORIES"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.inventories,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.inventories,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/inventories,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.inventories,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/inventories",
+          "b": "snowflake/INVENTORIES",
+          "confidence": "high",
+          "reason": "Identical columns and data structure across different platforms"
+        },
+        {
+          "a": "dbt/inventories",
+          "b": "postgres/inventories",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name"
+        },
+        {
+          "a": "dbt/inventories",
+          "b": "s3/inventories",
+          "confidence": "high",
+          "reason": "Identical columns and data types across different platforms"
+        },
+        {
+          "a": "snowflake/INVENTORIES",
+          "b": "postgres/inventories",
+          "confidence": "high",
+          "reason": "Identical structure and column names, same data types, and same number of columns"
+        },
+        {
+          "a": "snowflake/INVENTORIES",
+          "b": "s3/inventories",
+          "confidence": "high",
+          "reason": "Identical columns and data structure across different platforms"
+        },
+        {
+          "a": "postgres/inventories",
+          "b": "s3/inventories",
+          "confidence": "high",
+          "reason": "Identical columns and data structure across different platforms"
+        }
+      ]
+    },
+    {
+      "name": "order_items / ORDER_ITEMS",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/order_items",
+        "postgres/order_items",
+        "s3/order_items",
+        "snowflake/ORDER_ITEMS"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.order_items,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.order_items,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/order_items,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.order_items,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/order_items",
+          "b": "snowflake/ORDER_ITEMS",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same real-world entities"
+        },
+        {
+          "a": "dbt/order_items",
+          "b": "postgres/order_items",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name"
+        },
+        {
+          "a": "dbt/order_items",
+          "b": "s3/order_items",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data types, indicating they are likely copies of each other."
+        },
+        {
+          "a": "snowflake/ORDER_ITEMS",
+          "b": "postgres/order_items",
+          "confidence": "high",
+          "reason": "Identical schema and column names, just different data types and platform"
+        },
+        {
+          "a": "snowflake/ORDER_ITEMS",
+          "b": "s3/order_items",
+          "confidence": "high",
+          "reason": "Identical columns and data types, just different case"
+        },
+        {
+          "a": "postgres/order_items",
+          "b": "s3/order_items",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name"
+        }
+      ]
+    },
+    {
+      "name": "orders / ORDERS",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/orders",
+        "postgres/orders",
+        "s3/orders",
+        "snowflake/ORDERS"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.orders,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.orders,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/orders,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.orders,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/orders",
+          "b": "snowflake/ORDERS",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data types, indicating they are likely copies of each other."
+        },
+        {
+          "a": "dbt/orders",
+          "b": "postgres/orders",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same platform, same name"
+        },
+        {
+          "a": "dbt/orders",
+          "b": "s3/orders",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same platform copy"
+        },
+        {
+          "a": "snowflake/ORDERS",
+          "b": "postgres/orders",
+          "confidence": "high",
+          "reason": "Identical columns and data types across different platforms"
+        },
+        {
+          "a": "snowflake/ORDERS",
+          "b": "s3/orders",
+          "confidence": "high",
+          "reason": "Identical columns and data types across different platforms"
+        },
+        {
+          "a": "postgres/orders",
+          "b": "s3/orders",
+          "confidence": "high",
+          "reason": "Identical columns and data types across different platforms"
+        }
+      ]
+    },
+    {
+      "name": "product_categories / PRODUCT_CATEGORIES",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/product_categories",
+        "postgres/product_categories",
+        "s3/product_categories",
+        "snowflake/PRODUCT_CATEGORIES"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.product_categories,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.product_categories,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/product_categories,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.product_categories,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/product_categories",
+          "b": "snowflake/PRODUCT_CATEGORIES",
+          "confidence": "high",
+          "reason": "Identical data structure and column types despite case differences"
+        },
+        {
+          "a": "dbt/product_categories",
+          "b": "postgres/product_categories",
+          "confidence": "high",
+          "reason": "Both datasets have identical structure and column names, despite minor data type differences."
+        },
+        {
+          "a": "dbt/product_categories",
+          "b": "s3/product_categories",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name"
+        },
+        {
+          "a": "snowflake/PRODUCT_CATEGORIES",
+          "b": "postgres/product_categories",
+          "confidence": "high",
+          "reason": "Identical data structure and column types across different platforms"
+        },
+        {
+          "a": "snowflake/PRODUCT_CATEGORIES",
+          "b": "s3/product_categories",
+          "confidence": "high",
+          "reason": "Identical data structure and column names are case-insensitive equivalents"
+        },
+        {
+          "a": "postgres/product_categories",
+          "b": "s3/product_categories",
+          "confidence": "high",
+          "reason": "Identical data structure and column names with minor type differences"
+        }
+      ]
+    },
+    {
+      "name": "products / PRODUCTS",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/products",
+        "postgres/products",
+        "s3/products",
+        "snowflake/PRODUCTS"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.products,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.products,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/products,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.products,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/products",
+          "b": "snowflake/PRODUCTS",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same platform data export"
+        },
+        {
+          "a": "dbt/products",
+          "b": "postgres/products",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same platform, same name"
+        },
+        {
+          "a": "dbt/products",
+          "b": "s3/products",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same platform copy"
+        },
+        {
+          "a": "snowflake/PRODUCTS",
+          "b": "postgres/products",
+          "confidence": "high",
+          "reason": "Identical columns and data types, just different platform and case"
+        },
+        {
+          "a": "snowflake/PRODUCTS",
+          "b": "s3/products",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same platform data export"
+        },
+        {
+          "a": "postgres/products",
+          "b": "s3/products",
+          "confidence": "high",
+          "reason": "Identical columns and data structure across different platforms"
+        }
+      ]
+    },
+    {
+      "name": "promotions / PROMOTIONS",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/promotions",
+        "postgres/promotions",
+        "s3/promotions",
+        "snowflake/PROMOTIONS"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.promotions,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.promotions,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/promotions,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.promotions,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/promotions",
+          "b": "snowflake/PROMOTIONS",
+          "confidence": "high",
+          "reason": "Identical data structure and column names with minor differences in data types"
+        },
+        {
+          "a": "dbt/promotions",
+          "b": "postgres/promotions",
+          "confidence": "high",
+          "reason": "Identical structure and data types, same column names, same data entity"
+        },
+        {
+          "a": "dbt/promotions",
+          "b": "s3/promotions",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name, likely a copy"
+        },
+        {
+          "a": "snowflake/PROMOTIONS",
+          "b": "postgres/promotions",
+          "confidence": "high",
+          "reason": "Identical columns and data types, just different platform and case"
+        },
+        {
+          "a": "snowflake/PROMOTIONS",
+          "b": "s3/promotions",
+          "confidence": "high",
+          "reason": "Identical columns and data types, likely a copy or export"
+        },
+        {
+          "a": "postgres/promotions",
+          "b": "s3/promotions",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name"
+        }
+      ]
+    },
+    {
+      "name": "regions / REGIONS",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/regions",
+        "postgres/regions",
+        "s3/regions",
+        "snowflake/REGIONS"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.regions,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.regions,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/regions,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.regions,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/regions",
+          "b": "snowflake/REGIONS",
+          "confidence": "high",
+          "reason": "Identical data structure and column types across different platforms"
+        },
+        {
+          "a": "dbt/regions",
+          "b": "postgres/regions",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name, likely a copy or export"
+        },
+        {
+          "a": "dbt/regions",
+          "b": "s3/regions",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data types, indicating they are likely copies of each other."
+        },
+        {
+          "a": "snowflake/REGIONS",
+          "b": "postgres/regions",
+          "confidence": "high",
+          "reason": "Identical data structure and column names with minor differences in data types and case"
+        },
+        {
+          "a": "snowflake/REGIONS",
+          "b": "s3/regions",
+          "confidence": "high",
+          "reason": "Identical columns and data types, just different case"
+        },
+        {
+          "a": "postgres/regions",
+          "b": "s3/regions",
+          "confidence": "high",
+          "reason": "Identical columns and data types across different platforms"
+        }
+      ]
+    },
+    {
+      "name": "warehouses / WAREHOUSES",
+      "platforms": [
+        "dbt",
+        "postgres",
+        "s3",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/warehouses",
+        "postgres/warehouses",
+        "s3/warehouses",
+        "snowflake/WAREHOUSES"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.order_entry_db.order_entry.warehouses,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.warehouses,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/warehouses,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.order_entry.warehouses,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/warehouses",
+          "b": "snowflake/WAREHOUSES",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name with case difference"
+        },
+        {
+          "a": "dbt/warehouses",
+          "b": "postgres/warehouses",
+          "confidence": "high",
+          "reason": "Both datasets have identical structure and column names, despite different platforms and data types"
+        },
+        {
+          "a": "dbt/warehouses",
+          "b": "s3/warehouses",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name"
+        },
+        {
+          "a": "snowflake/WAREHOUSES",
+          "b": "postgres/warehouses",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same schema, likely copied or exported"
+        },
+        {
+          "a": "snowflake/WAREHOUSES",
+          "b": "s3/warehouses",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same real-world entities"
+        },
+        {
+          "a": "postgres/warehouses",
+          "b": "s3/warehouses",
+          "confidence": "high",
+          "reason": "Identical data structure and column names, despite different platforms"
+        }
+      ]
+    },
+    {
+      "name": "order_details / Order Details / ORDER_DETAILS / ORDER_DETAILS_REPLICA",
+      "platforms": [
+        "dbt",
+        "looker",
+        "looker",
+        "powerbi",
+        "snowflake",
+        "snowflake"
+      ],
+      "datasets": [
+        "dbt/order_details",
+        "looker/order_details",
+        "looker/Order Details",
+        "powerbi/ORDER_DETAILS",
+        "snowflake/ORDER_DETAILS",
+        "snowflake/ORDER_DETAILS_REPLICA"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:dbt,b2fd91.ORDER_ENTRY_DB.analytics.order_details,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry-looker.view.order_details,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:looker,b2fd91.order-entry.explore.order_details,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:powerbi,b2fd91.datahub_order_entries.ORDER_DETAILS,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:snowflake,b2fd91.order_entry_db.analytics.order_details_replica,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "dbt/order_details",
+          "b": "snowflake/ORDER_DETAILS",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data types, indicating they are likely copies of each other."
+        },
+        {
+          "a": "dbt/order_details",
+          "b": "snowflake/ORDER_DETAILS_REPLICA",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data types, suggesting a replica or export from one platform to another."
+        },
+        {
+          "a": "snowflake/ORDER_DETAILS",
+          "b": "snowflake/ORDER_DETAILS_REPLICA",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and names, indicating they are replicas of each other."
+        },
+        {
+          "a": "dbt/order_details",
+          "b": "powerbi/ORDER_DETAILS",
+          "confidence": "high",
+          "reason": "Both datasets contain identical columns and data structure, despite minor differences in platform and column naming conventions."
+        },
+        {
+          "a": "snowflake/ORDER_DETAILS",
+          "b": "powerbi/ORDER_DETAILS",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data types, suggesting they are copies of each other."
+        },
+        {
+          "a": "powerbi/ORDER_DETAILS",
+          "b": "snowflake/ORDER_DETAILS_REPLICA",
+          "confidence": "high",
+          "reason": "Both datasets have identical columns and data structure, indicating a replica of the same data."
+        },
+        {
+          "a": "looker/order_details",
+          "b": "snowflake/ORDER_DETAILS_REPLICA",
+          "confidence": "high",
+          "reason": "Both datasets contain identical rows about the same real-world entities, despite differences in column names and data types."
+        },
+        {
+          "a": "looker/order_details",
+          "b": "powerbi/ORDER_DETAILS",
+          "confidence": "high",
+          "reason": "Both datasets contain identical columns and data structure, indicating they are likely copies of each other."
+        },
+        {
+          "a": "looker/Order Details",
+          "b": "snowflake/ORDER_DETAILS",
+          "confidence": "high",
+          "reason": "Both datasets contain identical rows about the same real-world entities despite differences in platform, column names, and data types."
+        },
+        {
+          "a": "looker/Order Details",
+          "b": "looker/order_details",
+          "confidence": "high",
+          "reason": "Both datasets contain identical columns and data structure, despite minor differences in column naming"
+        },
+        {
+          "a": "looker/Order Details",
+          "b": "powerbi/ORDER_DETAILS",
+          "confidence": "high",
+          "reason": "Both datasets contain identical rows and columns describing the same real-world entities, despite minor differences in column naming conventions."
+        },
+        {
+          "a": "looker/Order Details",
+          "b": "snowflake/ORDER_DETAILS_REPLICA",
+          "confidence": "high",
+          "reason": "Both datasets contain identical rows and columns, albeit with minor differences in column names and data types, indicating a replica."
+        }
+      ]
+    },
+    {
+      "name": "product_information",
+      "platforms": [
+        "postgres",
+        "s3"
+      ],
+      "datasets": [
+        "postgres/product_information",
+        "s3/product_information"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:postgres,b2fd91.order_entry_db.order_entry.product_information,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:s3,b2fd91.demo-data-bucket/order_entry/product_information,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "postgres/product_information",
+          "b": "s3/product_information",
+          "confidence": "high",
+          "reason": "Identical columns and data types, same table name"
+        }
+      ]
+    },
+    {
+      "name": "Custom SQL Query / Promotions",
+      "platforms": [
+        "tableau",
+        "tableau"
+      ],
+      "datasets": [
+        "tableau/Custom SQL Query",
+        "tableau/Promotions"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:tableau,b2fd91.8bfe7483-1c9a-a0e1-ec84-57207dd37a15,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:tableau,b2fd91.b980a8c5-28eb-119e-f6ca-4da32732e5be,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "tableau/Promotions",
+          "b": "tableau/Custom SQL Query",
+          "confidence": "high",
+          "reason": "Both datasets contain the same columns with the same data types and names, indicating they are likely copies of each other."
+        }
+      ]
+    },
+    {
+      "name": "Custom SQL Query / Order Mode",
+      "platforms": [
+        "tableau",
+        "tableau"
+      ],
+      "datasets": [
+        "tableau/Custom SQL Query",
+        "tableau/Order Mode"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:tableau,b2fd91.37fcfb15-34ae-973a-5ae3-cf63691d48e3,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:tableau,b2fd91.c067553a-127e-a871-14a0-5f32cb032c78,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "tableau/Order Mode",
+          "b": "tableau/Custom SQL Query",
+          "confidence": "high",
+          "reason": "Both datasets contain the same columns with similar names and data types, indicating they likely hold the same data."
+        }
+      ]
+    },
+    {
+      "name": "Custom SQL Query / Orders By Day",
+      "platforms": [
+        "tableau",
+        "tableau"
+      ],
+      "datasets": [
+        "tableau/Custom SQL Query",
+        "tableau/Orders By Day"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:tableau,b2fd91.f32082e5-06b8-f46e-9047-4611fffe66b0,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:tableau,b2fd91.f8fb6a0b-7be6-690b-cc45-3c6e0fd2bcde,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "tableau/Orders By Day",
+          "b": "tableau/Custom SQL Query",
+          "confidence": "high",
+          "reason": "Both datasets contain the same columns with similar data types and likely represent the same underlying data."
+        }
+      ]
+    },
+    {
+      "name": "Custom SQL Query / Top Product Category",
+      "platforms": [
+        "tableau",
+        "tableau"
+      ],
+      "datasets": [
+        "tableau/Custom SQL Query",
+        "tableau/Top Product Category"
+      ],
+      "urns": [
+        "urn:li:dataset:(urn:li:dataPlatform:tableau,b2fd91.4a3af1dd-fd0c-7077-d5fd-aa2fdf87cb23,PROD)",
+        "urn:li:dataset:(urn:li:dataPlatform:tableau,b2fd91.fadbf744-48be-0929-a47c-5786327a3343,PROD)"
+      ],
+      "verdicts": [
+        {
+          "a": "tableau/Top Product Category",
+          "b": "tableau/Custom SQL Query",
+          "confidence": "high",
+          "reason": "Both datasets contain the same columns with similar names and data types, indicating they likely hold the same data."
+        }
+      ]
+    }
+  ]
+}
