@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 566"
+     width="1000" height="566" role="img"
+     aria-label="Fadlie's architecture: an MCP client calls a server on AWS App
+     Runner, which reads DataHub Core on EC2, asks Amazon Nova Micro on Bedrock
+     to decide which datasets hold the same data, and writes the missing
+     governance back.">
+<defs>
+  <marker id="pointe-bleue" viewBox="0 0 10 10" refX="9" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#3f6ea8"/></marker>
+  <marker id="pointe-verte" viewBox="0 0 10 10" refX="9" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#2e9e6b"/></marker>
+  <marker id="pointe-ambre" viewBox="0 0 10 10" refX="9" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#c68a2e"/></marker>
+</defs>
+<style>
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,
+       sans-serif;fill:#16181d}
+  .titre{font-size:21px;font-weight:650;letter-spacing:-.3px}
+  .sous{font-size:13.5px;fill:#5b6270}
+  .boite{fill:#fff;stroke-width:1.6}
+  .boite.douce{fill:#f7f8fa;stroke-width:1;stroke-opacity:.55}
+  .cadre{fill:none;stroke:#c8ced7;stroke-width:1.4;stroke-dasharray:5 4}
+  .cadre-t{font-size:12px;fill:#5b6270;letter-spacing:.02em}
+  .bt{font-size:13.5px;font-weight:640}
+  .bl{font-size:12px;fill:#5b6270}
+  .et{font-size:11px;fill:#8a93a1}
+  .regle{font-size:12.5px;font-weight:640}
+  .regle.douce{font-weight:400;fill:#5b6270}
+  @media (prefers-color-scheme:dark){
+    text{fill:#e6e9ef} .sous,.bl,.cadre-t,.et,.regle.douce{fill:#98a1b0}
+    .boite{fill:#0e1116} .boite.douce{fill:#161b22}
+    .cadre{stroke:#3a424e}
+  }
+</style>
+<text class="titre" x="20" y="40">Structure proposes. A model decides. Nothing
+is invented.</text>
+<text class="sous" x="20" y="62">Every value Fadlie writes into DataHub was read
+from a dataset it names &#8212; and it will not write at all unless asked
+twice.</text>
+<rect x="20" y="150" width="178" height="96" rx="8" class="boite" stroke="#3f6ea8"/><text class="bt" x="34" y="174" fill="#3f6ea8">MCP client</text><text class="bl" x="34" y="194">Claude, or any MCP host.</text><text class="bl" x="34" y="211">Holds a bearer token.</text><text class="bl" x="34" y="228">Never sends a user id.</text><rect x="240" y="96" width="440" height="424" rx="12" class="cadre"/><text class="cadre-t" x="256" y="120">AWS App Runner &#183; eu-central-1 &#183; image from Amazon ECR</text><rect x="258" y="134" width="404" height="54" rx="8" class="boite douce" stroke="#3f6ea8"/><text class="bt" x="272" y="158" fill="#3f6ea8">Authorization: Bearer &#8212; middleware</text><text class="bl" x="272" y="178">Checked before any tool runs. No tool takes an identity.</text><rect x="258" y="200" width="404" height="76" rx="8" class="boite douce" stroke="#3f6ea8"/><text class="bt" x="272" y="224" fill="#3f6ea8">Four MCP tools</text><text class="bl" x="272" y="244">catalog_summary &#183; find_duplicate_datasets</text><text class="bl" x="272" y="261">governance_gaps &#183; apply_governance</text><rect x="258" y="288" width="404" height="46" rx="8" class="boite douce" stroke="#3f6ea8"/><text class="bt" x="272" y="312" fill="#3f6ea8">Cached report, refreshed in the background</text><text class="bl" x="272" y="332">App Runner cuts at 120 s; a full analysis takes about 240.</text><rect x="258" y="346" width="404" height="158" rx="8" class="boite douce" stroke="#c68a2e"/><text class="bt" x="272" y="370" fill="#c68a2e">The agent &#8212; four layers</text><text class="bl" x="272" y="390">catalogue &#8212; reads 67 datasets, schemas, lineage</text><text class="bl" x="272" y="407">candidats &#8212; 2&#8239;211 pairs &#8594; 97</text><text class="bl" x="272" y="424">juge &#8212; a model decides: 84 confirmed, 18 groups</text><text class="bl" x="272" y="441">ecart &#8594; reparer &#8212; 373 gaps, each naming a source</text><rect x="726" y="150" width="254" height="100" rx="8" class="boite" stroke="#2e9e6b"/><text class="bt" x="740" y="174" fill="#2e9e6b">DataHub Core v1.7.0</text><text class="bl" x="740" y="194">on Amazon EC2, contest datapack</text><text class="bl" x="740" y="211">GraphQL + OpenAPI v3</text><text class="bl" x="740" y="228">read &#8212; and written back</text><rect x="726" y="300" width="254" height="84" rx="8" class="boite" stroke="#c68a2e"/><text class="bt" x="740" y="324" fill="#c68a2e">Amazon Bedrock</text><text class="bl" x="740" y="344">Amazon Nova Micro, temperature 0</text><text class="bl" x="740" y="361">the only layer that decides</text><rect x="726" y="424" width="254" height="72" rx="8" class="boite douce" stroke="#3f6ea8"/><text class="bt" x="740" y="448" fill="#3f6ea8">AWS Secrets Manager</text><text class="bl" x="740" y="468">the DataHub token, never in the</text><text class="bl" x="740" y="485">image and never in the repo</text><line x1="200" y1="190" x2="236" y2="190" stroke="#3f6ea8" stroke-width="1.6" marker-end="url(#pointe-bleue)"/><line x1="664" y1="372" x2="722" y2="214" stroke="#2e9e6b" stroke-width="1.6" marker-end="url(#pointe-verte)"/><line x1="664" y1="402" x2="722" y2="340" stroke="#c68a2e" stroke-width="1.6" marker-end="url(#pointe-ambre)"/><text class="et" x="218" y="182" text-anchor="middle">HTTPS</text><text class="regle" x="20" y="532">Identity comes from the transport.</text><text class="regle douce" x="20" y="550">No tool takes a user or a token.</text><text class="regle" x="347" y="532">It copies; it never writes.</text><text class="regle douce" x="347" y="550">Every value names where it came from.</text><text class="regle" x="674" y="532">Writing takes a second argument.</text><text class="regle douce" x="674" y="550">A dry run by default, in the code.</text>
+</svg>

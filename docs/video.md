@@ -100,6 +100,24 @@ zéro est **vu**, pas raconté.
 - Les silences pendant que le serveur travaille ne sont pas des trous. C'est là
   qu'on regarde au lieu d'écouter. Ne pas les couper au montage.
 
+## Ce que la vidéo dit et qui a été affiné depuis
+
+Le segment 2 dit : *« Every same-name pair is connected, at distance two or
+four. The median distance between two datasets picked at random is also four. »*
+Re-mesuré le 6 août avec `scripts/capturer-lignage.py` : « two or four » vaut
+pour 78 couples sur 88, et le mot « also » laisse croire que les jumeaux sont à
+4 quand leur médiane est 2. **La conclusion ne bouge pas**, elle se durcit — au
+seuil de 4 on attrape 86 des 88 homonymes *et* 199 des 316 inconnus.
+
+**Pas de nouveau tournage.** Trois des quatre affirmations du segment sont
+exactes et la conclusion tient ; refaire imposerait une nouvelle URL YouTube et
+une cascade de corrections sur une soumission validée, à quatre jours de
+l'échéance. La note est dans la description de la vidéo, et le chiffre exact
+avec sa figure est sur <https://benewende-dev.github.io/fadlie/>.
+
+C'est la règle du dépôt appliquée à la vidéo : **une mesure se relit, elle ne se
+recopie pas** — et quand elle change, on le dit là où elle a été publiée.
+
 ## Le GIF du README
 
 `docs/images/demo.gif` — 900 × 506, 144 images, 173 Ko. Il n'est pas rejoué : il

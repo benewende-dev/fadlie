@@ -82,6 +82,11 @@ with the confidence of something that has looked.
 
 Structure suggests. A model decides. Nothing is invented.
 
+![An MCP client calls the Fadlie server on AWS App Runner; the server reads
+DataHub Core on EC2, asks Amazon Nova Micro on Bedrock which datasets hold the
+same data, and writes the missing governance back — a dry run unless asked
+twice](docs/images/architecture.svg)
+
 | Layer | What it does | Why it cannot be the last word |
 |---|---|---|
 | `catalogue` | reads schemas, governance, lineage | — |

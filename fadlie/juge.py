@@ -4,9 +4,9 @@ C'est la seule couche qui décide, et elle existe parce que la mesure l'exige.
 
 - Le **nom** ne tranche pas : trois groupes homonymes sur quinze ne sont pas la
   même chose (`custom_sql_query` recouvre 0 % de ses colonnes, `promotions` 9 %).
-- Le **lignage** ne tranche pas davantage : le graphe est d'un seul tenant, et
-  deux copies d'une même table sont à la même distance que deux jeux pris au
-  hasard.
+- Le **lignage** ne tranche pas davantage : le graphe est d'un seul tenant, donc
+  la connexité ne dit rien, et aucun seuil de distance ne sépare les copies des
+  couples tirés au hasard — leurs distributions se chevauchent.
 - La **structure** ne suffit pas seule : `countries`, `regions`, `warehouses` et
   `product_categories` ont toutes quatre colonnes de forme voisine sans être la
   même donnée.

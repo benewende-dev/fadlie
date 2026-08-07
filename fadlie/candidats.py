@@ -15,11 +15,12 @@ référence à quatre colonnes (`countries`, `regions`, `warehouses`,
 C'est exactement le genre de couple qu'on soumet à un juge.
 
 Et le lignage ne tranche pas non plus — c'est le résultat le plus utile de tous.
-Le graphe de lignage du catalogue est **une seule composante** : 103 sommets,
-tout jeu atteint tout autre, distance médiane 4. Les copies d'une même table
-sont à distance 2 ou 4, exactement comme deux jeux pris au hasard. La connexité
-ne porte donc aucune information sur « est-ce la même donnée ». On la reporte
-comme une pièce du dossier, jamais comme un verdict.
+Le graphe de lignage du catalogue est **une seule composante** : tout jeu
+atteint tout autre, donc la connexité ne porte aucune information. Et la
+distance presque pas : au seuil de 4, on attrape 86 des 88 couples d'homonymes,
+mais aussi 199 des 316 couples tirés au hasard. Aucune coupure ne garde les
+jumeaux et jette le reste (`scripts/capturer-lignage.py`). On reporte la
+distance comme une pièce du dossier, jamais comme un verdict.
 
 Il reste donc, pour décider : la structure, qui dit « peut-être », et un juge.
 """

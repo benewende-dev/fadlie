@@ -307,6 +307,11 @@ hand: it is generated from real responses of the deployed agent, captured on
 
 <div class="chiffres">{bloc_chiffres(resume, gaps)}</div>
 
+<figure><img src="images/architecture.svg" alt="An MCP client calls the Fadlie
+server on AWS App Runner; the server reads DataHub Core on EC2, asks Amazon Nova
+Micro on Bedrock which datasets hold the same data, and writes the missing
+governance back &mdash; a dry run unless asked twice"></figure>
+
 <h2>The one it refuses to settle</h2>
 <p class="avant">A disagreement is not a gap. When two copies of the same data
 carry <em>different</em> values, there is nothing to copy — someone decided, or
