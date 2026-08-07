@@ -100,6 +100,27 @@ zéro est **vu**, pas raconté.
 - Les silences pendant que le serveur travaille ne sont pas des trous. C'est là
   qu'on regarde au lieu d'écouter. Ne pas les couper au montage.
 
+## Le GIF du README
+
+`docs/images/demo.gif` — 900 × 506, 144 images, 173 Ko. Il n'est pas rejoué : il
+est **découpé dans la vidéo publiée**, de 1:32,5 à 1:48,5, c'est-à-dire du
+`catalog_summary()` jusqu'à `gaps on products now: 0`. Tout l'arc en seize
+secondes, sans une image reconstituée.
+
+```bash
+ffmpeg -ss 92.5 -t 16 -i fadlie.mp4 \
+    -vf "fps=9,scale=900:-1:flags=lanczos,palettegen=max_colors=64:stats_mode=diff" \
+    palette.png
+ffmpeg -ss 92.5 -t 16 -i fadlie.mp4 -i palette.png \
+    -lavfi "fps=9,scale=900:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle" \
+    docs/images/demo.gif
+```
+
+**Neuf images par seconde suffisent** : le plan ne bouge que par sauts, section
+par section. À trente, le fichier est vingt fois plus lourd pour exactement la
+même chose à l'œil. La palette de soixante-quatre couleurs tient parce que le
+terminal n'en emploie que cinq.
+
 ## Sous-titres
 
 En anglais, comme la narration, et **générés depuis le texte prononcé**, pas

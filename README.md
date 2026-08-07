@@ -13,8 +13,14 @@ Built for **Build with DataHub: The Agent Hackathon**, on the contest's own
 `showcase-ecommerce` dataset. Every number below is produced by a script in this
 repository, against a live DataHub instance.
 
-**Two minutes and forty seconds, including a live run against the deployed
-agent: <https://youtu.be/YXff0HNRAwU>**
+![Fadlie reading the catalog, listing the governance that stopped at one copy of
+`products`, and levelling it — every value naming the dataset it came
+from](docs/images/demo.gif)
+
+*Sixteen seconds of a real run against the deployed agent: 97 pairs examined, 18
+groups of copies, 53 gaps on the `products` copies alone — then zero. The full
+video, two minutes and forty seconds, is at
+<https://youtu.be/YXff0HNRAwU>.*
 
 ---
 
@@ -45,9 +51,11 @@ with the confidence of something that has looked.
 > **The live demo no longer matches that paragraph, and that is the point.**
 > Fadlie has since levelled three of the eighteen groups on the running
 > instance — `customers`, `orders`, `products` — writing 102, 60 and 53 values
-> that it read from their twins. Around 420 gaps remain, on some 46 datasets,
-> so there is plenty left to try. Reload the datapack into a fresh DataHub and
-> the numbers above come back exactly.
+> that it read from their twins. The run captured in [`examples/`](examples/)
+> counts 373 gaps left on 46 datasets, so there is plenty still to try. That
+> total moves a little between runs — the judge confirms 83, 84 or 85 of the
+> same 97 pairs — while the structural findings do not move at all. Reload the
+> datapack into a fresh DataHub and the numbers above come back exactly.
 
 ## How it decides
 
