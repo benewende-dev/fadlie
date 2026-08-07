@@ -184,8 +184,9 @@ jeux, 1 désaccord.** Répartition : 291 descriptions de colonne, 127
 propriétaires, 55 étiquettes de colonne, 39 descriptions, 34 domaines, 34 termes.
 
 Le seul désaccord est instructif : `snowflake/ORDER_DETAILS` est dans
-« Ecommerce Operations » quand ses quatre jumeaux sont dans « Data Platform
-Team ». Fadlie **ne tranche pas** — quelqu'un a décidé, ou quelqu'un s'est
+« Ecommerce Operations » quand ses **trois** jumeaux sont dans « Data Platform
+Team » — quatre jeux portent un domaine, pas cinq ; la relecture du 6 août a
+corrigé un « quatre » dans le README, que la vidéo, elle, disait juste. Fadlie **ne tranche pas** — quelqu'un a décidé, ou quelqu'un s'est
 trompé, et ce n'est pas à un agent de choisir.
 
 Deux corrections nées de ce passage :

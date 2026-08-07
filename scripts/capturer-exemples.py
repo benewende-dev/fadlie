@@ -35,8 +35,9 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 EXEMPLES = RACINE / "examples"
 
 # Le jeu visé pour l'exemple d'écarts. `order_details` est le cas le plus parlant
-# du catalogue : quatre jumeaux, dix-sept colonnes sensibles, et le seul
-# désaccord de domaine que Fadlie refuse de trancher.
+# du catalogue : six jeux du même nom sur quatre plateformes, et le seul
+# désaccord de domaine que Fadlie refuse de trancher — trois jeux d'un côté, un
+# de l'autre.
 JEU = "order_details"
 
 
